@@ -38,6 +38,10 @@ class Settings(BaseSettings):
     # el temporizador académico lo calculará el módulo 4 desde `participacion.inicio`.
     # Por defecto 300 min, por encima del máximo de participación (240 min).
     STUDENT_TOKEN_EXPIRE_MINUTES: int = Field(default=300, gt=0, le=60 * 24)
+
+    # --- Módulo 5: evaluación y retroalimentación ---
+    # Expiración del token de SOLO LECTURA para consultar resultados tras finalizar la sesión.
+    STUDENT_RESULTS_TOKEN_EXPIRE_MINUTES: int = Field(default=60, gt=0, le=60 * 24)
     # Clave AES-256 (32 bytes en Base64 URL-safe) para cifrar los códigos de convocatoria en reposo.
     # Obligatoria y fuera de la base de datos y de Git. Generar con:
     #   python -c "import base64, os; print(base64.urlsafe_b64encode(os.urandom(32)).decode())"
