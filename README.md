@@ -1,6 +1,6 @@
 # Inter Nos — Simulador de Psicología Social (Backend)
 
-Monolito modular en **FastAPI + PostgreSQL**. Estado actual: módulos **1 — Autenticación y Usuarios**, **2 — Gestión de Casos Académicos** y **3 — Sesiones y Convocatorias**, **4 — Participaciones** y **5 — Evaluación y Retroalimentación** (en revisión).
+Monolito modular en **FastAPI + PostgreSQL**. Estado actual: módulos **1 — Autenticación y Usuarios**, **2 — Gestión de Casos Académicos** y **3 — Sesiones y Convocatorias**, **4 — Participaciones**, **5 — Evaluación y Retroalimentación** y **6 — Notificaciones y Eventos** (en revisión).
 
 > El código está en `backend/`: ejecute desde esa carpeta los comandos de este documento.
 
@@ -1174,7 +1174,7 @@ Una sesión o participación de otro docente responde 404, igual que en el módu
 
 ### Eventos para el módulo 6
 
-`eventos.py` define el puerto `PublicadorEventosEvaluacion` con una implementación nula que solo registra en el log. El módulo 6 la sustituirá con `eventos.configurar(...)` desde `app/bootstrap.py`, sin tocar los servicios. No hay SMTP ni adaptadores todavía.
+`eventos.py` define el puerto `PublicadorEventosEvaluacion` con una implementación nula que solo registra en el log. El módulo 6 no la sustituye: registra estos mismos eventos en su outbox dentro de la transacción (ver "Módulo 6").
 
 | Evento | Cuándo |
 |---|---|
@@ -1212,8 +1212,248 @@ Se ejecutan con los mismos comandos de la sección "Pruebas"; el resultado y la 
 - No se registra quién evaluó ni cuándo, porque el modelo actual no tiene esos campos. Añadirlos requeriría una migración.
 - El limitador de intentos sigue en memoria por proceso (limitación ya documentada en el módulo 3).
 
+## Módulo 6: Notificaciones y Eventos
+
+Comunica a los estudiantes sus convocatorias, códigos, cambios y resultados (RF-20, RF-21 y RF-27). Lo hace con dos patrones:
+- **Observer:** desacopla los módulos académicos de las notificaciones.
+- **Adapter:** aísla al proveedor de correo.
+
+Un **Transactional Outbox** garantiza que una operación académica nunca falle porque el servidor de correo esté caído, y que ningún aviso nazca de una operación revertida.
+
+### Arquitectura del envío
+
+```text
+Servicio académico (módulos 3 y 5)
+  └─ transacción: operación + INSERT en evento_outbox   (app/core/outbox.py)
+                                   │  COMMIT conjunto
+worker de notificaciones ──────────┘
+  1. reclama un evento (FOR UPDATE SKIP LOCKED)
+  2. PublicadorEventos.publicar(evento) ──> ObservadorConvocatorias
+                                       └─> ObservadorAvisosAcademicos
+       └─ notificacion (aviso interno) + entrega_correo PENDIENTE   (misma transacción)
+  3. reclama una entrega (SKIP LOCKED), revalida el estado real y descifra el código en memoria
+  4. ServicioCorreo.enviar(MensajeCorreo) ──> AdaptadorCorreoSMTP ──> proveedor SMTP
+  5. ENVIADA | PENDIENTE con espera progresiva | FALLIDA | CANCELADA
+```
+
+```text
+app/modules/notifications/
+├── models/          # EventoOutbox, Notificacion, EntregaCorreo y sus enums
+├── events/          # EventoDominio, catálogo y RegistroEventosSQL (implementa el puerto del outbox)
+├── observers/       # base.py (ObservadorEvento), convocatorias.py, avisos_academicos.py
+├── publishers/      # PublicadorEventos (sujeto del Observer)
+├── adapters/        # base.py (ServicioCorreo, MensajeCorreo), smtp_adapter.py, fake_adapter.py
+├── templates/       # avisos internos y correos (texto + HTML escapado)
+├── repositories/    # consultas, SKIP LOCKED e inserciones idempotentes
+├── services/        # notificacion_service, procesador_eventos, entregas_service
+├── schemas/  dependencies/  routers/
+app/core/outbox.py   # puerto RegistroEventos (sin dependencias entre módulos)
+app/workers/notifications/
+```
+
+### Patrón Observer
+
+| Rol GoF | Clase | Responsabilidad |
+|---|---|---|
+| Evento | `events.EventoDominio` | Id, tipo, sesión, momento y datos **no sensibles**: ids y motivos, nunca códigos, notas ni tokens. `RegistroEventosSQL` rechaza esas claves. |
+| Observador (abstracto) | `observers.base.ObservadorEvento` | Contrato `tipos` y `actualizar(evento)`, idempotente |
+| Sujeto | `publishers.PublicadorEventos` | `suscribir`, `desuscribir` y `publicar`. Elige los observadores por tipo de evento y admite varios por tipo. |
+| Observador concreto | `ObservadorConvocatorias` | Invitaciones, códigos, revocaciones, reprogramaciones y cancelación de envíos al cerrar la sesión |
+| Observador concreto | `ObservadorAvisosAcademicos` | Resultados disponibles, calificaciones actualizadas y retroalimentación |
+
+**Qué problema resuelve.** Los módulos 3 y 5 ya no necesitan saber quién reacciona a sus hechos ni cómo: solo registran el evento. Añadir otro observador (por ejemplo, para el módulo 7) no toca ningún servicio académico.
+
+**Varios observadores para un evento:** `SESION_FINALIZADA` llega a los dos. `ObservadorConvocatorias` cancela las invitaciones que no salieron y `ObservadorAvisosAcademicos` anuncia los resultados.
+
+**Si un observador falla:** se revierte todo el evento (savepoint) y se reintenta. No queda un aviso a medias.
+
+### Patrón Adapter
+
+| Rol GoF | Clase |
+|---|---|
+| Objetivo (Target) | `adapters.base.ServicioCorreo` con `enviar(MensajeCorreo) -> ResultadoEnvio`, `ErrorCorreoTemporal` y `ErrorCorreoPermanente` |
+| Cliente | `services.entregas_service.EntregasService` |
+| Adaptador | `adapters.smtp_adapter.AdaptadorCorreoSMTP`: traduce el mensaje a `email.message.EmailMessage` y usa `smtplib` |
+| Adaptador de pruebas | `adapters.fake_adapter.AdaptadorCorreoPruebas`: captura los mensajes y puede simular fallos |
+| Fábrica | `adapters.crear_servicio_correo(settings)` |
+
+**Qué problema resuelve.** La lógica de negocio nunca importa `smtplib`; `smtp_adapter.py` es el único archivo que lo hace. Cambiar a un proveedor con API HTTP consiste en escribir otro adaptador de `ServicioCorreo`, sin tocar los servicios académicos ni el de notificaciones.
+
+`MensajeCorreo` se valida al construirse:
+- Un único destinatario con formato de correo válido.
+- Sin saltos de línea en el destinatario, el asunto, los encabezados ni el Message-ID, lo que impide la inyección de encabezados.
+- Asunto de 200 caracteres como máximo.
+
+### Eventos implementados
+
+Se reutilizan los nombres que ya publicaban los módulos 3 y 5:
+- `CONVOCATORIA_RETIRADA` corresponde a la revocación.
+- `SESION_MODIFICADA` corresponde a la reprogramación.
+
+| Evento (origen) | Observador | Aviso interno | Correo | Regla |
+|---|---|---|---|---|
+| `CONVOCATORIA_CREADA` (3) | Convocatorias | CONVOCATORIA | Sí, **con código** | Solo si la convocatoria sigue activa y la sesión no terminó |
+| `CONVOCATORIA_REACTIVADA` (3) | Convocatorias | CONVOCATORIA | Sí, con el código **vigente** | Igual |
+| `CODIGO_REGENERADO` (3) | Convocatorias | CODIGO_REGENERADO | Sí, con el código **nuevo** | Cancela antes las entregas pendientes que llevarían el código anterior |
+| `CONVOCATORIA_RETIRADA` (3) | Convocatorias | REVOCACION | Sí, sin código | Cancela los envíos pendientes. Avisa solo si el estudiante pudo tener el código (se le envió o llegó a participar). Si fue reactivada después, no se avisa. |
+| `SESION_MODIFICADA` (3) | Convocatorias | REPROGRAMACION | Sí, sin código | Solo si cambió el caso, el inicio, el fin, el tiempo, el lugar o el mensaje |
+| `SESION_FINALIZADA` (3) | Ambos | RESULTADOS_DISPONIBLES y RETROALIMENTACION | Resultados: sí | Cancela invitaciones pendientes y anuncia los resultados ya registrados (caso A) |
+| `CALIFICACION_REGISTRADA` (5) | Avisos académicos | RESULTADOS_DISPONIBLES | Sí | Solo con la sesión FINALIZADA (caso B) |
+| `CALIFICACION_ACTUALIZADA` (5) | Avisos académicos | CALIFICACION_ACTUALIZADA | Sí | Solo si los resultados ya se habían anunciado |
+| `RETROALIMENTACION_REGISTRADA` (5) | Avisos académicos | RETROALIMENTACION | **No** (solo interna) | Solo con la sesión FINALIZADA; si no, se avisa al finalizar |
+| `RESULTADOS_DISPONIBLES` (5) | Avisos académicos | RESULTADOS_DISPONIBLES | Sí | Revisión de toda la sesión, idempotente |
+| `SESION_PROGRAMADA`, `SESION_INICIADA`, `INTENTOS_MODIFICADOS` | — | — | — | Sin observadores: se marcan procesados sin efectos |
+
+**Resultados sin anticipar notas.** Un aviso de resultados exige tres cosas: la sesión FINALIZADA, la convocatoria activa y al menos una nota registrada. Funcionan los dos órdenes:
+- Caso A: se evalúa y después finaliza la sesión.
+- Caso B: finaliza la sesión y después se evalúa.
+
+La clave `resultados:<convocatoria>` hace que el aviso salga una sola vez por cualquiera de los dos caminos. Una recalificación idéntica no emite eventos (módulo 5), así que no genera avisos. Ningún correo ni aviso incluye la nota, las respuestas correctas ni las justificaciones.
+
+**Retroalimentación.** La clave `retro:<participación>:<huella del texto>` evita duplicar el aviso aunque llegue por el evento y por el cierre de la sesión. Un texto distinto genera un aviso nuevo, y el aviso no copia el texto del docente.
+
+### Tablas (migración `0011_notificaciones_eventos`)
+
+| Tabla | Para qué | Columnas clave |
+|---|---|---|
+| `evento_outbox` | Eventos confirmados con la operación académica | `tipo`, `sesion_id` (FK), `datos` JSONB (solo ids y motivos), `estado` (PENDIENTE, PROCESADO, FALLIDO), `intentos`, `proximo_intento_en`, `ultimo_error` |
+| `notificacion` | Aviso interno de **un** destinatario | `destinatario_id`, `tipo`, `convocatoria_id` (obligatoria), `participacion_id`, `evento_id`, `clave_idempotencia` UNIQUE, `titulo`, `mensaje`, `creada_en`, `leida`, `leida_en` |
+| `entrega_correo` | Intento de comunicar una notificación por correo | `notificacion_id` UNIQUE (un correo por aviso), `estado`, `huella_codigo`, `intentos`, `ultimo_intento_en`, `proximo_intento_en`, `enviada_en`, `ultimo_error` |
+
+- Se toma como base el modelo académico original de `notificacion` (origen en una convocatoria o participación, tipo, asunto y cuerpo). La convocatoria es obligatoria porque acota lo que ve cada token estudiantil.
+- El aviso y la entrega se separan: que exista una notificación no significa que el correo se envió.
+- Todas las FK son `RESTRICT`, sin cascadas.
+- Índices: por destinatario y fecha, no leídas por destinatario, y parciales para los pendientes de ambas colas.
+- CHECK: lectura coherente, `enviada_en` según el estado, intentos no negativos y participación obligatoria en los avisos de un intento.
+- La migración es autocontenida y reversible; la regresión prueba bajar a `0010` y volver a subir.
+
+### Seguridad de los códigos de autorización
+
+- El código **nunca** se guarda en claro: ni en `evento_outbox`, ni en `notificacion`, ni en `entrega_correo`, ni en los logs. La prueba de integración busca cada código en todo el contenido de las tres tablas.
+- Se descifra con `descifrar_codigo` del módulo 3 **solo en memoria**, justo antes de enviar. La criptografía no cambió.
+- `entrega_correo.huella_codigo` guarda el HMAC del código **cifrado** vigente al preparar la entrega. Si al enviar ya no coincide, el código se regeneró y la entrega se cancela, así que nunca sale un código obsoleto.
+- Antes de cada envío se revalida el estado **real**, aunque la entrega lleve mucho tiempo pendiente (por ejemplo, con el envío desactivado):
+  - La convocatoria debe seguir activa.
+  - Invitaciones y reprogramaciones: la sesión no debe haber finalizado.
+  - Resultados: la sesión debe estar finalizada.
+  - Avisos de retiro: la convocatoria debe seguir revocada.
+- **Vigencia de los correos con código** (`services/vigencia.py`). La misma regla la aplican el observador y el envío, que nunca manda una invitación que ya no permite participar. Se aplican los límites reales del módulo 3:
+  - Un ingreso nuevo solo cabe hasta `sesion.limite_ingreso` y antes de `sesion.fin`. Antes del inicio, la invitación vale para el futuro.
+  - Después del límite, el código solo es útil para quien puede reingresar porque tiene un intento EN_PROGRESO con tiempo. Esa regla es `ReingresoConParticipacionActiva` del módulo 4, reutilizada. Es el caso de un código regenerado mientras el estudiante resuelve el cuestionario.
+  - Una entrega que ya no es útil queda **CANCELADA** con un motivo legible, sin el código: "El plazo de ingreso terminó: la invitación ya no permite participar."
+- **Reprogramaciones sin mensajes engañosos:**
+  - El aviso interno indica qué cambió (p. ej., "Cambió: lugar o modalidad") y la programación vigente.
+  - El correo muestra los datos **vigentes en el momento del envío**, junto con lo que cambió.
+  - Solo se envía correo si el estudiante ya había recibido una invitación. Si la invitación aún no salió, saldrá con los datos actualizados y un correo de "cambio" sería redundante.
+  - Un cambio posterior cancela el aviso anterior que todavía no se había enviado: "Reprogramación superada por un cambio posterior."
+- Cada correo va a un único destinatario y no incluye datos de otros convocados.
+- Los errores guardados son mensajes seguros: el tipo y el código SMTP, sin contraseñas, cuerpo ni respuesta completa del servidor.
+- **Límite inherente:** un correo entregado no se puede retirar. Si el docente revoca o regenera después del envío, el código anterior deja de servir (reglas del módulo 3), pero el mensaje ya está en la bandeja del estudiante.
+
+### Configuración del correo
+
+| Variable | Por defecto | Uso |
+|---|---|---|
+| `NOTIFICATIONS_EMAIL_ENABLED` | `false` | Sin envío real: los avisos internos se crean y las entregas quedan PENDIENTES |
+| `SMTP_HOST`, `SMTP_PORT` | —, `587` | Servidor |
+| `SMTP_USERNAME`, `SMTP_PASSWORD` | — | Autenticación. La contraseña es `SecretStr`: no aparece en `repr`, logs ni errores |
+| `SMTP_FROM_EMAIL`, `SMTP_FROM_NAME` | —, `Inter Nos` | Remitente |
+| `SMTP_USE_STARTTLS`, `SMTP_USE_SSL` | `true`, `false` | STARTTLS o TLS implícito, con verificación de certificado y nombre de host (`ssl.create_default_context()`) |
+| `SMTP_TIMEOUT_SECONDS` | `10` | Tiempo máximo de conexión y de cada operación |
+| `SIMULATOR_ACCESS_URL` | — | URL de acceso en las invitaciones. **Debe configurarse antes de enviar convocatorias reales**: aún no hay frontend definitivo y no se inventa una dirección. Exige https, salvo en localhost. |
+| `NOTIFICATIONS_UTC_OFFSET_HOURS` | `-5` | Zona en la que se muestran las fechas (siempre indicada, p. ej. `08:00 (UTC-05:00)`) |
+| `NOTIFICATIONS_MAX_ATTEMPTS`, `NOTIFICATIONS_RETRY_BASE_SECONDS`, `NOTIFICATIONS_RETRY_MAX_SECONDS`, `NOTIFICATIONS_LEASE_SECONDS` | `5`, `60`, `3600`, `300` | Reintentos y reserva |
+
+Con el envío activado, `crear_servicio_correo` falla al arrancar el worker, de forma explícita y sin mostrar secretos, en estos casos:
+- Faltan el host, el remitente, la URL o la contraseña (cuando hay usuario).
+- El remitente no es una dirección válida.
+- La URL no es absoluta.
+- Se pide enviar sin TLS a un servidor no local, o enviar credenciales sin TLS.
+
+No existe ninguna opción para desactivar la verificación TLS.
+
+### Prueba con un servidor SMTP real (Mailpit)
+
+`tests/integration/test_modulo_6_smtp_mailpit.py` envía de verdad por SMTP a un **Mailpit local**. Se omite si no está configurado y se niega a usar cualquier host que no sea local, así que ninguna prueba puede enviar correos hacia Internet:
+
+```bash
+docker run -d --rm --name inter_nos_mailpit -p 127.0.0.1:1025:1025 -p 127.0.0.1:8025:8025 axllent/mailpit:v1.20.0
+MAILPIT_SMTP_PORT=1025 MAILPIT_API_URL=http://127.0.0.1:8025 pytest tests/integration/test_modulo_6_smtp_mailpit.py
+```
+
+La prueba hace lo siguiente:
+1. Activa temporalmente `NOTIFICATIONS_EMAIL_ENABLED`, solo hacia `127.0.0.1`, sin credenciales.
+2. Crea convocatorias en la base desechable y comprueba que sus eventos quedan en el outbox.
+3. Ejecuta el worker real, que procesa los eventos con Observer y envía con `AdaptadorCorreoSMTP`.
+4. Consulta la API de Mailpit y verifica destinatario único, remitente, asunto, cuerpo, URL de acceso, código vigente y `Message-ID`.
+5. Comprueba que las entregas quedaron ENVIADA en PostgreSQL y que el código no aparece en la base.
+
+La segunda prueba simula un fallo de conexión con un puerto cerrado. Las entregas quedan PENDIENTE con un error seguro y, al volver el servidor, se entregan. Las evidencias, con el código redactado, están en `docs/evidencias/modulo_6/`.
+
+La interfaz web de Mailpit (`http://127.0.0.1:8025`) muestra los mensajes capturados.
+
+### Worker y reintentos
+
+```bash
+python -m app.workers.notifications                 # una pasada (cron / Programador de tareas)
+python -m app.workers.notifications --intervalo 30  # bucle propio
+```
+
+- **Concurrencia:** varias instancias simultáneas no reclaman el mismo evento ni la misma entrega (`FOR UPDATE SKIP LOCKED`). Está probado con tres workers en paralelo.
+- **Reinicios:** cada evento se procesa en su transacción, así que lo no confirmado sigue PENDIENTE. Una entrega EN_PROCESO de un worker que cayó se retoma cuando vence su reserva (`NOTIFICATIONS_LEASE_SECONDS`).
+- **Reintentos:**
+  - Un error temporal (desconexión, tiempo agotado, 4xx) vuelve a PENDIENTE con espera exponencial: `base × 2^(intento−1)`, hasta `NOTIFICATIONS_RETRY_MAX_SECONDS`.
+  - Un error permanente (5xx, destinatario rechazado, autenticación, certificado), o agotar `NOTIFICATIONS_MAX_ATTEMPTS`, la deja FALLIDA para diagnóstico.
+  - Un administrador puede reintentar una entrega FALLIDA: vuelve a revalidarse antes de enviar.
+- **Idempotencia:** `clave_idempotencia` y una entrega por notificación. SMTP no garantiza "exactamente una vez": si el worker cae entre la aceptación del servidor y la marca ENVIADA, el mensaje puede repetirse. El `Message-ID` estable `<entrega-<id>@dominio>` permite reconocerlo.
+- **Un SMTP caído no bloquea nada:** las convocatorias se confirman igual y las entregas esperan.
+
+### Endpoints del módulo 6 (`/api/v1`)
+
+| Método | Ruta | Quién | Función |
+|---|---|---|---|
+| GET | `/notifications?no_leidas=&skip=&limit=` | Cualquier token válido | Mis notificaciones |
+| GET | `/notifications/unread-count` | Igual | Cantidad sin leer |
+| GET | `/notifications/{id}` | Igual | Una notificación propia (404 si es ajena) |
+| PATCH | `/notifications/{id}/read` | Igual | Marcar como leída (idempotente) |
+| GET | `/notification-deliveries?estado=` | Administrador | Estado y errores de las entregas (sin direcciones ni contenido) |
+| POST | `/notification-deliveries/{id}/retry` | Administrador | Reintentar una entrega FALLIDA |
+
+**Alcance según el token.** Se reutilizan los tres tipos existentes, y el tipo solo elige el validador, que después verifica firma, expiración y estado actual:
+- `access` (docente o administrador): sus propias notificaciones.
+- `student` (sesión EN_CURSO) y `student_results` (sesión FINALIZADA): las del estudiante **en la convocatoria del token**.
+
+Ninguna ruta crea notificaciones ni envía correos: solo las operaciones académicas confirmadas lo hacen. Un estudiante no puede reenviar códigos, y un token de resultados no modifica participaciones.
+
+### Integración con los módulos 3 y 5
+
+- `ServicioSesionesBase._transaction` (módulo 3) y `EvaluacionService._transaction` (módulo 5) registran sus eventos pendientes con `app.core.outbox.registro()` **antes del commit**. Es el único cambio en esos módulos.
+- `bootstrap.configurar_integraciones()` conecta `RegistroEventosSQL`. Sin él, el puerto por defecto no hace nada.
+- Los publicadores posteriores al commit (`PublicadorNulo`) siguen como estaban.
+- **Decisión de diseño:** los README de los módulos 3 y 5 preveían sustituir esos publicadores posteriores al commit. Se optó por el outbox dentro de la transacción, porque un publicador posterior al commit pierde el evento si el proceso cae entre el commit y la publicación.
+- No se modificaron las fórmulas de Strategy ni las políticas de calificación.
+
+### Pruebas del módulo 6
+
+| Archivo | Tipo | Pruebas | Qué cubre |
+|---|---|---:|---|
+| `tests/unit/test_modulo_6.py` | Unitarias (sin PostgreSQL ni SMTP) | 131 | Publicador (registro, distribución, varios observadores, tipos, eventos desconocidos, fallos); ambos observadores con dobles (eventos obsoletos, códigos regenerados, revocación, reprogramación, casos A y B, idempotencia); outbox y datos prohibidos; procesador y reintentos; `MensajeCorreo` e inyección de encabezados; adaptadores SMTP y de pruebas; traducción de errores sin filtrar secretos; configuración inválida; plantillas, escapado y ausencia de códigos y notas; revalidación de entregas y caminos de error del envío |
+| `tests/integration/test_modulo_6_api.py` | Integración (PostgreSQL real) | 45 | Outbox en la transacción académica; rollback sin eventos; código vigente; regeneración antes y después del envío; revocación antes y después; reactivación; reprogramación; resultados (casos A y B, antes del cierre); recalificación; retroalimentación; notificaciones internas, lectura y aislamiento entre estudiantes; permisos; administración de entregas; reintentos con espera; intentos agotados; idempotencia del worker; workers concurrentes; reserva vencida tras una caída; fallo de observador y recuperación; envío desactivado; revocación o regeneración concurrentes detectadas al enviar; entregas pendientes con el envío desactivado (válida antes del inicio, plazo de ingreso vencido, código regenerado tras el plazo con y sin reingreso, sesión finalizada, revocada, código regenerado, reprogramada antes de la invitación y cambios sucesivos); privacidad de la administración de entregas (secretos en respuestas, errores y logs; cinco actores no administradores) |
+| `tests/integration/test_modulo_6_smtp_mailpit.py` | Extremo a extremo con SMTP real (Mailpit local) | 2 | Entrega real verificada en Mailpit y en PostgreSQL; fallo de conexión SMTP con reintento y recuperación. Se omite si Mailpit no está configurado |
+| `tests/test_notifications_regression.py` | Regresión | 4 | Migración `0011` reversible sin tocar datos académicos; el publicador posterior al commit del módulo 3 sigue funcionando y el outbox va dentro de la transacción; sin el módulo 6 configurado no se registra nada; cerrar un intento no genera avisos |
+
+El resultado y la cobertura están en `docs/REPORTE_PRUEBAS_MODULO_6.md`.
+
+### Limitaciones
+
+- **Avisos internos fuera de la sesión:** un estudiante solo los ve con un token vigente, es decir, `student` con la sesión EN_CURSO o `student_results` con la sesión FINALIZADA. Antes de que la sesión empiece, su canal es el correo.
+- **Correos ya entregados:** no se pueden retirar (ver "Seguridad").
+- **Revocación concurrente con el envío:** se revalida al reclamar la entrega. Si la revocación ocurre en los segundos entre la reclamación y el envío, el correo puede salir; el código ya no sirve porque el módulo 3 lo rechaza.
+- **Zona horaria fija:** el desplazamiento es configurable, pero no hay horario de verano (Colombia no lo usa).
+- **Sin envío activado:** las entregas se acumulan PENDIENTES y se enviarán cuando se active, siempre revalidadas.
+
 ## Pendiente para módulos posteriores
 
 - **Módulo 5:** decisiones académicas pendientes (nota consolidada entre intentos y tratamiento de cierres administrativos sin respuestas); ver "Módulo 5".
-- **Módulo 6:** envío de códigos por correo (y desactivar `CONVOCATION_CODE_RETRIEVAL_ENABLED`) e implementación de `PublicadorEventosSesion` y `PublicadorEventosEvaluacion`.
+- **Módulo 6:** configurar `SIMULATOR_ACCESS_URL` y el SMTP institucional antes de activar `NOTIFICATIONS_EMAIL_ENABLED`, y decidir si se desactiva `CONVOCATION_CODE_RETRIEVAL_ENABLED` una vez que los códigos lleguen por correo.
 - *Refresh tokens*, "cerrar todas las sesiones" a petición del usuario y limitación de intentos en el login con contraseña (el ingreso estudiantil ya la tiene).

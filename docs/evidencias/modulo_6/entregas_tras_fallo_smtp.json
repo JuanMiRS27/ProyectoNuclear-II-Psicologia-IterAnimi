@@ -1,0 +1,26 @@
+[
+  {
+    "id": "e2e9bcfd-3745-4fb3-8cbd-11c3b1981a59",
+    "estado": "PENDIENTE",
+    "intentos": 1,
+    "ultimo_error": "Fallo de red o de protocolo SMTP (ConnectionRefusedError).",
+    "enviada_en": null,
+    "correo": "estudiante2@universidad.edu.co"
+  },
+  {
+    "id": "1dd72286-0b05-4870-9568-8c0ca621939b",
+    "estado": "PENDIENTE",
+    "intentos": 1,
+    "ultimo_error": "Fallo de red o de protocolo SMTP (ConnectionRefusedError).",
+    "enviada_en": null,
+    "correo": "estudiante3@universidad.edu.co"
+  },
+  {
+    "id": "9f27a164-cfab-44a5-aaa1-31de82948d36",
+    "estado": "PENDIENTE",
+    "intentos": 1,
+    "ultimo_error": "Fallo de red o de protocolo SMTP (ConnectionRefusedError).",
+    "enviada_en": null,
+    "correo": "estudiante4@universidad.edu.co"
+  }
+]

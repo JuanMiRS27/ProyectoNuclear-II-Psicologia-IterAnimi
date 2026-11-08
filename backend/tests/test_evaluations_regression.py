@@ -11,9 +11,13 @@ from tests.sessions_helpers import ingresar
 
 
 def test_el_modulo_5_no_agrega_migraciones():
-    """El módulo 5 usa `nota_final` y `retroalimentacion_general` de la migración 0010."""
+    """El módulo 5 usa `nota_final` y `retroalimentacion_general` de la migración 0010.
+
+    Módulo 6: la siguiente revisión (0011) es la de notificaciones y sigue directamente a la 0010.
+    """
     script = ScriptDirectory.from_config(alembic_config())
-    assert script.get_heads() == ["0010_evaluacion_tras_cierre"]
+    assert len(script.get_heads()) == 1
+    assert script.get_revision("0011_notificaciones_eventos").down_revision == "0010_evaluacion_tras_cierre"
 
 
 def test_cerrar_un_intento_sigue_sin_registrar_nota(entorno):

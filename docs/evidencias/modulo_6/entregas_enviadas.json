@@ -1,0 +1,26 @@
+[
+  {
+    "id": "01fde823-365a-4835-8d46-1068ee32b9f8",
+    "estado": "ENVIADA",
+    "intentos": 1,
+    "ultimo_error": null,
+    "enviada_en": "2026-11-03 08:00:00+00:00",
+    "correo": "estudiante2@universidad.edu.co"
+  },
+  {
+    "id": "87f79511-42a6-4ef2-816c-8dfb021ae120",
+    "estado": "ENVIADA",
+    "intentos": 1,
+    "ultimo_error": null,
+    "enviada_en": "2026-11-03 08:00:00+00:00",
+    "correo": "estudiante3@universidad.edu.co"
+  },
+  {
+    "id": "dfecb649-ea49-4b7b-823e-3fd01a7afb0d",
+    "estado": "ENVIADA",
+    "intentos": 1,
+    "ultimo_error": null,
+    "enviada_en": "2026-11-03 08:00:00+00:00",
+    "correo": "estudiante4@universidad.edu.co"
+  }
+]

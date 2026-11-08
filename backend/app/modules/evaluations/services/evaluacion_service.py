@@ -19,6 +19,7 @@ from decimal import Decimal
 
 from sqlalchemy.orm import Session
 
+from app.core import outbox
 from app.core.exceptions import ConflictError, NotFoundError
 from app.modules.auth.models import Usuario
 from app.modules.evaluations import eventos
@@ -182,6 +183,9 @@ class EvaluacionService:
     def _transaction(self) -> Iterator[None]:
         try:
             yield
+            # Módulo 6 (outbox): los eventos se guardan en ESTA transacción, junto con la nota.
+            for evento in self._pendientes:
+                outbox.registro().registrar(self._session, evento.tipo, evento.sesion_id, evento.datos)
             self._session.commit()
         except BaseException:
             self._session.rollback()

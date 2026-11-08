@@ -9,6 +9,7 @@ from app.modules.auth import models  # noqa: F401  (registra los modelos en Base
 from app.modules.cases import models as cases_models  # noqa: F401
 from app.modules.sessions import models as sessions_models  # noqa: F401
 from app.modules.participations import models as participations_models  # noqa: F401
+from app.modules.notifications import models as notifications_models  # noqa: F401
 
 config = context.config
 
