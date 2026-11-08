@@ -1,6 +1,6 @@
 # Inter Nos — Simulador de Psicología Social (Backend)
 
-Monolito modular en **FastAPI + PostgreSQL**. Estado actual: módulos **1 — Autenticación y Usuarios**, **2 — Gestión de Casos Académicos** y **3 — Sesiones y Convocatorias**, **4 — Participaciones**, **5 — Evaluación y Retroalimentación** y **6 — Notificaciones y Eventos** (en revisión).
+Monolito modular en **FastAPI + PostgreSQL**. Estado actual: módulos **1 — Autenticación y Usuarios**, **2 — Gestión de Casos Académicos** y **3 — Sesiones y Convocatorias**, **4 — Participaciones**, **5 — Evaluación y Retroalimentación**, **6 — Notificaciones y Eventos** y **7 — Seguimiento y Reportes** (en revisión).
 
 > El código está en `backend/`: ejecute desde esa carpeta los comandos de este documento.
 
@@ -1452,8 +1452,224 @@ El resultado y la cobertura están en `docs/REPORTE_PRUEBAS_MODULO_6.md`.
 - **Zona horaria fija:** el desplazamiento es configurable, pero no hay horario de verano (Colombia no lo usa).
 - **Sin envío activado:** las entregas se acumulan PENDIENTES y se enviarán cuando se active, siempre revalidadas.
 
+## Módulo 7: Seguimiento y Reportes
+
+Permite al docente consultar el desarrollo y los resultados de sus actividades académicas: seguimiento de sesiones y convocatorias, participaciones, ausencias, intentos, calificaciones, desempeño por criterio y por pregunta, historial por caso y por espacio académico, y exportación CSV.
+
+Es **solo de lectura**: no modifica respuestas, notas, retroalimentaciones, estados ni convocatorias. Tampoco agrega tablas, migraciones, dependencias ni patrones de diseño.
+
+**Requisitos.** El repositorio no contiene un documento de requisitos con obligaciones concretas de reportes; los únicos RF citados son los del módulo 6 (RF-20, RF-21 y RF-27). Por eso las métricas, los endpoints y la exportación CSV son **propuestas de implementación** basadas en el enunciado del módulo. No se encontró ninguna exigencia de Excel o PDF, así que no se añadieron dependencias para esos formatos.
+
+### Estructura
+
+```text
+app/modules/reports/
+├── calculations/   # Funciones puras: tasas, conteos, estadísticas con Decimal, condición del convocado y del intento
+├── repositories/   # Proyecciones y agregaciones SQL (COUNT FILTER, GROUP BY, percentile_disc); solo SELECT
+├── services/
+│   ├── base.py                 # Transacción READ ONLY + REPEATABLE READ, autorización, piezas comunes
+│   ├── reportes_sesion.py      # Resumen, estudiantes, desempeño individual, notas, criterios, preguntas
+│   ├── reportes_academicos.py  # Mis sesiones, espacio académico, historial del caso
+│   └── exportacion_service.py  # CSV con los mismos permisos y filtros
+├── exporters/      # Construcción del CSV (UTF-8, anti-inyección de fórmulas, nombres seguros, límite de filas)
+├── schemas/        # Respuestas Pydantic (solo docentes) y filtros con extra="forbid"
+├── dependencies/
+└── routers/        # Solo GET; sin cálculos ni SQL
+```
+
+Flujo: `router → DocenteUser → servicio (instantánea de lectura + propiedad) → repositorio (agregación SQL) → cálculos puros → esquema`.
+
+### Reutilización de los módulos anteriores
+
+| Necesidad | Contrato reutilizado (sin duplicarlo) |
+|---|---|
+| Nota de un intento | `participacion.nota_final` registrada por el módulo 5. El reporte **no recalcula** notas. |
+| Si un intento cerrado sin nota está pendiente o "sin calificar" | `CIERRES_ADMINISTRATIVOS` de `EstrategiaEvaluacionIncompleta`. Una prueba unitaria compara `calculations.calificable` con las tres estrategias reales. |
+| COMPLETA / INCOMPLETA | `SelectorEstrategia` del módulo 5 (sin calcular la nota) |
+| Puntaje por criterio | `CalculadoraRubrica.puntuar` y `mapeo.criterio` del módulo 5 |
+| Corrección de una pregunta | Regla del módulo 5: la opción elegida tiene `es_correcta`. Sirve cualquiera de las correctas; no es multiselección. |
+| Ausencia | Convocatoria activa sin intentos (`ConsultaEvaluacionService.ausencias`), declarada solo con la sesión FINALIZADA |
+| Propiedad | `Sesion.docente_id` (módulos 3 y 5) y `CasoEstudio.autor_id` (módulo 2) |
+| Redondeo | `evaluations.dominio.redondear` (2 decimales, ROUND_HALF_UP) |
+
+### Fórmulas de los indicadores
+
+Todos devuelven `{numerador, denominador, porcentaje}`. Con denominador 0, `porcentaje` es `null`: nunca 0 % ni una división por cero.
+
+```text
+tasa_participacion = convocatorias ACTIVAS con al menos un intento / convocatorias ACTIVAS × 100
+tasa_finalizacion  = intentos FINALIZADOS (cierre voluntario)       / intentos registrados × 100
+tasa_expiracion    = intentos EXPIRADOS                              / intentos registrados × 100
+tasa_calificacion  = intentos con nota registrada                    / intentos cerrados    × 100
+```
+
+- El denominador de la participación excluye las convocatorias revocadas.
+- **Estudiantes ≠ intentos.** Un estudiante con tres intentos es un participante y tres intentos.
+- "Intentos registrados" incluye los EN_PROGRESO. Por eso, durante la sesión, finalización + expiración puede sumar menos de 100 %.
+- `vencidos_sin_cerrar` cuenta los EN_PROGRESO cuyo tiempo ya se agotó (`inicio + tiempo_max_min <= ahora`). El reporte no los cierra, porque es de solo lectura: los cierra el worker o la siguiente petición del estudiante.
+
+### Ausencias y condición del convocado
+
+| Condición | Regla |
+|---|---|
+| `PARTICIPO` | Convocatoria activa con al menos un intento |
+| `PENDIENTE` | Convocatoria activa sin intentos y sesión SIN_INICIAR o EN_CURSO. Todavía no es ausencia, aunque haya vencido el plazo de ingreso. |
+| `AUSENTE` | Convocatoria activa sin intentos y sesión FINALIZADA (la ausencia del módulo 5) |
+| `REVOCADA` | Convocatoria retirada. Conserva su historial de intentos, pero **no** es una ausencia. |
+
+### Intentos y notas
+
+| Situación del intento | Regla |
+|---|---|
+| `EN_PROGRESO` | Sin resultados académicos: el reporte individual no muestra aciertos ni errores |
+| `CALIFICADO` | Tiene `nota_final` (un 0.00 registrado sí es una nota) |
+| `SIN_CALIFICAR` | Cerrado y sin nota por la política del módulo 5 (cierre administrativo sin respuestas). **No es un cero.** |
+| `PENDIENTE_CALIFICACION` | El módulo 5 lo calificaría, pero aún no se procesó |
+
+- **Varios intentos:** cada intento se muestra por separado, ordenado por número. **No hay nota consolidada** ni promedio por estudiante, porque no existe una política académica para ello (decisión del módulo 5).
+- **Estadísticas de notas** (`unidad: "intento"`): evaluados, mínimo, máximo, promedio, mediana, promedio en % de la escala y distribución.
+  - Solo se usan las notas registradas: las nulas no cuentan como cero.
+  - Todo con `Decimal`, redondeado una sola vez.
+  - La mediana es exacta: `percentile_disc(0.5)` en orden ascendente y descendente da los dos valores centrales.
+  - La distribución usa cinco tramos de igual amplitud sobre la escala de la rúbrica (`[0, 20 %)`, …, `[80 %, 100 %]`). Un límite pertenece al tramo superior.
+  - No se supone una escala de 5,0.
+- **Escalas distintas:** una sesión y un caso tienen una sola rúbrica (no editable tras publicarse), así que sus notas son comparables. El espacio académico puede mezclar casos, por lo que solo combina notas **normalizadas** (`nota × 100 / escala` de su rúbrica). Cada caso muestra además su promedio en su propia escala.
+- **Recalificación:** los reportes reflejan el estado actual de PostgreSQL. Si el módulo 5 recalifica un intento, los reportes posteriores muestran la nota nueva. No se guardan copias históricas de los reportes.
+
+### Desempeño por criterio y por pregunta
+
+- **Intentos considerados:** los cerrados (FINALIZADOS y EXPIRADOS). Cada intento corrige **todas** las preguntas del caso, igual que el módulo 5, así que una pregunta sin respuesta cuenta como no acertada.
+- **Por criterio:** `porcentaje_aciertos = aciertos × 100 / (preguntas del criterio × intentos considerados)`.
+  - `puntaje_promedio` es el promedio, sobre los intentos **calificados**, de `CalculadoraRubrica.puntuar` aplicado al porcentaje del criterio en cada intento. Es la misma función del módulo 5, no otra fórmula.
+  - Si los niveles del criterio no son evaluables, el puntaje queda `null` con una advertencia.
+  - Un criterio sin preguntas es **no evaluable** (`SIN_EVIDENCIA` en el módulo 5): sin porcentaje ni puntaje.
+- **Por pregunta:** escenario, criterio, intentos considerados, aciertos, errores, sin respuesta y porcentaje.
+  - Una pregunta sin opción correcta se marca `corregible: false`, sin aciertos ni errores.
+  - No se agregan estudiantes ni respuestas ficticias.
+
+### Seguridad y autorización
+
+| Actor | Resultado |
+|---|---|
+| Docente responsable de la sesión | 200 en los reportes de esa sesión |
+| Autor del caso | 200 en `/cases/{id}/reports`, pero solo con **sus** sesiones. Ser autor **no** da acceso a las sesiones de otro docente que usen el caso: responden 404 |
+| Otro docente | 404 en sesiones, estudiantes y casos ajenos (indistinguible de un recurso inexistente). En un espacio compartido o en "mis sesiones" recibe 200, pero solo con **sus** sesiones. |
+| Administrador | 403. El rol no otorga acceso a datos académicos de sesiones, igual que en los módulos 2, 3 y 5. |
+| Estudiante con token `access` | 403 |
+| Tokens `student` y `student_results` | 401 (solo se acepta el tipo `access`) |
+| Anónimo | 401 |
+
+- **Espacio académico:** es un catálogo compartido. Siempre se filtra por `Sesion.docente_id`, así que las sesiones de otros docentes no se muestran ni se agregan. Un espacio inactivo solo es visible para quien tiene sesiones en él.
+- **Caso:** solo para su autor, en cualquier estado (también ARCHIVADO). Aun así, solo se agregan las sesiones del docente: si otro docente usa el caso, sus sesiones, estudiantes, notas y estadísticas no aparecen. La API del módulo 3 solo permite programar casos propios, pero PostgreSQL no lo impide; por eso `test_el_autor_del_caso_no_accede_a_la_sesion_de_otro_docente` inserta esa sesión directamente y comprueba los 11 endpoints y las exportaciones.
+- **Docente responsable que no es autor:** consulta todos los reportes de su sesión y su espacio, pero no el historial del caso (`/cases/{id}/reports` → 404), porque la propiedad de los casos del módulo 2 no cambia.
+- **Conocer un UUID no autoriza nada.** Los filtros usan `extra="forbid"`: `?docente_id=…` u otro parámetro desconocido responde 422.
+- **Solo GET:** las 11 rutas de reportes devuelven 405 a POST, PUT, PATCH y DELETE, y no inyectan el servicio que registra notas (`EvaluacionService`).
+- **Datos excluidos:** ningún esquema ni columna CSV incluye `codigo_autorizacion`, contraseñas, JWT, claves ni `version_token`. Una prueba lo verifica sobre todos los esquemas.
+- **Estudiantes:** no tienen endpoints de reportes. Siguen consultando sus resultados con el módulo 5, que exige la sesión FINALIZADA.
+- Todas las respuestas llevan `Cache-Control: no-store`.
+
+### Coherencia y concurrencia
+
+Cada reporte se calcula en **una transacción `READ ONLY` con aislamiento `REPEATABLE READ`** (`ReportesRepository.iniciar_lectura`). Todas sus consultas ven la misma instantánea. Si un intento finaliza, una nota se registra o una convocatoria se revoca durante el cálculo, el cambio aparece en todo el reporte o en ninguna parte.
+
+- Con el MVCC de PostgreSQL, esta lectura no bloquea las operaciones académicas ni es bloqueada por ellas.
+- `READ ONLY` hace fallar cualquier escritura accidental.
+- Antes de abrirla se confirma la transacción implícita de la autenticación, que solo leyó el usuario.
+
+### Rendimiento
+
+- Las métricas se agregan en PostgreSQL. La página de estudiantes y todos sus intentos se obtienen en dos consultas, sin N+1.
+- La corrección se agrega por intento × criterio y por pregunta. Nunca se cargan todas las respuestas históricas.
+- Las pruebas verifican que el número de consultas es **idéntico con 5 y con 200 estudiantes** (400 intentos, 1 200 respuestas).
+- **Índices:** no se añadieron. Las consultas filtran por claves ya indexadas: `ix_sesion_docente_id_inicio`, `ix_sesion_caso_id`, `ix_sesion_espacio_academico_id`, `uq_convocatoria_sesion_estudiante`, `uq_participacion_convocatoria_intento` y `uq_respuesta_participacion_pregunta`.
+
+### Endpoints del módulo 7 (`/api/v1`, `DocenteUser`)
+
+| Método | Ruta | Función |
+|---|---|---|
+| GET | `/sessions/{id}/reports/summary` | Resumen: sesión, convocatorias, intentos por estado y motivo, indicadores |
+| GET | `/sessions/{id}/reports/students` | Estudiantes, paginados. Filtros: `convocatoria` (activas/revocadas/todas), `condicion`, `estado_participacion`, `con_nota`, `intento_activo`, `buscar`, `skip` y `limit` (≤100) |
+| GET | `/sessions/{id}/reports/students/{student_id}` | Historial de intentos de un estudiante |
+| GET | `/sessions/{id}/reports/grades` | Estadísticas de notas (total, FINALIZADOS y EXPIRADOS) |
+| GET | `/sessions/{id}/reports/criteria` | Desempeño por criterio |
+| GET | `/sessions/{id}/reports/questions` | Desempeño por pregunta |
+| GET | `/sessions/{id}/reports/export?tipo=&formato=csv` | `tipo`: resumen, estudiantes, intentos, criterios o preguntas. Admite los filtros de estudiantes. |
+| GET | `/reports/my-sessions` | Mis sesiones con indicadores. Filtros: `estado`, `espacio_academico_id`, `caso_id`, `desde`, `hasta`, `skip` y `limit` |
+| GET | `/academic-spaces/{id}/reports` | Espacio académico (solo mis sesiones). Filtros: `estado`, `caso_id`, `desde`, `hasta` y paginación |
+| GET | `/academic-spaces/{id}/reports/export?tipo=sesiones&formato=csv` | Sesiones del espacio en CSV |
+| GET | `/cases/{id}/reports` | Historial del caso (solo su autor). Filtros: `estado`, `espacio_academico_id`, `desde`, `hasta` y paginación |
+
+**Fechas:** `desde` y `hasta` exigen zona horaria y se normalizan a UTC. Se aplican a `sesion.inicio` como intervalo **semiabierto** `[desde, hasta)`; `desde >= hasta` responde 422.
+
+No se duplicó ninguna ruta del módulo 5: `/evaluations` y `/absences` siguen siendo las rutas operativas de la evaluación.
+
+### Exportación CSV
+
+- UTF-8 con BOM, separador coma, todas las celdas entre comillas y fin de línea CRLF.
+- Fechas ISO 8601 en UTC (`2026-11-03T08:00:00Z`) y decimales con punto (`2.20`).
+- Una nota nula es una **celda vacía**, nunca 0.
+- **Inyección de fórmulas:** un texto que empieza por `=`, `+`, `-`, `@`, tabulador o retorno de carro se antepone con `'`. También cuando el indicador está en ancho completo o va precedido de cualquier secuencia de espacios (incluido NBSP), caracteres de control (NUL, tabulador vertical, …) o caracteres invisibles de formato (espacio de ancho cero, BOM, marcas de dirección).
+- Nombre `reporte_<ámbito>_<tipo>_<id8>_<AAAAMMDD>.csv`, solo con `[a-z0-9_-]`. Cabeceras `Content-Disposition: attachment`, `Cache-Control: no-store` y `X-Content-Type-Options: nosniff`.
+- Máximo **5 000 filas** (`MAX_FILAS_EXPORTACION`). Se piden `límite + 1` filas para detectar el exceso y, si se supera, responde 422 `EXPORTACION_EXCEDE_LIMITE` con la sugerencia de filtrar.
+- Se genera en memoria y nunca se guarda en disco.
+- Usa los mismos permisos, filtros y cálculos que la consulta JSON.
+
+### Ejemplos
+
+```http
+GET /api/v1/sessions/0763e5f0-…/reports/summary
+Authorization: Bearer <token del docente responsable>
+
+200 OK
+{
+  "generado_en": "2026-11-03T08:00:00Z",
+  "sesion": {"estado": "EN_CURSO", "tiempo_max_min": 40, "escala_max": "5.00", "limite_ingreso": "2026-11-03T09:00:00Z", "...": "..."},
+  "convocatorias": {"activas": 3, "revocadas": 0, "activas_con_intento": 1, "activas_sin_intento": 2,
+                    "revocadas_con_intento": 0, "ausentes": 0, "pendientes": 2},
+  "intentos": {"total": 2, "en_progreso": 1, "finalizados": 1, "expirados": 0, "calificados": 1,
+               "pendientes_de_calificacion": 0, "sin_calificar": 0, "vencidos_sin_cerrar": 0, "...": "..."},
+  "indicadores": {"tasa_participacion": {"numerador": 1, "denominador": 3, "porcentaje": "33.33"},
+                  "tasa_finalizacion": {"numerador": 1, "denominador": 2, "porcentaje": "50.00"}, "...": "..."}
+}
+```
+
+```http
+GET /api/v1/sessions/{id}/reports/export?tipo=intentos&condicion=PARTICIPO
+
+200 OK
+Content-Type: text/csv; charset=utf-8
+Content-Disposition: attachment; filename="reporte_sesion_intentos_0763e5f0_20261103.csv"
+
+"ID del estudiante","Nombre",…,"Número de intento","Estado",…,"Nota final","Escala máxima","Situación"
+"dace5ed9-…","Usuario Estudiante 2",…,"1","FINALIZADA",…,"2.20","5.00","CALIFICADO"
+```
+
+En `docs/REPORTE_PRUEBAS_MODULO_7.md` hay más ejemplos, con los valores que verifican las pruebas.
+
+### Pruebas del módulo 7
+
+| Archivo | Tipo | Pruebas | Qué cubre |
+|---|---|---:|---|
+| `tests/unit/test_modulo_7.py` | Unitarias (sin PostgreSQL) | 106 | Tasas y denominador cero; estudiantes frente a intentos; condición del convocado; situación del intento, comparada con las estrategias reales; mediana, promedio y redondeo con `Decimal`; distribución; notas nulas; escalas distintas; agregado equivalente al SQL; criterios (también sin preguntas y con niveles inválidos); preguntas; fechas y filtros; CSV y fórmulas; servicios con repositorio simulado; transacción de solo lectura; esquemas sin secretos |
+| `tests/integration/test_modulo_7_api.py` | Integración (PostgreSQL real) | 39 | Resúmenes (vacío, con convocatorias, activas, cerradas, ausencias, revocadas); notas (iguales a las del módulo 5, nulas, FINALIZADA frente a EXPIRADA, varios intentos); criterios y preguntas frente al desglose del módulo 5; varias opciones correctas; criterio sin preguntas; espacio compartido e inactivo; caso archivado; filtros de fecha; autorización de seis actores; autor del caso frente a la sesión de otro docente (11 rutas); historial sin otros estudiantes; escalas 5 y 10 normalizadas; UUID ajenos; parámetros desconocidos; solo GET; CSV (contenido, mismos filtros y permisos que el JSON en 13 combinaciones, fórmulas también tras caracteres invisibles, permisos, vacío, límite); concurrencia (instantánea ante finalización, calificación y revocación; solo lectura; agregados íntegros) |
+| `tests/integration/test_modulo_7_rendimiento.py` | Rendimiento | 3 | Consultas constantes con 5 y 200 estudiantes; filas acotadas por la agregación; paginación; límite de exportación |
+| `tests/test_reports_regression.py` | Regresión | 5 | Sin migraciones nuevas; ningún reporte modifica datos; los módulos 4, 5 y 6 siguen funcionando |
+
+El resultado y la cobertura están en `docs/REPORTE_PRUEBAS_MODULO_7.md`.
+
+### Limitaciones y decisiones pendientes
+
+- **Nota consolidada entre intentos:** sigue sin definirse (módulo 5) y los reportes no la inventan.
+- **Coherencia de la nota registrada:** el reporte usa `nota_final` tal como está guardada y no recalcula. Si se alteró fuera de la aplicación, lo detecta el módulo 5 (`requiere_procesamiento` en `/evaluations`).
+- **Pendiente frente a sin calificar:** se deriva de la política vigente del módulo 5. Si esa política cambia, basta con cambiar `CIERRES_ADMINISTRATIVOS`.
+- **Administradores:** no tienen reportes académicos. Si la institución necesita una supervisión global, debe definirse un permiso explícito.
+- **Formatos:** solo CSV. Excel o PDF requerirían dependencias que ningún requisito del repositorio exige.
+- **Volumen:** el desempeño por criterio trae una fila por intento × criterio para aplicar `CalculadoraRubrica.puntuar`. Basta para grupos académicos; con decenas de miles de intentos convendría una vista materializada.
+- **Sin caché ni reportes históricos:** cada consulta refleja el estado actual de PostgreSQL.
+
 ## Pendiente para módulos posteriores
 
 - **Módulo 5:** decisiones académicas pendientes (nota consolidada entre intentos y tratamiento de cierres administrativos sin respuestas); ver "Módulo 5".
 - **Módulo 6:** configurar `SIMULATOR_ACCESS_URL` y el SMTP institucional antes de activar `NOTIFICATIONS_EMAIL_ENABLED`, y decidir si se desactiva `CONVOCATION_CODE_RETRIEVAL_ENABLED` una vez que los códigos lleguen por correo.
+- **Módulo 7:** definir la política de nota consolidada entre intentos (afectaría a los reportes por estudiante), si los administradores deben tener una supervisión global y si se requieren formatos Excel o PDF.
 - *Refresh tokens*, "cerrar todas las sesiones" a petición del usuario y limitación de intentos en el login con contraseña (el ingreso estudiantil ya la tiene).

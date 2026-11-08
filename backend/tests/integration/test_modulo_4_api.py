@@ -1,9 +1,14 @@
 """Módulo 4 por HTTP: inicio, respuestas, cierre y datos para la evaluación contra PostgreSQL real."""
 
+import ast
 import uuid
 from datetime import timedelta
+from pathlib import Path
+from typing import get_args
 
 import pytest
+from fastapi.routing import APIRoute
+from pydantic import BaseModel
 from sqlalchemy import text
 
 from app.core.database import SessionLocal, engine
@@ -318,21 +323,95 @@ def test_cierre_no_genera_nota_ni_retroalimentacion(entorno):
     assert (datos.nota_final, datos.retroalimentacion_general) == (None, None)
 
 
-def test_no_existen_rutas_de_calificacion(client):
-    # Desde el módulo 5 la calificación existe, pero solo en sus rutas: el módulo 4 sigue sin exponerla.
-    # Se comprueba por pertenencia (etiqueta OpenAPI de cada operación), no por una lista exacta de rutas.
-    esquema = client.get("/openapi.json").json()
-    operaciones = [(ruta, set(op.get("tags", []))) for ruta, ops in esquema["paths"].items() for op in ops.values()]
+CAMPOS_DE_CALIFICACION = {"nota_final", "retroalimentacion_general"}
 
-    def es_calificacion(ruta: str) -> bool:
-        return any(clave in ruta for clave in ("evaluat", "grade", "feedback", "result"))
 
-    modulo_4 = [ruta for ruta, tags in operaciones if "Participaciones" in tags]
-    assert modulo_4 and not [r for r in modulo_4 if es_calificacion(r)]
-    assert all(tags & {"Evaluación", "Resultados del estudiante"} for ruta, tags in operaciones if es_calificacion(ruta))
-    for nombre in ("ParticipacionRead", "CuestionarioRead"):
-        propiedades = esquema["components"]["schemas"][nombre]["properties"]
-        assert "nota_final" not in propiedades and "retroalimentacion_general" not in propiedades
+def _rutas(router) -> list[APIRoute]:
+    """Rutas reales de un router (FastAPI 0.162 envuelve los routers incluidos en `_IncludedRouter`)."""
+    rutas = []
+    for ruta in router.routes:
+        if isinstance(ruta, APIRoute):
+            rutas.append(ruta)
+        elif hasattr(ruta, "original_router"):
+            rutas.extend(_rutas(ruta.original_router))
+    return rutas
+
+
+def _dependencias(ruta: APIRoute) -> set:
+    llamadas, pendientes = set(), list(ruta.dependant.dependencies)
+    while pendientes:
+        dependencia = pendientes.pop()
+        llamadas.add(dependencia.call)
+        pendientes.extend(dependencia.dependencies)
+    return llamadas
+
+
+def _campos(anotacion, vistos=None) -> set[str]:
+    """Nombres de campo de todos los modelos Pydantic alcanzables desde una anotación (recursivo)."""
+    vistos = set() if vistos is None else vistos
+    if isinstance(anotacion, type) and issubclass(anotacion, BaseModel):
+        if anotacion in vistos:
+            return set()
+        vistos.add(anotacion)
+        campos = set(anotacion.model_fields)
+        for campo in anotacion.model_fields.values():
+            campos |= _campos(campo.annotation, vistos)
+        return campos
+    return set().union(*(_campos(a, vistos) for a in get_args(anotacion))) if get_args(anotacion) else set()
+
+
+def _modelos_de(ruta: APIRoute) -> set[str]:
+    campos = _campos(ruta.response_model)
+    if ruta.body_field is not None:
+        campos |= _campos(ruta.body_field.field_info.annotation)
+    return campos
+
+
+def test_no_existen_rutas_de_calificacion():
+    """Estructural (sin depender de palabras en las rutas): quién puede registrar notas y quién las expone.
+
+    - Módulo 4: ningún modelo de entrada o salida alcanzable contiene campos de calificación y ninguna ruta
+      inyecta el servicio que las registra.
+    - Módulo 5: es el ÚNICO que inyecta `EvaluacionService` (única escritura de nota y retroalimentación),
+      y en el código solo `app/modules/evaluations/` asigna esos campos.
+    - Módulo 7: solo GET, sin cuerpo de petición y sin servicios de escritura entre sus dependencias.
+    """
+    from app.modules.evaluations.dependencies import get_evaluacion_service
+    from app.modules.evaluations.routers import router as router_5
+    from app.modules.participations.routers import router as router_4
+    from app.modules.reports.routers import router as router_7
+
+    modulo_4, modulo_5, modulo_7 = _rutas(router_4), _rutas(router_5), _rutas(router_7)
+    todas = [r for router in (router_4, router_5, router_7) for r in _rutas(router)]
+    assert modulo_4 and modulo_5 and modulo_7
+
+    for ruta in modulo_4:
+        assert not CAMPOS_DE_CALIFICACION & _modelos_de(ruta), ruta.path
+        assert get_evaluacion_service not in _dependencias(ruta), ruta.path
+
+    escritoras = [r for r in todas if get_evaluacion_service in _dependencias(r)]
+    assert escritoras and all(r in modulo_5 for r in escritoras)
+    assert {m for r in escritoras for m in r.methods} >= {"POST", "PATCH"}  # procesar, recalcular, retroalimentación
+
+    servicios_de_escritura = {get_evaluacion_service}
+    for ruta in modulo_7:
+        assert ruta.methods == {"GET"}, ruta.path
+        assert ruta.body_field is None, ruta.path
+        assert not servicios_de_escritura & _dependencias(ruta), ruta.path
+
+    raiz = Path(__file__).resolve().parents[2] / "app"
+    asignaciones = set()
+    for archivo in raiz.rglob("*.py"):
+        for nodo in ast.walk(ast.parse(archivo.read_text(encoding="utf-8"))):
+            objetivos = nodo.targets if isinstance(nodo, ast.Assign) else [nodo.target] if isinstance(nodo, ast.AugAssign | ast.AnnAssign) else []
+            if any(isinstance(o, ast.Attribute) and o.attr in CAMPOS_DE_CALIFICACION for o in objetivos):
+                asignaciones.add(archivo.relative_to(raiz).parts[:2])
+    assert asignaciones == {("modules", "evaluations")}
+
+    for nombre in ("ParticipacionRead", "CuestionarioRead"):  # comprobación original, sin cambios
+        from app.modules.participations import schemas as esquemas_4
+
+        assert not CAMPOS_DE_CALIFICACION & set(getattr(esquemas_4, nombre).model_fields)
 
 
 def test_consulta_para_evaluacion_con_datos_reales(entorno):
