@@ -1,17 +1,20 @@
-"""Patrones de diseño realmente implementados en los módulos 1-4.
+"""Patrones de diseño implementados en los módulos 1-7.
 
 Inventario verificado en el código:
 - State: ciclo de vida de casos (`cases/states`) y de sesiones (`sessions/states`).
 - Builder con Director: construcción de casos desde CaseDSL (`cases/builders`).
 - Chain of Responsibility: validación previa a la publicación (`cases/validators`).
 - Repository: acceso a datos separado de las reglas de negocio.
-- Puertos y adaptadores con Null Object: `sessions/integracion.py` y `sessions/eventos.py`.
+- Puertos y adaptadores con Null Object: `sessions/integracion.py`, `sessions/eventos.py`,
+  `evaluations/eventos.py` y el outbox (`core/outbox.py`).
 - Policy: reingreso estudiantil y temporizador.
+- Strategy (módulo 5): `evaluations/strategies`. Sus pruebas propias están en `test_modulo_5.py`.
+- Observer y Adapter (módulo 6): `notifications/publishers`, `observers` y `adapters`. Sus
+  pruebas propias están en `test_modulo_6.py`.
 
-Observer y Strategy NO existen todavía: `sessions/integracion.py` declara expresamente que
-"no es Observer", `sessions/eventos.py` deja el Observer al módulo 6 y
-`participations/services/consulta_evaluacion.py` reserva la Strategy para el módulo 5.
-Por eso no se prueban: una prueba de esos patrones ejercitaría código inexistente.
+El módulo 7 no introduce patrones nuevos: reutiliza la Strategy del módulo 5. Al final de este
+archivo se prueba la COLABORACIÓN entre patrones de módulos distintos (raíz de composición,
+outbox, Strategy compartida y Adapter intercambiable).
 """
 
 import inspect
@@ -19,11 +22,13 @@ import logging
 import uuid
 from datetime import timedelta
 from decimal import Decimal
+from types import SimpleNamespace
 from unittest.mock import MagicMock
 
 import pytest
 
 from app import bootstrap
+from app.core import outbox
 from app.core.exceptions import ConflictError, PermissionDeniedError, UnprocessableEntityError
 from app.modules.auth.dependencies.auth import require_admin, require_docente, require_roles
 from app.modules.auth.models import RolUsuario
@@ -72,6 +77,16 @@ from app.modules.sessions.states.estados import (
     EstadoSinIniciar,
     TransicionSesionNoPermitidaError,
 )
+from app.modules.evaluations.dominio import CondicionAcademica, SituacionAcademica
+from app.modules.evaluations.services import evaluacion_service
+from app.modules.evaluations.strategies import ContextoEvaluacion
+from app.modules.notifications.adapters import AdaptadorCorreoPruebas, ErrorCorreoTemporal, MensajeCorreo
+from app.modules.notifications.events import RegistroEventosSQL
+from app.modules.notifications.models import EstadoEntregaEnum
+from app.modules.notifications.services.entregas_service import EntregasService, ResumenEntregas
+from app.modules.participations.models import EstadoParticipacionEnum, MotivoCierreEnum
+from app.modules.reports.services.reportes_sesion import condicion_academica
+from app.modules.sessions.services import sesion_service
 from tests.conftest import RelojFijo
 from tests.unit.fabricas import T8, T9, T10, caso_valido, sesion, sesion_bd, usuario
 
@@ -677,6 +692,7 @@ def puertos(monkeypatch):
     """Restaura los puertos globales al terminar: `configurar` los modifica a nivel de módulo."""
     monkeypatch.setattr(integracion, "_cierre", integracion._cierre)
     monkeypatch.setattr(integracion, "_fabrica_reingreso", integracion._fabrica_reingreso)
+    monkeypatch.setattr(outbox, "_registro", outbox._registro)
 
 
 def test_puerto_de_cierre_por_defecto_no_hace_nada():
@@ -757,3 +773,83 @@ def test_fabrica_de_dependencias_crea_verificadores_independientes():
 def test_conflicto_es_la_base_de_las_transiciones_prohibidas():
     assert issubclass(TransicionNoPermitidaError, ConflictError)
     assert issubclass(TransicionSesionNoPermitidaError, ConflictError)
+
+
+# --- Colaboración entre patrones de los módulos 5, 6 y 7 ------------------------------------------
+
+
+def test_outbox_por_defecto_no_registra_nada():
+    db = sesion_bd()
+
+    assert outbox._SinRegistro().registrar(db, "X", uuid.uuid4(), {}) is None
+    db.execute.assert_not_called()
+
+
+def test_raiz_de_composicion_conecta_el_outbox_del_modulo_6(puertos):
+    outbox.configurar(outbox._SinRegistro())
+
+    bootstrap.configurar_integraciones()
+
+    assert isinstance(outbox.registro(), RegistroEventosSQL)
+
+
+def test_modulos_academicos_no_importan_al_modulo_6():
+    for modulo in (outbox, evaluacion_service, sesion_service):
+        assert "app.modules.notifications" not in inspect.getsource(modulo)
+
+
+@pytest.mark.parametrize(
+    ("estado", "motivo", "esperada"),
+    [
+        (EstadoParticipacionEnum.FINALIZADA, MotivoCierreEnum.VOLUNTARIO, CondicionAcademica.COMPLETA),
+        (EstadoParticipacionEnum.EXPIRADA, MotivoCierreEnum.TIEMPO_AGOTADO, CondicionAcademica.INCOMPLETA),
+        (EstadoParticipacionEnum.EXPIRADA, MotivoCierreEnum.SESION_FINALIZADA, CondicionAcademica.INCOMPLETA),
+        (EstadoParticipacionEnum.EN_PROGRESO, None, None),
+    ],
+)
+def test_reportes_reutilizan_la_misma_strategy_que_la_evaluacion(estado, motivo, esperada):
+    fila = SimpleNamespace(id=uuid.uuid4(), estudiante_id=uuid.uuid4(), convocatoria_id=uuid.uuid4(), estado=estado, motivo_cierre=motivo)
+
+    condicion = condicion_academica(fila, uuid.uuid4())
+
+    assert condicion == esperada
+    if esperada is not None:
+        situacion = SituacionAcademica(
+            fila.estudiante_id, fila.convocatoria_id, uuid.uuid4(), None, (), fila.id, estado=estado, motivo_cierre=motivo
+        )
+        assert ContextoEvaluacion.para(situacion).estrategia.condicion == condicion
+
+
+def _entregas_con(adaptador):
+    servicio = EntregasService(sesion_bd(), adaptador, RelojFijo(T8))
+    servicio._repo = MagicMock()
+    entrega = SimpleNamespace(id=uuid.uuid4(), estado=EstadoEntregaEnum.EN_PROCESO, intentos=1, proximo_intento_en=None, ultimo_error=None)
+    servicio._repo.reclamar_entrega.return_value = entrega
+    servicio._repo.entrega_bloqueada.return_value = entrega
+    mensaje = MensajeCorreo(destinatario="eva@universidad.edu.co", asunto="Aviso", texto="Hola")
+    servicio._preparar = MagicMock(return_value=mensaje)
+    return servicio, entrega, mensaje
+
+
+def test_entregas_funcionan_con_cualquier_adaptador_de_correo():
+    adaptador = AdaptadorCorreoPruebas()  # sustituye a SMTP sin que el servicio lo note
+    servicio, entrega, mensaje = _entregas_con(adaptador)
+    resumen = ResumenEntregas()
+
+    assert servicio._procesar_una(resumen) is True
+
+    assert adaptador.enviados == [mensaje]
+    assert (entrega.estado, resumen.enviadas) == (EstadoEntregaEnum.ENVIADA, 1)
+    assert servicio._session.commit.call_count == 2  # reserva antes de la red y resultado después
+
+
+def test_fallo_del_adaptador_reprograma_la_entrega():
+    adaptador = AdaptadorCorreoPruebas()
+    adaptador.fallar_con(ErrorCorreoTemporal("Servidor ocupado."))
+    servicio, entrega, _ = _entregas_con(adaptador)
+    resumen = ResumenEntregas()
+
+    servicio._procesar_una(resumen)
+
+    assert adaptador.enviados == []
+    assert (entrega.estado, entrega.ultimo_error, resumen.reintentos) == (EstadoEntregaEnum.PENDIENTE, "Servidor ocupado.", 1)
