@@ -1,6 +1,6 @@
 # Inter Nos — Simulador de Psicología Social (Backend)
 
-Monolito modular en **FastAPI + PostgreSQL**. Estado actual: módulos **1 — Autenticación y Usuarios**, **2 — Gestión de Casos Académicos** y **3 — Sesiones y Convocatorias**, y **4 — Participaciones**.
+Monolito modular en **FastAPI + PostgreSQL**. Estado actual: módulos **1 — Autenticación y Usuarios**, **2 — Gestión de Casos Académicos** y **3 — Sesiones y Convocatorias**, **4 — Participaciones** y **5 — Evaluación y Retroalimentación** (en revisión).
 
 > El código está en `backend/`: ejecute desde esa carpeta los comandos de este documento.
 
@@ -1027,8 +1027,193 @@ python -m app.workers.session_expiration            # el cierre de sesiones tamb
 - El worker procesa hasta 500 intentos por pasada; con más, se completan en pasadas siguientes.
 - Los intentos que vencen entre dos pasadas del worker siguen figurando EN_PROGRESO en la base de datos hasta la siguiente pasada o la siguiente petición del estudiante. Ninguna operación los trata como vigentes, porque todas comprueban la fecha límite antes de actuar.
 
+## Módulo 5: Evaluación y Retroalimentación
+
+Califica las participaciones cerradas con el patrón **Strategy**, registra `participacion.nota_final`, construye la retroalimentación a partir del contenido del docente y permite consultar los resultados de forma segura. No crea tablas ni migraciones: usa `nota_final` y `retroalimentacion_general`, que la migración `0010_evaluacion_tras_cierre` ya deja escribir solo en intentos cerrados.
+
+### Estructura
+
+```text
+app/modules/evaluations/
+├── dominio.py                       # Estructuras inmutables, enums y errores (sin SQLAlchemy)
+├── strategies/
+│   ├── base.py                      # EstrategiaEvaluacion (abstracción)
+│   ├── completa.py                  # EstrategiaEvaluacionCompleta   (FINALIZADA)
+│   ├── incompleta.py                # EstrategiaEvaluacionIncompleta (EXPIRADA)
+│   ├── ausencia.py                  # EstrategiaEvaluacionAusencia   (sin participación)
+│   └── contexto.py                  # ContextoEvaluacion + SelectorEstrategia
+├── services/
+│   ├── calculadora_rubrica.py       # Algoritmo común: corrección, niveles y ponderación
+│   ├── evaluacion_service.py        # Coordina Strategy, persistencia y eventos (transaccional)
+│   ├── retroalimentacion_service.py # Retroalimentación por pregunta y resumen general
+│   ├── consulta_resultados_service.py
+│   ├── acceso_resultados_service.py # Ingreso de solo lectura a resultados
+│   └── mapeo.py                     # Entidades ORM -> dominio puro
+├── security/                        # Token "student_results"
+├── repositories/                    # Bloqueos y escritura de nota/retroalimentación
+├── schemas/
+├── dependencies/
+├── routers/                         # docente_router.py, estudiante_router.py
+└── eventos.py                       # Puerto para el módulo 6 (Observer/Adapter)
+```
+
+### Patrón Strategy
+
+```text
+EstrategiaEvaluacion (ABC)  ── usa ──>  CalculadoraRubrica
+├── EstrategiaEvaluacionCompleta
+├── EstrategiaEvaluacionIncompleta
+└── EstrategiaEvaluacionAusencia
+
+ContextoEvaluacion ──> EstrategiaEvaluacion   (intercambiable: cambiar_estrategia)
+SelectorEstrategia ──> elige la estrategia de cada situación
+```
+
+- **Selección explícita** (`SelectorEstrategia`): sin participación → Ausencia; `FINALIZADA` → Completa; `EXPIRADA` → Incompleta; `EN_PROGRESO` → ninguna (409). Si dos estrategias aplicaran a la vez, falla en lugar de elegir una al azar.
+- **Contrato común**: todas devuelven un `ResultadoEvaluacion` (condición, calificación, nota, observaciones, desglose).
+- **Sin duplicar la matemática**: la fórmula vive solo en `CalculadoraRubrica`, que las tres estrategias comparten. Cada estrategia decide qué situaciones admite, qué verifica (estado y motivo coherentes), si la nota se registra y qué se le explica al estudiante.
+
+| Estrategia | Cuándo | Tratamiento |
+|---|---|---|
+| Completa | `FINALIZADA` (motivo `VOLUNTARIO`) | Corrige todas las preguntas del caso; las no respondidas cuentan como no acertadas. Siempre se califica, aunque no haya respuestas, porque el cierre fue decisión del estudiante. |
+| Incompleta | `EXPIRADA` (`TIEMPO_AGOTADO`, `CONVOCATORIA_REVOCADA`, `SESION_FINALIZADA`) | Solo cuentan las respuestas guardadas; misma rúbrica, sin penalización adicional; se conserva y explica la causa. Ver la política de cierres administrativos más abajo. |
+| Ausencia | Convocatoria activa sin intentos (`ConsultaEvaluacionService.ausencias`) | No crea participaciones ni respuestas ni calcula nada. Condición `AUSENCIA`, calificación `SIN_CALIFICAR`, nota `null`. Nunca equivale a cero aciertos. |
+
+### Algoritmo de calificación
+
+1. **Corrección.** Una pregunta es `ACIERTO` si la opción elegida tiene `es_correcta = true`; con varias opciones correctas, cualquiera sirve (no es multiselección). Opción incorrecta → `ERROR`; sin respuesta → `SIN_RESPUESTA` (no acertada). No hay puntos parciales ni bonificaciones.
+2. **Agrupación por criterio.** Para cada criterio: total, aciertos, errores, sin responder y `porcentaje = aciertos × 100 / total` (valor exacto).
+3. **Puntaje del criterio** (política documentada abajo): por niveles o lineal.
+4. **Nota.**
+
+```text
+nota_exacta = Σ (puntaje_criterio × peso_criterio) / Σ (peso de los criterios evaluables)
+            = Σ (puntaje_criterio × peso_efectivo / 100)
+peso_efectivo = peso × 100 / Σ (peso de los criterios evaluables)
+puntaje lineal = escala_max × porcentaje_aciertos / 100
+nota_final = nota_exacta redondeada a 2 decimales con ROUND_HALF_UP
+```
+
+- Todo con `Decimal` y un contexto decimal propio (precisión 28), independiente de la configuración global. Se divide una sola vez al final, así la renormalización no arrastra errores.
+- Solo se redondea la nota final (y las cifras que se muestran). Los porcentajes y puntajes intermedios conservan su valor exacto.
+- La nota queda en `[0, escala_max]`, y `escala_max` no puede superar 99.99 (`NUMERIC(4, 2)` de `nota_final`).
+
+### Política de niveles y umbrales (decisión del módulo 5)
+
+| Niveles del criterio | Política | Puntaje | Nivel cualitativo |
+|---|---|---|---|
+| Todos tienen `min_aciertos_pct` | `NIVELES` | `valor` del nivel de **mayor umbral que no supere** el porcentaje del criterio | Ese nivel |
+| Alguno carece de umbral, o no hay niveles | `LINEAL` | `escala_max × porcentaje / 100` | Sin asignar (con advertencia) |
+| Criterio sin preguntas | `SIN_EVIDENCIA` | Excluido y pesos renormalizados | — |
+
+- `min_aciertos_pct` es el porcentaje de aciertos **de las preguntas de ese criterio**, no del caso completo.
+- La comparación es exacta: 2 de 3 (66,666… %) no alcanza un umbral de 66,67 %.
+- Ejemplo (Bajo 1.00 / 0 %, Medio 3.00 / 50 %, Alto 5.00 / 80 %): 75 % → Medio, 3.00. 80 % exacto → Alto.
+- Las dos políticas dan puntajes en la misma escala `[0, escala_max]`, así que una rúbrica puede combinarlas: cada criterio aporta su puntaje ponderado y la fórmula de la nota es la misma.
+- **No se inventan umbrales.** Con umbrales incompletos no se reparte el rango uniformemente; se usa el cálculo lineal y el desglose lo indica.
+- Con la política `NIVELES` se exigen, **solo al calificar**, las reglas que el módulo 2 aplazó: umbrales distintos, un nivel base de 0 %, umbrales entre 0 y 100, valores entre 0 y `escala_max`, y valores que no bajan cuando sube el umbral. Las reglas de publicación del módulo 2 y CaseDSL no cambian.
+- Si un caso antiguo no cumple estas reglas, el proceso responde **422** con un `codigo` (p. ej., `NIVELES_VALOR_FUERA_DE_ESCALA`, `NIVELES_SIN_NIVEL_BASE`, `RUBRICA_SIN_EVIDENCIA`) y **no escribe ninguna nota**. El caso publicado no se modifica.
+- Antes de calcular también se verifica: que la rúbrica exista, que la escala sea positiva, que los pesos sumen 100, que cada pregunta tenga un criterio de la rúbrica y al menos una opción correcta, y que cada respuesta sea de una pregunta del caso con una opción de esa pregunta.
+
+**Criterios sin preguntas.** El módulo 2 permite publicarlos. No se penaliza al estudiante por ellos: se excluyen, los demás pesos se renormalizan y el desglose los muestra como `SIN_EVIDENCIA`. Si **ningún** criterio tiene preguntas, el proceso responde 422 (`RUBRICA_SIN_EVIDENCIA`).
+
+### Intentos incompletos y cierres administrativos
+
+- No se penaliza la causa del cierre ni se agregan respuestas.
+- `TIEMPO_AGOTADO` es el único cierre atribuible al estudiante, porque dispuso de todo su tiempo. Se califica siempre.
+- `CONVOCATORIA_REVOCADA` y `SESION_FINALIZADA` son cierres administrativos y **no se asume abandono**. Con al menos una respuesta guardada se califica el rendimiento demostrado. Sin ninguna, no hay evidencia y el intento queda `SIN_CALIFICAR` (nota `null`), en lugar de registrar un cero que el estudiante no pudo evitar.
+
+### Persistencia y recalificación
+
+- Solo se escribe `nota_final`. Respuestas, número de intento, inicio, fin, estado y motivo nunca se tocan, y los disparadores del módulo 4 lo impiden también en PostgreSQL.
+- `POST /sessions/{id}/evaluations/process` evalúa todos los intentos cerrados en **una transacción**. Si uno no se puede evaluar, se revierte todo. Bloquea la sesión con `FOR SHARE` y las participaciones con `FOR UPDATE` en orden de id, así que dos procesos concurrentes se serializan sin interbloqueos y sin duplicar registros.
+- **Idempotente y determinista.** Con los mismos datos y la misma política la nota es la misma. Si no cambia, no se escribe nada ni se publica ningún evento.
+- **Recalificación controlada** (`POST /participations/{id}/evaluation/recalculate`): solo el docente responsable y solo sobre intentos cerrados. Sirve, por ejemplo, para corregir una nota alterada fuera de la aplicación; el listado la marca con `requiere_procesamiento`. Nunca sobrescribe la retroalimentación del docente.
+- **Varios intentos:** el listado muestra todos con su nota. **No se elige una nota definitiva** (mejor, último u otra regla), porque no existe una política académica aprobada. Queda como decisión pendiente.
+
+### Retroalimentación
+
+- **Por pregunta:** escenario, enunciado, opción elegida con su justificación, resultado (`ACIERTO`, `ERROR`, `SIN_RESPUESTA`, este último indicado expresamente), opciones correctas con sus justificaciones y criterio asociado. Todo sale del contenido del módulo 2: no se generan explicaciones nuevas ni se usa IA.
+- **General automática** (`retroalimentacion_automatica`): observaciones de la estrategia (p. ej., causa del cierre), aciertos, errores y sin responder, porcentaje y nivel por criterio, y nota. Se deriva siempre de datos inmutables y no se persiste.
+- **General del docente** (`retroalimentacion_general`): la escribe o modifica el docente responsable con `PATCH /participations/{id}/feedback` (máximo 5000 caracteres; vacío o `null` la elimina) en cualquier intento cerrado. Como el cálculo automático nunca escribe esta columna, una recalificación no puede sobrescribirla. Las justificaciones originales no se modifican.
+
+### Acceso de estudiantes a resultados
+
+El token de resolución del módulo 3 deja de servir cuando la sesión termina, y no se reutiliza. Se añadió un acceso propio de **solo lectura**:
+
+1. `POST /auth/student/results-login` con el mismo correo y código de convocatoria. Exige la sesión `FINALIZADO`, la convocatoria activa y la cuenta activa.
+2. Emite un JWT de tipo `student_results` (expira en `STUDENT_RESULTS_TOKEN_EXPIRE_MINUTES`, 60 por defecto), limitado a esa convocatoria.
+3. Cada petición revalida el estado actual: convocatoria activa, misma huella del código, `version_token`, cuenta activa y sesión finalizada.
+
+| Garantía | Cómo |
+|---|---|
+| No crea participaciones, no responde, no entra a rutas docentes | Cada decodificador acepta solo su tipo (`access`, `student`, `student_results`) |
+| No ve resultados de otros | El alcance es la convocatoria del token; un intento ajeno responde 404 |
+| No ve respuestas correctas mientras puede participar | El ingreso exige la sesión `FINALIZADO`, que el módulo 3 nunca revierte |
+| Detalle solo con evaluación registrada | `GET /student/results/{id}` responde 409 mientras la nota registrada no coincida con la calculada |
+| Fuerza bruta | Comparte el limitador del ingreso estudiantil (mismos contadores por correo e IP) y responde 401 genérico |
+| Sin caché | `Cache-Control: no-store` |
+
+El estudiante nunca envía `nota_final`: ningún esquema de entrada la acepta (`extra="forbid"`).
+
+### Endpoints del módulo 5 (`/api/v1`)
+
+| Método | Ruta | Quién | Función |
+|---|---|---|---|
+| POST | `/sessions/{id}/evaluations/process` | Docente responsable | Evaluar los intentos cerrados (422 si la rúbrica no es evaluable) |
+| GET | `/sessions/{id}/evaluations` | Docente responsable | Todos los intentos (FINALIZADOS, EXPIRADOS, EN_PROGRESO) y las ausencias, con resumen |
+| GET | `/sessions/{id}/absences` | Docente responsable | Ausencias (convocatorias activas sin intentos) |
+| GET | `/participations/{id}/evaluation` | Docente responsable | Evaluación detallada: nota registrada y calculada, desglose y retroalimentación |
+| POST | `/participations/{id}/evaluation/recalculate` | Docente responsable | Recalcular y registrar |
+| PATCH | `/participations/{id}/feedback` | Docente responsable | Retroalimentación general del docente |
+| POST | `/auth/student/results-login` | Estudiante | Token de solo lectura (sesión finalizada) |
+| GET | `/student/results` | Token de resultados | Mis intentos y su nota |
+| GET | `/student/results/{participation_id}` | Token de resultados | Calificación y retroalimentación completa |
+
+Una sesión o participación de otro docente responde 404, igual que en el módulo 3. Un estudiante o administrador con token `access` recibe 403, y cualquier otro token, 401.
+
+### Eventos para el módulo 6
+
+`eventos.py` define el puerto `PublicadorEventosEvaluacion` con una implementación nula que solo registra en el log. El módulo 6 la sustituirá con `eventos.configurar(...)` desde `app/bootstrap.py`, sin tocar los servicios. No hay SMTP ni adaptadores todavía.
+
+| Evento | Cuándo |
+|---|---|
+| `CALIFICACION_REGISTRADA` | Una nota pasa de `null` a un valor |
+| `CALIFICACION_ACTUALIZADA` | Una nota cambia de valor |
+| `RETROALIMENTACION_REGISTRADA` | El docente cambia su retroalimentación |
+| `RESULTADOS_DISPONIBLES` | Un proceso registra o cambia notas con la sesión ya `FINALIZADO` |
+
+Se publican **solo después del commit**; si la transacción falla, se descartan. Una recalificación sin cambios no publica nada. No incluyen la nota ni el texto: solo ids.
+
+Si el docente evalúa **antes** de finalizar la sesión y no vuelve a haber cambios, `RESULTADOS_DISPONIBLES` no se emite: el procesamiento posterior es idempotente y repetir el evento sería un duplicado. En ese caso, el hecho de que los resultados están disponibles lo señala `SESION_FINALIZADA` (módulo 3). El módulo 6 debe observar ambos eventos.
+
+### Pruebas del módulo 5
+
+| Ubicación | Tipo | Pruebas |
+|---|---|---:|
+| `tests/unit/test_modulo_5.py` | Unitarias sin PostgreSQL: selección y contexto, las tres estrategias, corrección (una y varias correctas, sin respuesta), agrupación, porcentajes, ponderación, umbrales y su límite exacto, cálculo lineal, criterios sin preguntas y renormalización, `Decimal`, redondeo, rúbricas inválidas, escala, determinismo, retroalimentación, eventos post-commit con dobles, tokens y acceso de resultados | 98 |
+| `tests/integration/test_modulo_5_api.py` | PostgreSQL real: FINALIZADA, EXPIRADA y sus tres causas, persistencia, ausencias, varios intentos, historial protegido, idempotencia, recalificación, rúbrica no evaluable sin escrituras parciales, criterios sin preguntas, concurrencia, disparadores, eventos post-commit, retroalimentación, autorización y consulta segura del estudiante | 35 |
+| `tests/test_evaluations_regression.py` | Regresión: sin migraciones nuevas, el módulo 4 no inventa notas, el ingreso de resolución sigue cerrado tras finalizar, tipos de token | 4 |
+
+Se ejecutan con los mismos comandos de la sección "Pruebas"; el resultado y la cobertura están en `docs/REPORTE_PRUEBAS_MODULO_5.md`.
+
+### Decisiones pendientes de revisión académica
+
+- **Nota consolidada** cuando hay varios intentos (mejor, último, promedio): no implementada a propósito.
+- **Cierre administrativo sin respuestas → `SIN_CALIFICAR`** y **ausencia → `null`**: son propuestas del módulo 5 y no imponen un cero. Si la política académica exige un cero, el cambio se limita a la estrategia correspondiente.
+- **Convocatoria revocada:** su estudiante no puede consultar resultados (coherente con el módulo 3, donde una convocatoria revocada no autoriza tokens). El docente sí ve su intento y su nota.
+- Las reglas de niveles que exige la calificación podrían adelantarse a la publicación del módulo 2 para detectar antes los casos no evaluables. No se hizo para no cambiar CaseDSL ni las reglas de publicación sin acuerdo.
+- **`TIEMPO_AGOTADO` sin respuestas se califica** (con el nivel base de cada criterio, que puede no ser cero: con los niveles de ejemplo da 1.00). Se considera atribuible al estudiante porque dispuso de todo su tiempo.
+- Un intento `SIN_CALIFICAR` cuenta como **evaluado** en el resumen de la sesión aunque no se haya procesado: su resultado es determinista y no escribe nada.
+
+### Limitaciones
+
+- La evaluación por sesión consulta cada intento por separado con `ConsultaEvaluacionService.obtener` (varias consultas por intento). Es suficiente para grupos académicos, pero no está optimizada para miles de intentos.
+- No se registra quién evaluó ni cuándo, porque el modelo actual no tiene esos campos. Añadirlos requeriría una migración.
+- El limitador de intentos sigue en memoria por proceso (limitación ya documentada en el módulo 3).
+
 ## Pendiente para módulos posteriores
 
-- **Módulo 5:** calificación (Strategy) a partir de `ConsultaEvaluacionService`: escribir `nota_final` y `retroalimentacion_general`, tratar las ausencias y definir la interpretación de `minAciertosPct` y de las opciones correctas múltiples.
-- **Módulo 6:** envío de códigos por correo (y desactivar `CONVOCATION_CODE_RETRIEVAL_ENABLED`) e implementación de `PublicadorEventosSesion`.
+- **Módulo 5:** decisiones académicas pendientes (nota consolidada entre intentos y tratamiento de cierres administrativos sin respuestas); ver "Módulo 5".
+- **Módulo 6:** envío de códigos por correo (y desactivar `CONVOCATION_CODE_RETRIEVAL_ENABLED`) e implementación de `PublicadorEventosSesion` y `PublicadorEventosEvaluacion`.
 - *Refresh tokens*, "cerrar todas las sesiones" a petición del usuario y limitación de intentos en el login con contraseña (el ingreso estudiantil ya la tiene).

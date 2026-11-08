@@ -319,9 +319,20 @@ def test_cierre_no_genera_nota_ni_retroalimentacion(entorno):
 
 
 def test_no_existen_rutas_de_calificacion(client):
-    rutas = client.get("/openapi.json").json()["paths"]
+    # Desde el módulo 5 la calificación existe, pero solo en sus rutas: el módulo 4 sigue sin exponerla.
+    # Se comprueba por pertenencia (etiqueta OpenAPI de cada operación), no por una lista exacta de rutas.
+    esquema = client.get("/openapi.json").json()
+    operaciones = [(ruta, set(op.get("tags", []))) for ruta, ops in esquema["paths"].items() for op in ops.values()]
 
-    assert not [r for r in rutas if "evaluat" in r or "grade" in r or "feedback" in r or "result" in r]
+    def es_calificacion(ruta: str) -> bool:
+        return any(clave in ruta for clave in ("evaluat", "grade", "feedback", "result"))
+
+    modulo_4 = [ruta for ruta, tags in operaciones if "Participaciones" in tags]
+    assert modulo_4 and not [r for r in modulo_4 if es_calificacion(r)]
+    assert all(tags & {"Evaluación", "Resultados del estudiante"} for ruta, tags in operaciones if es_calificacion(ruta))
+    for nombre in ("ParticipacionRead", "CuestionarioRead"):
+        propiedades = esquema["components"]["schemas"][nombre]["properties"]
+        assert "nota_final" not in propiedades and "retroalimentacion_general" not in propiedades
 
 
 def test_consulta_para_evaluacion_con_datos_reales(entorno):
