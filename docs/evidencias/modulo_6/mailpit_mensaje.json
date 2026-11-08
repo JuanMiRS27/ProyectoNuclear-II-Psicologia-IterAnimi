@@ -1,0 +1,16 @@
+{
+  "From": {
+    "Name": "Inter Nos",
+    "Address": "no-responder@internos-pruebas.edu.co"
+  },
+  "To": [
+    {
+      "Name": "",
+      "Address": "estudiante2@universidad.edu.co"
+    }
+  ],
+  "Subject": "Inter Nos: Convocatoria a una sesión académica — Conformidad en el aula",
+  "MessageID": "entrega-01fde823-365a-4835-8d46-1068ee32b9f8@internos-pruebas.edu.co",
+  "Date": "2026-11-07T18:53:23Z",
+  "Text": "Inter Nos\r\n\r\nConvocatoria a una sesión académica\r\n\r\nHola, Usuario Estudiante 2.\r\nHas sido convocado a una sesión del simulador. Ingresa con tu correo institucional y este código:\r\n\r\nCaso académico: Conformidad en el aula\r\nFecha: 03/11/2026\r\nHora de inicio: 03:00 (UTC-05:00)\r\nHora de finalización: 05:00 (UTC-05:00)\r\nTiempo máximo de participación: 40 minutos\r\nLugar o modalidad: Aula 301\r\nMensaje del docente: Traigan audífonos.\r\nCorreo institucional: estudiante2@universidad.edu.co\r\nCódigo de autorización: [CÓDIGO DE PRUEBA REDACTADO]\r\nAcceso: http://localhost:5173\r\n\r\nMensaje automático. No respondas a este correo.\r\n"
+}

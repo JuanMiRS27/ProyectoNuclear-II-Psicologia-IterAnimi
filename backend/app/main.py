@@ -6,6 +6,7 @@ from app.core.exceptions import register_exception_handlers
 from app.modules.auth.routers import router as auth_module_router
 from app.modules.cases.routers import router as cases_module_router
 from app.modules.evaluations.routers import router as evaluations_module_router
+from app.modules.notifications.routers import router as notifications_module_router
 from app.modules.participations.routers import router as participations_module_router
 from app.modules.sessions.routers import router as sessions_module_router
 
@@ -29,6 +30,7 @@ def create_app() -> FastAPI:
     app.include_router(sessions_module_router, prefix=settings.API_V1_PREFIX)
     app.include_router(participations_module_router, prefix=settings.API_V1_PREFIX)
     app.include_router(evaluations_module_router, prefix=settings.API_V1_PREFIX)
+    app.include_router(notifications_module_router, prefix=settings.API_V1_PREFIX)
 
     @app.get("/health", tags=["Sistema"], summary="Comprobación de disponibilidad")
     def health() -> dict[str, str]:

@@ -5,6 +5,7 @@ from contextlib import contextmanager
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from app.core import outbox
 from app.core.clock import Reloj, RelojSistema
 from app.core.exceptions import BusinessRuleError, ConflictError, NotFoundError
 from app.modules.auth.models import Usuario
@@ -70,6 +71,9 @@ class ServicioSesionesBase:
     def _transaction(self) -> Iterator[None]:
         try:
             yield
+            # Módulo 6 (outbox): los eventos se guardan en ESTA transacción, junto con la operación.
+            for evento in self._pendientes:
+                outbox.registro().registrar(self._session, evento.tipo, evento.sesion_id, evento.datos)
             self._session.commit()
         except IntegrityError as exc:
             self._session.rollback()
