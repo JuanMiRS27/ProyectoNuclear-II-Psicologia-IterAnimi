@@ -1,0 +1,139 @@
+{
+  "pequeno_5_estudiantes": {
+    "summary": {
+      "consultas": 5,
+      "filas": 4,
+      "ms": 27.6,
+      "bytes": 1274
+    },
+    "students": {
+      "consultas": 6,
+      "filas": 21,
+      "ms": 31.4,
+      "bytes": 5182
+    },
+    "student": {
+      "consultas": 6,
+      "filas": 6,
+      "ms": 25.9,
+      "bytes": 1215
+    },
+    "grades": {
+      "consultas": 9,
+      "filas": 8,
+      "ms": 33.5,
+      "bytes": 2018
+    },
+    "criteria": {
+      "consultas": 8,
+      "filas": 29,
+      "ms": 34.1,
+      "bytes": 785
+    },
+    "questions": {
+      "consultas": 6,
+      "filas": 9,
+      "ms": 28.6,
+      "bytes": 1231
+    },
+    "export_estudiantes": {
+      "consultas": 5,
+      "filas": 20,
+      "ms": 23.2,
+      "bytes": 1670
+    },
+    "export_intentos": {
+      "consultas": 5,
+      "filas": 13,
+      "ms": 26.8,
+      "bytes": 2820
+    },
+    "my_sessions": {
+      "consultas": 6,
+      "filas": 5,
+      "ms": 25.8,
+      "bytes": 625
+    },
+    "space": {
+      "consultas": 12,
+      "filas": 11,
+      "ms": 43.4,
+      "bytes": 1273
+    },
+    "case": {
+      "consultas": 17,
+      "filas": 38,
+      "ms": 58.4,
+      "bytes": 2405
+    }
+  },
+  "grande_200_estudiantes": {
+    "summary": {
+      "consultas": 5,
+      "filas": 4,
+      "ms": 27.0,
+      "bytes": 1302
+    },
+    "students": {
+      "consultas": 6,
+      "filas": 63,
+      "ms": 44.9,
+      "bytes": 15521
+    },
+    "student": {
+      "consultas": 6,
+      "filas": 6,
+      "ms": 25.6,
+      "bytes": 1215
+    },
+    "grades": {
+      "consultas": 9,
+      "filas": 8,
+      "ms": 41.5,
+      "bytes": 2031
+    },
+    "criteria": {
+      "consultas": 8,
+      "filas": 809,
+      "ms": 68.6,
+      "bytes": 799
+    },
+    "questions": {
+      "consultas": 6,
+      "filas": 9,
+      "ms": 61.9,
+      "bytes": 1247
+    },
+    "export_estudiantes": {
+      "consultas": 5,
+      "filas": 605,
+      "ms": 53.0,
+      "bytes": 41640
+    },
+    "export_intentos": {
+      "consultas": 5,
+      "filas": 403,
+      "ms": 55.3,
+      "bytes": 101090
+    },
+    "my_sessions": {
+      "consultas": 6,
+      "filas": 5,
+      "ms": 27.5,
+      "bytes": 640
+    },
+    "space": {
+      "consultas": 12,
+      "filas": 11,
+      "ms": 51.1,
+      "bytes": 1297
+    },
+    "case": {
+      "consultas": 17,
+      "filas": 818,
+      "ms": 98.0,
+      "bytes": 2445
+    }
+  },
+  "respuestas": 1200
+}
