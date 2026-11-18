@@ -85,6 +85,17 @@ class Settings(BaseSettings):
             raise ValueError("CONVOCATION_CODE_ENCRYPTION_KEY debe codificar exactamente 32 bytes (AES-256).")
         return valor
 
+    # --- Frontend (SPA) ---
+    # Orígenes autorizados por CORS, separados por comas (p. ej. "https://simulador.universidad.edu.co").
+    # Vacío por defecto: sin CORS, como hasta ahora. Solo hace falta si el frontend se sirve desde
+    # otro origen que la API; en desarrollo el servidor de Vite actúa como proxy y no lo necesita.
+    # La autenticación viaja en la cabecera Authorization (no hay cookies), así que no se habilitan credenciales.
+    CORS_ALLOWED_ORIGINS: str = ""
+
+    @property
+    def cors_origins(self) -> list[str]:
+        return [o.strip().rstrip("/") for o in self.CORS_ALLOWED_ORIGINS.split(",") if o.strip()]
+
     @property
     def docs_enabled(self) -> bool:
         return self.ENVIRONMENT != "production"

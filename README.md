@@ -3,6 +3,10 @@
 Monolito modular en **FastAPI + PostgreSQL**. Estado actual: módulos **1 — Autenticación y Usuarios**, **2 — Gestión de Casos Académicos** y **3 — Sesiones y Convocatorias**, **4 — Participaciones**, **5 — Evaluación y Retroalimentación**, **6 — Notificaciones y Eventos** y **7 — Seguimiento y Reportes** (en revisión).
 
 > El código está en `backend/`: ejecute desde esa carpeta los comandos de este documento.
+>
+> **Frontend (Iter Animi):** está en `frontend/` (React + TypeScript + Vite). Comandos, variables, despliegue y el recorrido
+> docente–estudiante para la sustentación: [`frontend/README.md`](frontend/README.md). Si el frontend se sirve desde otro
+> origen que la API, defina en el backend `CORS_ALLOWED_ORIGINS` (orígenes separados por comas; vacío = sin CORS).
 
 | Componente | Versión |
 |---|---|

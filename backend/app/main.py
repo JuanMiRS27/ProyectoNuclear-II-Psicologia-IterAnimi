@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.bootstrap import configurar_integraciones
 from app.core.config import get_settings
@@ -24,6 +25,18 @@ def create_app() -> FastAPI:
         openapi_url="/openapi.json" if settings.docs_enabled else None,
     )
     register_exception_handlers(app)
+
+    # Frontend en otro origen: CORS solo si se configuran orígenes explícitos (nunca "*").
+    if settings.cors_origins:
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=settings.cors_origins,
+            allow_credentials=False,
+            allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
+            allow_headers=["Authorization", "Content-Type"],
+            expose_headers=["Content-Disposition", "Retry-After"],
+            max_age=600,
+        )
 
     # Cada módulo aporta su router (módulos 1 a 7).
     app.include_router(auth_module_router, prefix=settings.API_V1_PREFIX)
