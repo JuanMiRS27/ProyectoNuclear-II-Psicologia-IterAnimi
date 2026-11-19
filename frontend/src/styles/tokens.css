@@ -1,0 +1,182 @@
+/*
+ * Iter Animi — tokens semánticos (un único sistema para claro y oscuro).
+ * El tema se aplica en <html data-theme="light|dark">; se resuelve antes del primer render (index.html).
+ * Cualquier contenedor con data-theme reescribe los tokens solo para su contenido (vista previa del editor).
+ *
+ * Los nombres antiguos (--ink, --paper, --mist…) se mantienen como alias de los semánticos para no
+ * reescribir todas las reglas: cada alias apunta a un único token semántico.
+ */
+
+:root,
+[data-theme='light'] {
+  color-scheme: light;
+
+  /* Lienzo y superficies */
+  --bg: #fbfaf7; /* blanco cálido */
+  --surface: #ffffff;
+  --surface-muted: #ecf1f7; /* azul bruma */
+  --surface-strong: #dce5ef;
+  --surface-hover: #f3f6fa;
+  --sidebar-bg: #f1f4f8;
+  --sidebar-hover: #e5ebf2;
+  --topbar-bg: rgba(251, 250, 247, 0.94);
+  --overlay: rgba(21, 39, 64, 0.45);
+
+  /* Texto */
+  --text: #1f2530;
+  --text-strong: #1e3350; /* azul tinta */
+  --text-muted: #556070;
+  --text-subtle: #5d6876;
+
+  /* Bordes */
+  --border: #e1e6ec;
+  --border-strong: #c3ccd7;
+  --border-hover: #8fa4bd;
+  --control-border: #7d8a9b; /* 3:1 frente a superficie y lienzo (WCAG 1.4.11) */
+
+  /* Acción, enlaces, selección y foco */
+  --action: #3f6a9a; /* azul medio */
+  --action-hover: #345a85;
+  --on-action: #ffffff;
+  --link: #335b88;
+  --selection-bg: #eef3f9;
+  --selection-border: #3f6a9a;
+  --focus-ring: #3f6a9a;
+
+  /* Estados (nunca solo por color: siempre con icono o texto) */
+  --danger: #a3404a;
+  --danger-hover: #8b3540;
+  --danger-bg: #f8eced;
+  --danger-border: #e6c6c9;
+  --warn: #835410;
+  --warn-bg: #fbf3e4;
+  --warn-border: #e8d4a8;
+  --ok: #2c6549;
+  --ok-bg: #e9f3ee;
+  --ok-border: #c4ddd0;
+
+  /* Escena del simulador */
+  --scene-top: #c3d0de;
+  --scene-mid: #d6e0eb;
+  --scene-bottom: #e8eef5;
+  --scene-glow: rgba(255, 255, 255, 0.55);
+  --scene-floor: rgba(127, 147, 171, 0.14);
+  --scene-floor-line: rgba(127, 147, 171, 0.35);
+  --scene-label: #1e3350;
+  --scene-label-muted: #3c4f66;
+  --figure-fill: #ffffff;
+  --figure-line: #7f93ab;
+  --figure-shadow: rgba(52, 72, 100, 0.2);
+  --nameplate-bg: rgba(255, 255, 255, 0.9);
+
+  /* Panel de presentación del acceso */
+  --brand-panel: #1e3350;
+  --brand-panel-text: #e3eaf3;
+  --brand-panel-strong: #ffffff;
+  --brand-accent: #9fb6d3;
+
+  --shadow-sm: 0 1px 2px rgba(30, 51, 80, 0.05);
+  --shadow: 0 1px 2px rgba(30, 51, 80, 0.04), 0 6px 18px -8px rgba(30, 51, 80, 0.12);
+  --shadow-lg: 0 20px 50px rgba(21, 39, 64, 0.24);
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg: #131a24; /* azul carbón, no negro */
+  --surface: #1a2330; /* pizarra azulada */
+  --surface-muted: #212c3b;
+  --surface-strong: #2a3748;
+  --surface-hover: #222d3c;
+  --sidebar-bg: #161e2a;
+  --sidebar-hover: #202b3a;
+  --topbar-bg: rgba(19, 26, 36, 0.92);
+  --overlay: rgba(5, 9, 15, 0.62);
+
+  --text: #e6e2da; /* blanco cálido, no puro */
+  --text-strong: #f1ede6;
+  --text-muted: #a5b1c2; /* gris azulado */
+  --text-subtle: #8d9aac;
+
+  /* Bordes discretos: separan por tono, no brillan. */
+  --border: #2a3543;
+  --border-strong: #3a4859;
+  --border-hover: #6a85a6;
+  --control-border: #64768c; /* 3:1 frente a superficie y lienzo */
+
+  --action: #8fb6e4; /* azul claro */
+  --action-hover: #a9c7ec;
+  --on-action: #0f1926;
+  --link: #9cc1ec;
+  --selection-bg: #1f3048;
+  --selection-border: #8fb6e4;
+  --focus-ring: #9cc1ec;
+
+  --danger: #f0a4aa;
+  --danger-hover: #f5b9bd;
+  --danger-bg: #3a2329;
+  --danger-border: #5c3640;
+  --warn: #e7c47f;
+  --warn-bg: #352c1c;
+  --warn-border: #574729;
+  --ok: #8fd1ae;
+  --ok-bg: #1b3228;
+  --ok-border: #2f5242;
+
+  /* Escena: azul grisáceo profundo; el monigote blanco destaca por contraste y una sombra más marcada. */
+  --scene-top: #2a3b52;
+  --scene-mid: #22324a;
+  --scene-bottom: #1d2a3b;
+  --scene-glow: rgba(160, 190, 225, 0.12);
+  --scene-floor: rgba(9, 15, 24, 0.28);
+  --scene-floor-line: rgba(143, 168, 199, 0.22);
+  --scene-label: #e8edf4;
+  --scene-label-muted: #a9b9cc;
+  --figure-fill: #eef2f7;
+  --figure-line: #8fa5c0;
+  --figure-shadow: rgba(4, 8, 14, 0.5);
+  --nameplate-bg: rgba(19, 26, 36, 0.86);
+
+  --brand-panel: #1a2738;
+  --brand-panel-text: #c9d5e3;
+  --brand-panel-strong: #f1ede6;
+  --brand-accent: #8fb6e4;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.25), 0 8px 22px -10px rgba(0, 0, 0, 0.55);
+  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.55);
+}
+
+/* Alias de compatibilidad: las reglas existentes usan estos nombres. */
+:root,
+[data-theme] {
+  --ink: var(--text-strong);
+  --ink-deep: var(--text-strong);
+  --ink-soft: var(--surface-strong);
+  --blue: var(--action);
+  --blue-hover: var(--action-hover);
+  --blue-ink: var(--link);
+  --grayblue: var(--border-hover);
+  --mist: var(--surface-muted);
+  --mist-strong: var(--surface-strong);
+  --paper: var(--bg);
+  --ink-text: var(--text);
+  --slate: var(--text-muted);
+  --line: var(--border);
+  --line-strong: var(--border-strong);
+  --scene-line: var(--figure-line);
+  --focus: 0 0 0 2px var(--bg), 0 0 0 4px var(--focus-ring);
+
+  /* Manrope para la interfaz; Source Serif 4 solo para narración y diálogo del simulador. */
+  --font-ui: 'Manrope Variable', 'Manrope', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-read: 'Manrope Variable', 'Manrope', 'Segoe UI', system-ui, sans-serif;
+  --font-story: 'Source Serif 4 Variable', 'Source Serif 4', 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+}
+
+/* Un contenedor con tema propio pinta su fondo y su texto con sus tokens. */
+[data-theme] {
+  color: var(--text);
+}
+html {
+  background: var(--bg);
+}

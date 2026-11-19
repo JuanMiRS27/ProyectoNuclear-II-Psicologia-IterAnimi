@@ -6,6 +6,7 @@ import { Button } from '../../components/ui/Button'
 import { TextField } from '../../components/ui/Field'
 import { useSession } from '../../hooks/use-session'
 import { ROL } from '../../lib/labels'
+import { ThemeSwitcher } from '../../components/ui/ThemeSwitcher'
 import { authService } from '../../services/auth-service'
 
 /** Mi cuenta del personal: datos del perfil (del servidor) y cambio de contraseña (CU3). */
@@ -50,6 +51,10 @@ export function AccountView() {
           ]}
         />
       </Panel>
+      <Section title="Apariencia" description="Se guarda solo en este navegador. «Sistema» sigue la configuración de tu equipo.">
+        <ThemeSwitcher />
+      </Section>
+
       <Section title="Cambiar contraseña" description="Al cambiarla se cierran todas tus sesiones abiertas, también en otros equipos.">
         <form className="panel form-grid" onSubmit={submit} noValidate>
           <TextField label="Contraseña actual" type="password" autoComplete="current-password" value={actual} onChange={(e) => setActual(e.target.value)} error={errors.actual} />

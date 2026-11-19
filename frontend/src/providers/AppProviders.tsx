@@ -2,8 +2,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useState, type ReactNode } from 'react'
 import { ApiError } from '../services/http-client'
 import { SessionProvider } from './SessionProvider'
+import { ThemeProvider } from './ThemeProvider'
 
-/** Proveedores de la app (equivalente a app-providers de Ágora): estado remoto y sesión. */
+/** Proveedores de la app (equivalente a app-providers de Ágora): tema, estado remoto y sesión. */
 export function AppProviders({ children }: { children: ReactNode }) {
   const [queryClient] = useState(
     () =>
@@ -20,8 +21,10 @@ export function AppProviders({ children }: { children: ReactNode }) {
       }),
   )
   return (
-    <QueryClientProvider client={queryClient}>
-      <SessionProvider>{children}</SessionProvider>
-    </QueryClientProvider>
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <SessionProvider>{children}</SessionProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   )
 }

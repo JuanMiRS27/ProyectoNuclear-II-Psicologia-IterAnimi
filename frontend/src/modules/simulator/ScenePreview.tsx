@@ -1,3 +1,4 @@
+import '../../styles/story-font.css'
 import { useMemo, useState } from 'react'
 import type { VisualRuntime } from '../../lib/visual/runtime'
 import type { CasoDetalle } from '../../types/api'
@@ -46,6 +47,8 @@ export function ScenePreview({ caso, runtime, spriteUrls }: { caso: CasoDetalle;
   const [index, setIndex] = useState(0)
   const [selected, setSelected] = useState<string | null>(null)
   const [tested, setTested] = useState<string | null>(null)
+  // Tema solo de la vista previa: permite revisar la escena en claro y oscuro sin tocar la preferencia global.
+  const [previewTheme, setPreviewTheme] = useState<'app' | 'light' | 'dark'>('app')
   const step = steps[Math.min(index, steps.length - 1)]
   const stage = useStageExpression(runtime, step?.escenarioId ?? null)
 
@@ -75,6 +78,14 @@ export function ScenePreview({ caso, runtime, spriteUrls }: { caso: CasoDetalle;
             </option>
           ))}
         </select>
+        <label className="preview-theme">
+          <span>Tema</span>
+          <select value={previewTheme} onChange={(e) => setPreviewTheme(e.target.value as 'app' | 'light' | 'dark')}>
+            <option value="app">Como la aplicación</option>
+            <option value="light">Claro</option>
+            <option value="dark">Oscuro</option>
+          </select>
+        </label>
         <button
           type="button"
           className="btn btn-quiet btn-sm"
@@ -86,7 +97,7 @@ export function ScenePreview({ caso, runtime, spriteUrls }: { caso: CasoDetalle;
           Volver al estado inicial
         </button>
       </div>
-      <div className="preview-frame">
+      <div className="preview-frame" data-theme={previewTheme === 'app' ? undefined : previewTheme}>
         <SimulatorStage kicker={`Escena ${step.escenarioIndex + 1} de ${caso.escenarios.length}`} title={step.escenarioTitulo} sprite={sprite} characterName={runtime.characterName || undefined} />
         <div className="preview-read">
           <NarrativePanel texts={[step.contexto]} />

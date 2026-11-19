@@ -1,16 +1,25 @@
 import { useParams } from 'react-router'
 import { Notice, Page, PageHeader } from '../../components/design-system/layout'
-import { ErrorState, LoadingState } from '../../components/design-system/states'
+import { EmptyState, ErrorState, LoadingState } from '../../components/design-system/states'
 import { ButtonLink } from '../../components/ui/Button'
+import { useSession } from '../../hooks/use-session'
 import { useStudentResult } from '../../hooks/use-student'
 import { ApiError } from '../../services/http-client'
 import { ResultBreakdown } from '../evaluation/ResultBreakdown'
 
 export function StudentResultDetailView() {
   const { participationId = '' } = useParams()
+  const { session } = useSession()
   const q = useStudentResult(participationId)
   let body
-  if (q.isPending) body = <LoadingState label="Cargando resultado…" />
+  // Con la sesión en curso el token no permite leer notas: se explica en lugar de quedarse cargando.
+  if (session?.kind !== 'results')
+    body = (
+      <EmptyState icon="clock" title="Tus resultados aparecerán cuando termine la sesión">
+        Mientras la sesión sigue en curso no se muestran notas. Cuando tu docente la finalice, vuelve a ingresar con tu correo y el mismo código de acceso.
+      </EmptyState>
+    )
+  else if (q.isPending) body = <LoadingState label="Cargando resultado…" />
   else if (q.isError)
     body =
       q.error instanceof ApiError && q.error.status === 409 ? (

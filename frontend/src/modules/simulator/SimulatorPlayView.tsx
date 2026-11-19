@@ -1,3 +1,4 @@
+import '../../styles/story-font.css'
 // Orquestador del simulador (equivalente a simulator-play-view de Ágora con la dinámica de Iter Animi):
 // una decisión a la vez, seleccionar ≠ confirmar, sin doble envío, selección conservada ante error,
 // reanudación desde lo guardado y tiempo/progreso/cierre siempre según el servidor.

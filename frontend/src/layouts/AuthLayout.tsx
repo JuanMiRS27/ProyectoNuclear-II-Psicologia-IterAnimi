@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router'
 import { SceneCharacter } from '../modules/simulator/SceneCharacter'
+import { ThemeSwitcher } from '../components/ui/ThemeSwitcher'
 import { BrandMark } from './BrandMark'
 
 /** Acceso público (equivalente a (auth) de Ágora): presentación a la izquierda, formulario a la derecha. */
@@ -20,6 +21,9 @@ export function AuthLayout() {
         </div>
       </section>
       <main className="login-main" id="contenido">
+        <div className="login-theme">
+          <ThemeSwitcher compact />
+        </div>
         <Outlet />
       </main>
     </div>

@@ -12,8 +12,8 @@ export function SceneCharacter({ className = 'sim-character', decorative = false
       aria-label={decorative ? undefined : 'Personaje de la escena'}
     >
       {/* Sombra en el suelo: integra la figura en la escena */}
-      <ellipse cx="120" cy="350" rx="92" ry="9" fill="#5d7390" opacity="0.18" />
-      <g fill="#ffffff" stroke="var(--scene-line, #7f93ab)" strokeWidth="3" strokeLinejoin="round" strokeLinecap="round">
+      <ellipse cx="120" cy="350" rx="92" ry="9" fill="var(--figure-shadow, rgba(52, 72, 100, 0.2))" />
+      <g fill="var(--figure-fill, #ffffff)" stroke="var(--figure-line, #7f93ab)" strokeWidth="3" strokeLinejoin="round" strokeLinecap="round">
         {/* Cuerpo */}
         <path d="M36 348 C36 280 62 236 104 224 L136 224 C178 236 204 280 204 348 Z" />
         {/* Brazos insinuados */}

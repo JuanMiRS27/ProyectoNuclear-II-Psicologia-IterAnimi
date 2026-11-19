@@ -14,8 +14,8 @@ export function Glyph({ fill, size = 14 }: { fill: Fill; size?: number }) {
         </>
       ) : (
         <>
-          <circle cx="8" cy="8" r={r} fill={fill === 'full' ? 'var(--navy)' : 'var(--surface)'} stroke="var(--navy)" strokeWidth="1.8" />
-          {fill === 'half' && <path d={`M8 2 A${r} ${r} 0 0 1 8 14 Z`} fill="var(--navy)" />}
+          <circle cx="8" cy="8" r={r} fill={fill === 'full' ? 'currentColor' : 'var(--surface)'} stroke="currentColor" strokeWidth="1.8" />
+          {fill === 'half' && <path d={`M8 2 A${r} ${r} 0 0 1 8 14 Z`} fill="currentColor" />}
         </>
       )}
     </svg>

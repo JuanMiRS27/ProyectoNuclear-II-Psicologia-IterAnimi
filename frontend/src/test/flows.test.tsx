@@ -6,8 +6,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { PlatformLayout } from '../layouts/PlatformLayout'
 import { LoginView } from '../modules/auth/LoginView'
 import { SimulatorPlayView } from '../modules/simulator/SimulatorPlayView'
+import { StudentResultDetailView } from '../modules/student/StudentResultDetailView'
 import { StudentResultsView } from '../modules/student/StudentResultsView'
 import { SessionProvider } from '../providers/SessionProvider'
+import { ThemeProvider } from '../providers/ThemeProvider'
 import { questionnaire } from './fixtures'
 
 type Reply = { status: number; body?: unknown }
@@ -30,11 +32,13 @@ function renderAt(path: string, routes: RouteObject[]) {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } })
   const router = createMemoryRouter(routes, { initialEntries: [path] })
   render(
-    <QueryClientProvider client={qc}>
-      <SessionProvider>
-        <RouterProvider router={router} />
-      </SessionProvider>
-    </QueryClientProvider>,
+    <ThemeProvider>
+      <QueryClientProvider client={qc}>
+        <SessionProvider>
+          <RouterProvider router={router} />
+        </SessionProvider>
+      </QueryClientProvider>
+    </ThemeProvider>,
   )
   return router
 }
@@ -164,6 +168,15 @@ describe('resultados del estudiante', () => {
     setSession({ kind: 'student', token: 'tok', expiresAt: Date.now() + 3_600_000, sesionId: 's1', convocatoriaId: 'c1', correo: 'e@u.co' })
     renderAt('/r', [{ path: '/r', element: <StudentResultsView /> }])
     expect(await screen.findByText('Tus resultados aparecerán cuando termine la sesión')).toBeInTheDocument()
+    expect(fetch.mock.calls.some(([u]) => String(u).includes('/student/results'))).toBe(false)
+  })
+
+  it('el detalle de un resultado con la sesión en curso explica cuándo estará, sin quedarse cargando', async () => {
+    const fetch = mockFetch(() => undefined)
+    setSession({ kind: 'student', token: 'tok', expiresAt: Date.now() + 3_600_000, sesionId: 's1', convocatoriaId: 'c1', correo: 'e@u.co' })
+    renderAt('/r/p1', [{ path: '/r/:participationId', element: <StudentResultDetailView /> }])
+    expect(await screen.findByText('Tus resultados aparecerán cuando termine la sesión')).toBeInTheDocument()
+    expect(screen.queryByText('Cargando resultado…')).toBeNull()
     expect(fetch.mock.calls.some(([u]) => String(u).includes('/student/results'))).toBe(false)
   })
 

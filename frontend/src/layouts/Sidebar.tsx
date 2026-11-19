@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router'
 import { Icon } from '../components/ui/Icon'
+import { ThemeSwitcher } from '../components/ui/ThemeSwitcher'
 import { useSession } from '../hooks/use-session'
 import { displayName, groupBySection, homePathFor, navigationFor, roleLabel } from '../lib/navigation'
 import { BrandMark } from './BrandMark'
@@ -45,6 +46,8 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
           </div>
         ))}
       </nav>
+
+      <ThemeSwitcher compact />
 
       <div className="side-user">
         <span className="avatar" aria-hidden="true">

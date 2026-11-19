@@ -57,6 +57,8 @@ Evidencia:
 | Personaje y reacciones (encargo) | Docente | Caso → Personaje y reacciones | Ninguno (IndexedDB local) | Sprites PNG/WebP por expresión, reacción por opción con ids estables, revisión pendiente si cambia el texto, vista previa local sin intentos | N, T |
 | Paquete visual (encargo) | Docente → despliegue | Exportar/Importar paquete; `npm run visual:install` | Ninguno (archivos estáticos del frontend) | ZIP con manifiesto versionado; rutas externas y `..` rechazadas; ver `docs/PAQUETES_VISUALES.md` | N, T |
 | Novela visual del estudiante (encargo) | Estudiante | Simulador | `PUT` de respuestas existente | La expresión cambia solo tras la confirmación del servidor; sin paquete, personaje sin rostro; movimiento reducido respetado | N, T |
+| Tipografía local (encargo) | Todos | Toda la interfaz; narración del simulador | — | Manrope y Source Serif 4 en WOFF2 locales (OFL), `font-display: swap`; la serif solo se carga con el simulador o la vista previa | N |
+| Tema Claro/Oscuro/Sistema (encargo) | Todos | Acceso, barra lateral, Mi cuenta; el simulador hereda | — | `data-theme` en `<html>` resuelto antes del primer render; Sistema sigue `prefers-color-scheme`; contraste AA verificado (`npm run check:contrast`) | N, T |
 
 ## Cambio de backend asociado
 
