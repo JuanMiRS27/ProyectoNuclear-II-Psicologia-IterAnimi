@@ -27,10 +27,12 @@ def create_app() -> FastAPI:
     register_exception_handlers(app)
 
     # Frontend en otro origen: CORS solo si se configuran orígenes explícitos (nunca "*").
-    if settings.cors_origins:
+    # getattr: algunas pruebas sustituyen la configuración por un objeto mínimo.
+    cors_origins = getattr(settings, "cors_origins", None) or []
+    if cors_origins:
         app.add_middleware(
             CORSMiddleware,
-            allow_origins=settings.cors_origins,
+            allow_origins=cors_origins,
             allow_credentials=False,
             allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
             allow_headers=["Authorization", "Content-Type"],

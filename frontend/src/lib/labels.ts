@@ -9,7 +9,7 @@ import type {
   ResultadoPregunta,
   Rol,
   SituacionIntento,
-} from '../api/types'
+} from '../types/api'
 
 export const ROL: Record<Rol, string> = {
   ADMINISTRADOR: 'Administración',
@@ -71,4 +71,22 @@ export const SITUACION_INTENTO: Record<SituacionIntento, string> = {
   CALIFICADO: 'Calificado',
   SIN_CALIFICAR: 'Sin calificar',
   PENDIENTE_CALIFICACION: 'Por evaluar',
+}
+
+export const ESTADO_ENTREGA: Record<import('../types/api').EstadoEntrega, string> = {
+  PENDIENTE: 'Pendiente',
+  EN_PROCESO: 'Enviando',
+  ENVIADA: 'Enviada',
+  FALLIDA: 'Fallida',
+  CANCELADA: 'Cancelada',
+}
+
+export const TIPO_NOTIFICACION: Record<import('../types/api').TipoNotificacion, string> = {
+  CONVOCATORIA: 'Convocatoria',
+  CODIGO_REGENERADO: 'Código regenerado',
+  REPROGRAMACION: 'Cambio de programación',
+  REVOCACION: 'Retiro de la convocatoria',
+  RESULTADOS_DISPONIBLES: 'Resultados disponibles',
+  CALIFICACION_ACTUALIZADA: 'Calificación actualizada',
+  RETROALIMENTACION: 'Retroalimentación',
 }

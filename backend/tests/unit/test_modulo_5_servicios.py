@@ -340,7 +340,10 @@ def consulta():
 
 def _sesion_con_caso(estado=EstadoSesionEnum.FINALIZADO):
     return SimpleNamespace(
-        id=uuid.uuid4(), estado=estado, caso=SimpleNamespace(nombre="Conformidad", rubrica=SimpleNamespace(escala_max=Decimal("5")))
+        id=uuid.uuid4(),
+        estado=estado,
+        caso=SimpleNamespace(nombre="Conformidad", rubrica=SimpleNamespace(escala_max=Decimal("5"))),
+        espacio_academico=SimpleNamespace(nombre="Psicología Social", periodo="2026-2"),
     )
 
 
@@ -429,7 +432,10 @@ def test_estudiante_solo_ve_la_nota_si_la_evaluacion_esta_resuelta(consulta):
     consulta._repo.de_convocatoria.return_value = [resuelta, incoherente]
     consulta._evaluacion.evaluar.side_effect = lambda pid: _calculada(resuelta if pid == resuelta.id else incoherente)
 
-    filas = {f.participacion_id: f for f in consulta.resultados_estudiante(_acceso(conv)).resultados}
+    vista = consulta.resultados_estudiante(_acceso(conv))
+    # El estudiante ve el aula de su sesión solo por nombre y periodo.
+    assert vista.espacio_academico.model_dump() == {"nombre": "Psicología Social", "periodo": "2026-2"}
+    filas = {f.participacion_id: f for f in vista.resultados}
 
     assert (filas[resuelta.id].disponible, filas[resuelta.id].nota_final) == (True, Decimal("5.00"))
     assert (filas[incoherente.id].disponible, filas[incoherente.id].nota_final, filas[incoherente.id].calificacion) == (

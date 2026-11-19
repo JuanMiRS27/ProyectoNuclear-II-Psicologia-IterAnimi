@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { messageFromBody } from '../api/client'
-import { pathBelongsTo, type AppSession } from '../auth/session'
-import { buildSteps, initialStepIndex, nextStepIndex, savedFromQuestionnaire } from '../features/student/steps'
+import { messageFromBody } from '../services/http-client'
+import type { AppSession } from '../lib/auth-storage'
+import { homePathFor, pathBelongsTo } from '../lib/navigation'
+import { buildSteps, initialStepIndex, nextStepIndex, savedFromQuestionnaire } from '../modules/simulator/steps'
 import { localInputToIso, parseEmails } from '../lib/format'
-import { canOpenNow } from '../lib/sessionRules'
+import { canOpenNow } from '../lib/session-rules'
 import { questionnaire } from './fixtures'
 
 describe('pasos del simulador', () => {
@@ -69,9 +70,15 @@ describe('formato y reglas de presentación', () => {
   it('solo vuelve a una ruta de la zona del rol que determinó el servidor', () => {
     const docente = { kind: 'staff', token: 't', expiresAt: 0, user: { rol: 'DOCENTE' } } as AppSession
     const estudiante = { kind: 'student', token: 't', expiresAt: 0, sesionId: 's', convocatoriaId: 'c', correo: 'e' } as AppSession
-    expect(pathBelongsTo(docente, '/sesiones/1')).toBe(true)
+    expect(pathBelongsTo(docente, '/docente/sesiones/1')).toBe(true)
     expect(pathBelongsTo(docente, '/admin/usuarios')).toBe(false)
     expect(pathBelongsTo(estudiante, '/estudiante/caso/1')).toBe(true)
-    expect(pathBelongsTo(estudiante, '/aulas')).toBe(false)
+    expect(pathBelongsTo(estudiante, '/docente/aulas')).toBe(false)
+    expect(homePathFor(docente)).toBe('/docente')
+    expect(homePathFor(estudiante)).toBe('/estudiante')
+    const resultados = { ...estudiante, kind: 'results' } as AppSession
+    expect(homePathFor(resultados)).toBe('/estudiante')
+    const admin = { kind: 'staff', token: 't', expiresAt: 0, user: { rol: 'ADMINISTRADOR' } } as AppSession
+    expect(homePathFor(admin)).toBe('/admin')
   })
 })

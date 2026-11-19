@@ -42,6 +42,9 @@ def test_student_login_with_valid_code(client, escenario):
     datos = acceso.json()
     assert datos["estudiante_id"] == str(estudiante.id)
     assert datos["sesion"]["caso_nombre"] == "Conformidad en el aula"
+    # El aula de la sesión se expone solo con nombre y periodo (sin ids ni datos de otros docentes).
+    assert set(datos["sesion"]["espacio_academico"]) == {"nombre", "periodo"}
+    assert datos["sesion"]["espacio_academico"]["nombre"]
     assert "codigo" not in acceso.text and "es_correcta" not in acceso.text
 
 

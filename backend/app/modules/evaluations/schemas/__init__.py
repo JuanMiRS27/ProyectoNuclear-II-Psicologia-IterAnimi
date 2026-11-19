@@ -21,7 +21,7 @@ from app.modules.evaluations.dominio import (
 )
 from app.modules.participations.models import EstadoParticipacionEnum, MotivoCierreEnum
 from app.modules.sessions.models import EstadoSesionEnum
-from app.modules.sessions.schemas import StudentLoginRequest
+from app.modules.sessions.schemas import EspacioEstudianteRead, StudentLoginRequest
 
 
 def _vacio_a_none(valor: str | None) -> str | None:
@@ -212,6 +212,7 @@ class ResultadoEstudianteResumen(BaseModel):
 class ResultadosEstudianteRead(BaseModel):
     sesion_id: uuid.UUID
     caso_nombre: str
+    espacio_academico: EspacioEstudianteRead
     convocatoria_id: uuid.UUID
     resultados: list[ResultadoEstudianteResumen]
 

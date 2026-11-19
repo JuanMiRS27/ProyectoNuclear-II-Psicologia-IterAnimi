@@ -203,11 +203,19 @@ class StudentTokenResponse(BaseModel):
     convocatoria_id: uuid.UUID
 
 
+class EspacioEstudianteRead(BaseModel):
+    """Aula (espacio académico) de la sesión del token: solo nombre y periodo."""
+
+    nombre: str
+    periodo: str
+
+
 class SesionEstudianteRead(BaseModel):
     """Lo que ve el estudiante de su sesión: sin contenido académico (módulo 4) ni datos de otros."""
 
     id: uuid.UUID
     caso_nombre: str
+    espacio_academico: EspacioEstudianteRead
     inicio: datetime
     fin: datetime
     limite_ingreso: datetime
@@ -235,6 +243,7 @@ __all__ = [
     "ConvocatoriaCreate",
     "ConvocatoriaRead",
     "EspacioCreate",
+    "EspacioEstudianteRead",
     "EspacioList",
     "EspacioRead",
     "EspacioStatusUpdate",

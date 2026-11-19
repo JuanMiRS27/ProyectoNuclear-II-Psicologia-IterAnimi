@@ -7,6 +7,8 @@ Monolito modular en **FastAPI + PostgreSQL**. Estado actual: módulos **1 — Au
 > **Frontend (Iter Animi):** está en `frontend/` (React + TypeScript + Vite). Comandos, variables, despliegue y el recorrido
 > docente–estudiante para la sustentación: [`frontend/README.md`](frontend/README.md). Si el frontend se sirve desde otro
 > origen que la API, defina en el backend `CORS_ALLOWED_ORIGINS` (orígenes separados por comas; vacío = sin CORS).
+> Para el portal del estudiante, `GET /student/sessions/{id}` y `GET /student/results` incluyen además
+> `espacio_academico {nombre, periodo}` (cambio aditivo, de solo lectura y dentro del alcance del token).
 
 | Componente | Versión |
 |---|---|

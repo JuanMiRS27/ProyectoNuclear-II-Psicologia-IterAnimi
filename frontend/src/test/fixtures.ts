@@ -1,4 +1,4 @@
-import type { Cuestionario } from '../api/types'
+import type { Cuestionario } from '../types/api'
 
 export function questionnaire(overrides: Partial<Cuestionario> = {}): Cuestionario {
   return {
