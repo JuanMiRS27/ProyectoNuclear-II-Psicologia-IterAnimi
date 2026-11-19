@@ -1,5 +1,5 @@
 /*
- * Iter Animi — sistema visual (v2)
+ * Iter Animi — sistema visual (v3, campus digital sereno)
  * Azul tinta para estructura y navegación, azul medio para acción, azul grisáceo para escena y fondos
  * secundarios, blanco cálido para superficies, gris pizarra para texto secundario, negro suave para texto.
  * Rojo apagado solo para avisos y errores.
@@ -11,17 +11,18 @@
   --ink: #1e3350;
   --ink-deep: #152740;
   --ink-soft: #2b4568;
-  --blue: #4a6e99;
+  --blue: #3f6a9a;
+  --blue-hover: #345a85;
   --blue-ink: #3a5c86;
   --grayblue: #9aabc0;
-  --mist: #e7eef6;
-  --mist-strong: #d3dfec;
-  --paper: #faf9f6;
+  --mist: #ecf1f7;
+  --mist-strong: #d9e3ee;
+  --paper: #fbfaf7;
   --surface: #ffffff;
   --ink-text: #1f232a;
   --slate: #56606d;
-  --line: #dde2e9;
-  --line-strong: #bcc5d1;
+  --line: #e3e7ed;
+  --line-strong: #c9d1db;
   --danger: #a7434b;
   --danger-bg: #f8eced;
   --warn: #8a5a12;
@@ -45,7 +46,9 @@
 
   --radius-sm: 6px;
   --radius: 10px;
-  --radius-lg: 16px;
+  --radius-lg: 14px;
+  --shadow-sm: 0 1px 2px rgba(30, 51, 80, 0.05);
+  --shadow: 0 1px 2px rgba(30, 51, 80, 0.04), 0 6px 18px -8px rgba(30, 51, 80, 0.12);
   --focus: 0 0 0 3px var(--paper), 0 0 0 5px var(--blue);
   --gutter: clamp(1rem, 4vw, 2.75rem);
   --sidebar-w: 16.5rem;

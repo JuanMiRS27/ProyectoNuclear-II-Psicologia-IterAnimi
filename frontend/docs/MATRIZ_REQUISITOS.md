@@ -54,6 +54,9 @@ Evidencia:
 | Denegación entre roles (encargo) | Todos | Pantalla «No tienes acceso» | 401 y 403 del servidor | — | N, A, T |
 | Refresco de rutas internas (encargo) | Todos | — | SPA con `index.html` | Sin peticiones antes del token ni cargas infinitas | N |
 | Móvil (encargo) | Todos | Todas | — | 375 px sin desbordamiento; en el simulador se reduce el escenario y no el texto | N |
+| Personaje y reacciones (encargo) | Docente | Caso → Personaje y reacciones | Ninguno (IndexedDB local) | Sprites PNG/WebP por expresión, reacción por opción con ids estables, revisión pendiente si cambia el texto, vista previa local sin intentos | N, T |
+| Paquete visual (encargo) | Docente → despliegue | Exportar/Importar paquete; `npm run visual:install` | Ninguno (archivos estáticos del frontend) | ZIP con manifiesto versionado; rutas externas y `..` rechazadas; ver `docs/PAQUETES_VISUALES.md` | N, T |
+| Novela visual del estudiante (encargo) | Estudiante | Simulador | `PUT` de respuestas existente | La expresión cambia solo tras la confirmación del servidor; sin paquete, personaje sin rostro; movimiento reducido respetado | N, T |
 
 ## Cambio de backend asociado
 

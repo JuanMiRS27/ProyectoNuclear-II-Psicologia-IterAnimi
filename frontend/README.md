@@ -5,6 +5,7 @@ Consume la API real del backend (`backend/`, FastAPI, prefijo `/api/v1`); no hay
 
 - Matriz de requisitos (CU1–CU36 del plan PT-DCP-01): [`docs/MATRIZ_REQUISITOS.md`](docs/MATRIZ_REQUISITOS.md)
 - Estructura tomada de Ágora y qué cambió: [`docs/AGORA_A_ITER_ANIMI.md`](docs/AGORA_A_ITER_ANIMI.md)
+- Personaje y reacciones (novela visual), paquetes visuales y guía para la sustentación: [`docs/PAQUETES_VISUALES.md`](docs/PAQUETES_VISUALES.md)
 - Capturas de verificación (cuentas de prueba, sin contraseñas ni códigos): [`docs/capturas/`](docs/capturas)
 
 ## Requisitos
@@ -25,6 +26,9 @@ npm run test         # pruebas (Vitest + Testing Library)
 npm run build        # build de producción en dist/ (cada portal en su propio fragmento)
 npm run preview      # sirve dist/ localmente (con el mismo proxy)
 npm run check        # tipos + lint + pruebas + build
+npm run visual:install -- paquete.zip   # instala un paquete visual en public/visual-packages/
+npm run visual:index                    # regenera public/visual-packages/index.json (también antes de cada build)
+npm run visual:remove -- <id-del-caso>  # retira un paquete instalado
 ```
 
 ## Variables de entorno
@@ -136,3 +140,5 @@ Con PostgreSQL, el backend (`uvicorn`) y el frontend (`npm run dev`) en marcha y
 `src/test/flows.test.tsx`: validación del acceso, paso automático a resultados con la sesión finalizada, motivo del servidor,
 simulador (sin doble envío, selección conservada ante error, avance solo tras la confirmación), guardas por rol, y
 Resultados (sin petición con la sesión en curso; evaluados frente a en revisión).
+`src/test/visual.test.tsx`: paquetes visuales (ZIP, validación de rutas e imágenes, sin datos de evaluación), asociaciones por
+id y firma, expresión en escena, y simulador con y sin paquete (la reacción llega solo tras la confirmación del servidor).

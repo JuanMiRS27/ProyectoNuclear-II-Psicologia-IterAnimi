@@ -1,0 +1,59 @@
+// Paquete visual: estático para el estudiante y borrador local (IndexedDB) para el docente.
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { loadStaticPackage } from '../lib/visual/static-packages'
+import { draftKey, visualStorage } from '../lib/visual/storage'
+import type { VisualDraft } from '../lib/visual/types'
+import { useSession } from './use-session'
+
+/** Paquete instalado en el frontend servido para las escenas de un cuestionario (null si no hay). */
+export function useStaticVisualPackage(escenarioIds: string[]) {
+  return useQuery({
+    queryKey: ['visual-package', escenarioIds.join(',')],
+    queryFn: () => loadStaticPackage(escenarioIds),
+    enabled: escenarioIds.length > 0,
+    staleTime: Infinity,
+    retry: false,
+  })
+}
+
+function useDraftKey(caseId: string) {
+  const { session } = useSession()
+  // La identidad estable del docente es el id de su cuenta; sin ella no se separan borradores.
+  return session?.kind === 'staff' ? draftKey(session.user.id, caseId) : null
+}
+
+export function useVisualDraft(caseId: string) {
+  const key = useDraftKey(caseId)
+  return useQuery({
+    queryKey: ['visual-draft', key],
+    queryFn: async () => (await visualStorage.get(key!)) ?? null,
+    enabled: Boolean(key),
+    staleTime: Infinity,
+    gcTime: 0,
+  })
+}
+
+export function useSaveVisualDraft(caseId: string) {
+  const key = useDraftKey(caseId)
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (draft: VisualDraft) => {
+      if (!key) throw new Error('Se necesita una sesión de docente para guardar el borrador.')
+      const saved = { ...draft, savedAt: new Date().toISOString() }
+      await visualStorage.put(key, saved)
+      return saved
+    },
+    onSuccess: (saved) => qc.setQueryData(['visual-draft', key], saved),
+  })
+}
+
+export function useDeleteVisualDraft(caseId: string) {
+  const key = useDraftKey(caseId)
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async () => {
+      if (key) await visualStorage.remove(key)
+    },
+    onSuccess: () => qc.setQueryData(['visual-draft', key], null),
+  })
+}

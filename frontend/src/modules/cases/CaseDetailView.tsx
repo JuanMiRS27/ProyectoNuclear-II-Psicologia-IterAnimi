@@ -6,6 +6,7 @@ import { ErrorState, InlineError, LoadingState } from '../../components/design-s
 import { Button } from '../../components/ui/Button'
 import { ConfirmDialog, Dialog } from '../../components/ui/Dialog'
 import { TextAreaField, TextField } from '../../components/ui/Field'
+import { LinkTabs } from '../../components/ui/Tabs'
 import { useCase, useCaseEditor, useCaseLifecycle } from '../../hooks/use-cases'
 import { useSession } from '../../hooks/use-session'
 import { ApiError } from '../../services/http-client'
@@ -13,6 +14,7 @@ import type { CasoDetalle, ErrorValidacion } from '../../types/api'
 import { CaseContent } from './CaseContent'
 import { RubricEditor } from './editor/RubricEditor'
 import { ScenarioList } from './editor/ScenarioEditor'
+import { VisualEditor } from './visual/VisualEditor'
 
 export function CaseDetailView() {
   const { caseId = '' } = useParams()
@@ -26,6 +28,7 @@ export function CaseDetailView() {
   const [errores, setErrores] = useState<ErrorValidacion[] | null>(null)
   const [validOk, setValidOk] = useState(false)
   const [dialog, setDialog] = useState<'info' | 'archive' | 'delete' | null>(null)
+  const vista = params.get('vista') === 'personaje' ? 'personaje' : 'contenido'
 
   if (q.isPending)
     return (
@@ -68,7 +71,7 @@ export function CaseDetailView() {
     })
 
   return (
-    <Page width="reading">
+    <Page width={vista === 'personaje' ? 'wide' : 'reading'}>
       <PageHeader
         crumbs={[{ label: 'Casos', to: '/docente/casos' }]}
         title={c.nombre}
@@ -126,7 +129,19 @@ export function CaseDetailView() {
       <InlineError error={life.exportDsl.error} />
       <InlineError error={editor.error} />
 
-      {editable ? (
+      <LinkTabs
+        label="Secciones del caso"
+        param="vista"
+        current={vista}
+        tabs={[
+          { id: 'contenido', label: 'Contenido académico' },
+          { id: 'personaje', label: 'Personaje y reacciones' },
+        ]}
+      />
+
+      {vista === 'personaje' ? (
+        <VisualEditor caso={c} />
+      ) : editable ? (
         <>
           <Section
             title="Información general"

@@ -7,6 +7,8 @@ import { ErrorState, LoadingState } from '../../components/design-system/states'
 import { ConfirmDialog } from '../../components/ui/Dialog'
 import { useCountdown } from '../../hooks/use-countdown'
 import { useAttemptSync, useFinishAttempt, useQuestionnaire, useSaveAnswer } from '../../hooks/use-student'
+import { useStaticVisualPackage } from '../../hooks/use-visual'
+import { buildRuntime } from '../../lib/visual/runtime'
 import { errorMessage } from '../../lib/errors'
 import { ApiError } from '../../services/http-client'
 import type { Cuestionario, Progreso } from '../../types/api'
@@ -16,7 +18,8 @@ import { ReviewPanel } from './ReviewPanel'
 import { SimulatorActions } from './SimulatorActions'
 import { SimulatorHeader } from './SimulatorHeader'
 import { SimulatorStage } from './SimulatorStage'
-import { buildSteps, countDecisions, initialStepIndex, nextStepIndex, savedFromQuestionnaire } from './steps'
+import { buildSteps, countDecisions, initialStepIndex, nextStepIndex, savedFromQuestionnaire, type Step } from './steps'
+import { useStageExpression } from './use-stage-expression'
 
 const EXITS: Record<string, string> = {
   '/estudiante': 'Volver al inicio',
@@ -68,6 +71,22 @@ function Play({ data }: { data: Cuestionario }) {
   const fetchAttempt = useAttemptSync(pid)
   const step = steps[index]!
 
+  // Paquete visual instalado en el frontend (opcional): sin él, el caso se juega con el personaje sin imagen.
+  const escenarioIds = useMemo(() => data.escenarios.map((e) => e.id), [data])
+  const visual = useStaticVisualPackage(escenarioIds)
+  const runtime = useMemo(() => (visual.data ? buildRuntime(visual.data.manifest, data) : null), [visual.data, data])
+  const sceneOf = (st: Step | undefined) =>
+    st?.kind === 'decision' ? st.escenario.id : st?.kind === 'review' ? (lastSceneId(steps) ?? null) : (data.escenarios[0]?.id ?? null)
+  const stage = useStageExpression(runtime, sceneOf(step))
+  const sprite = stage.shown
+    ? {
+        expression: stage.shown.expression,
+        motion: stage.shown.motion,
+        src: visual.data?.spriteUrls[stage.shown.expression] ?? null,
+        alt: `${runtime?.characterName || 'Personaje'}: ${runtime?.label(stage.shown.expression) ?? ''}`,
+      }
+    : null
+
   const goToClosed = useCallback(() => navigate(`/estudiante/caso/${pid}/cierre`, { replace: true }), [navigate, pid])
 
   const resync = useCallback(async () => {
@@ -103,9 +122,12 @@ function Play({ data }: { data: Cuestionario }) {
     try {
       const r = await save.mutateAsync({ preguntaId, opcionId })
       const nextSaved = { ...saved, [preguntaId]: r.opcion_id }
+      const next = nextStepIndex(steps, index, nextSaved)
       setSaved(nextSaved)
+      // La reacción se aplica solo con la confirmación del servidor y no retrasa el avance.
+      stage.react(r.opcion_id, step.escenario.id, sceneOf(steps[next]))
       void resync()
-      setIndex(nextStepIndex(steps, index, nextSaved))
+      setIndex(next)
     } catch (err) {
       const closed = err instanceof ApiError && (err.status === 409 || err.status === 401)
       setError({ message: errorMessage(err), closed })
@@ -114,7 +136,7 @@ function Play({ data }: { data: Cuestionario }) {
     }
   }
 
-  const stage =
+  const sceneLabel =
     step.kind === 'decision'
       ? { kicker: `Escena ${step.escenarioIndex + 1} de ${data.escenarios.length}`, title: step.escenario.titulo }
       : step.kind === 'prologue'
@@ -126,7 +148,7 @@ function Play({ data }: { data: Cuestionario }) {
       <SimulatorHeader title={data.caso.nombre} progress={progress} secondsLeft={secondsLeft} exitTo={exitTo} exitLabel={EXITS[exitTo]!} />
 
       <main className="sim-stage-wrap" id="contenido">
-        <SimulatorStage kicker={stage.kicker} title={stage.title} />
+        <SimulatorStage kicker={sceneLabel.kicker} title={sceneLabel.title} sprite={sprite} characterName={runtime?.characterName || undefined} />
 
         <section className="sim-read" aria-labelledby="scene-heading">
           {step.kind === 'prologue' && (
@@ -248,4 +270,12 @@ function DecisionActions({ selectedId, savedId, pending, onBack }: { selectedId:
       }
     />
   )
+}
+
+function lastSceneId(steps: Step[]) {
+  for (let i = steps.length - 1; i >= 0; i--) {
+    const s = steps[i]!
+    if (s.kind === 'decision') return s.escenario.id
+  }
+  return null
 }
