@@ -1,13 +1,23 @@
 import { useId, useState } from 'react'
 import { Button } from '../../../components/ui/Button'
+import type { LibraryCatalog, LibraryCharacter } from '../../../lib/visual/library'
 import { detectImage } from '../../../lib/visual/package'
 import { LIMITS, type VisualManifest } from '../../../lib/visual/types'
 import { SceneCharacter } from '../../simulator/SceneCharacter'
+import { CharacterLibrary } from './CharacterLibrary'
 
 interface Props {
   manifest: VisualManifest
   urls: Record<string, string>
   onChange: (next: VisualManifest, images?: { set?: Record<string, Blob>; remove?: string[] }) => void
+  catalog: LibraryCatalog | null | undefined
+  catalogLoading: boolean
+  /** Usa un personaje del sistema (conserva las asociaciones compatibles). */
+  onUseSystem: (ch: LibraryCharacter) => void
+  /** Vuelve a los sprites propios (recupera los que había antes de elegir uno del sistema). */
+  onUseCustom: () => void
+  /** Hay sprites propios guardados para volver a ellos. */
+  hasStash: boolean
 }
 
 function slug(label: string, taken: Set<string>) {
@@ -24,8 +34,13 @@ function slug(label: string, taken: Set<string>) {
   return id
 }
 
-/** Zona 1: nombre del personaje y sus expresiones (etiquetas editables, imágenes PNG o WebP). */
-export function CharacterPanel({ manifest, urls, onChange }: Props) {
+/**
+ * Zona 1: nombre del personaje y su origen: un personaje del sistema (biblioteca estática) o sprites propios
+ * (etiquetas editables, imágenes PNG o WebP guardadas en este navegador).
+ */
+export function CharacterPanel({ manifest, urls, onChange, catalog, catalogLoading, onUseSystem, onUseCustom, hasStash }: Props) {
+  const library = manifest.character.library ?? null
+  const [source, setSource] = useState<'system' | 'mine'>(library ? 'system' : 'mine')
   const nameId = useId()
   const [error, setError] = useState<string | null>(null)
   const [newLabel, setNewLabel] = useState('')
@@ -75,6 +90,41 @@ export function CharacterPanel({ manifest, urls, onChange }: Props) {
         <span className="hint">Se muestra sobre el escenario. Puedes dejarlo vacío.</span>
       </div>
 
+      <div className="segmented source-tabs" role="tablist" aria-label="Origen del personaje">
+        {(
+          [
+            ['system', 'Personajes del sistema'],
+            ['mine', 'Mis personajes'],
+          ] as const
+        ).map(([id, label]) => (
+          <button key={id} type="button" role="tab" aria-selected={source === id} className={source === id ? 'is-active' : undefined} onClick={() => setSource(id)}>
+            {label}
+            {(id === 'system') === Boolean(library) && <span className="source-dot" aria-label="(en uso)" />}
+          </button>
+        ))}
+      </div>
+
+      {source === 'system' && (
+        <CharacterLibrary
+          catalog={catalog}
+          loading={catalogLoading}
+          activeId={library}
+          defaultExpression={manifest.character.defaultExpression}
+          onUse={onUseSystem}
+          onDefaultExpression={(id) => update({ character: { ...manifest.character, defaultExpression: id } })}
+        />
+      )}
+
+      {source === 'mine' && library && (
+        <div className="library-switch">
+          <p>
+            Este caso usa un personaje del sistema. {hasStash ? 'Tus sprites propios siguen guardados en el borrador.' : 'Puedes volver a cargar tus propias imágenes.'}
+          </p>
+          <Button onClick={onUseCustom}>{hasStash ? 'Volver a mis sprites' : 'Usar mis propios sprites'}</Button>
+        </div>
+      )}
+
+      {source === 'mine' && !library && (
       <fieldset className="expression-list">
         <legend>Expresiones</legend>
         <p className="small muted">
@@ -152,6 +202,7 @@ export function CharacterPanel({ manifest, urls, onChange }: Props) {
         )}
         <p className="small muted">PNG o WebP, hasta 2 MB por imagen. Se recomienda fondo transparente y la misma proporción en todas.</p>
       </fieldset>
+      )}
     </section>
   )
 }

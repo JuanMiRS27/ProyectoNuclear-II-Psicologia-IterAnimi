@@ -7,6 +7,8 @@ cuando el servidor acepta una respuesta. El docente define el personaje, sus im�
 Todo esto vive en el frontend. El backend no cambia: no hay rutas, tablas, permisos ni campos nuevos, el CaseDSL es el
 mismo y no se usa ningún servicio externo de imágenes.
 
+> Desde la versión 2 del paquete, el personaje puede ser uno de la biblioteca del sistema: el paquete solo guarda su id y las imágenes salen de `public/sprite-library/`. Ver [`BIBLIOTECA_PERSONAJES.md`](BIBLIOTECA_PERSONAJES.md).
+
 ## Recorrido: borrador local → paquete exportado → paquete en el despliegue
 
 ```

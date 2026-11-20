@@ -1,6 +1,6 @@
 // Validación del manifiesto y conversión borrador ↔ paquete ZIP.
 // Lo usan el editor (exportar/importar), el simulador (paquete estático) y scripts/visual-packages.mjs.
-import { LIMITS, MOTIONS, PACKAGE_FORMAT, PACKAGE_VERSION, type ExpressionDef, type VisualManifest } from './types.ts'
+import { LIMITS, MOTIONS, PACKAGE_FORMAT, PACKAGE_VERSION, SUPPORTED_VERSIONS, type ExpressionDef, type VisualManifest } from './types.ts'
 import { readZip, writeZip, ZipError, type ZipEntry } from './zip.ts'
 
 export class PackageError extends Error {}
@@ -8,6 +8,8 @@ export class PackageError extends Error {}
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const EXPR_ID_RE = /^[a-z0-9][a-z0-9_-]{0,31}$/
 const SIG_RE = /^[0-9a-f]{8}$/
+/** Id de un personaje de la biblioteca del sistema. */
+export const SYSTEM_ID_RE = /^system-[a-z0-9]+(-[a-z0-9]+){0,8}$/
 /** Únicas rutas admitidas dentro de un paquete: sin carpetas superiores, absolutas ni externas. */
 export const SPRITE_PATH_RE = /^sprites\/[a-z0-9][a-z0-9_-]{0,40}\.(png|webp)$/
 
@@ -29,13 +31,16 @@ const str = (v: unknown, max: number) => typeof v === 'string' && v.trim().lengt
 export function validateManifest(value: unknown): VisualManifest {
   if (!isObj(value)) throw new PackageError('El manifiesto no es un objeto JSON.')
   if (value.format !== PACKAGE_FORMAT) throw new PackageError('El archivo no es un paquete visual de Iter Animi.')
-  if (value.version !== PACKAGE_VERSION) throw new PackageError(`Versión de paquete no admitida (${String(value.version)}).`)
+  if (!SUPPORTED_VERSIONS.includes(value.version as never)) throw new PackageError(`Versión de paquete no admitida (${String(value.version)}).`)
   const c = value.case
   if (!isObj(c) || typeof c.id !== 'string' || !UUID_RE.test(c.id) || !str(c.nombre, 300))
     throw new PackageError('El paquete no identifica correctamente el caso.')
   const ch = value.character
   if (!isObj(ch) || typeof ch.name !== 'string' || ch.name.length > LIMITS.nameMax || typeof ch.defaultExpression !== 'string')
     throw new PackageError('Los datos del personaje no son válidos.')
+  const library = ch.library ?? null
+  if (library !== null && (value.version !== 2 || typeof library !== 'string' || !SYSTEM_ID_RE.test(library)))
+    throw new PackageError('El personaje del sistema indicado no tiene un identificador válido.')
   if (!Array.isArray(value.expressions) || value.expressions.length < 1 || value.expressions.length > LIMITS.maxExpressions)
     throw new PackageError(`El paquete debe tener entre 1 y ${LIMITS.maxExpressions} expresiones.`)
   const ids = new Set<string>()
@@ -45,6 +50,8 @@ export function validateManifest(value: unknown): VisualManifest {
       throw new PackageError('Hay una expresión con identificador o etiqueta no válidos.')
     if (ids.has(e.id)) throw new PackageError(`La expresión «${e.id}» está repetida.`)
     ids.add(e.id)
+    if (e.sprite !== null && library !== null)
+      throw new PackageError('Un paquete con personaje del sistema no puede incluir imágenes propias.')
     if (e.sprite !== null) {
       if (typeof e.sprite !== 'string' || !SPRITE_PATH_RE.test(e.sprite))
         throw new PackageError(`La imagen de «${e.label as string}» apunta a una ruta no permitida.`)
@@ -81,8 +88,10 @@ export function extensionFor(kind: ImageKind) {
 export async function buildPackage(manifest: VisualManifest, images: Record<string, Blob>): Promise<Uint8Array> {
   const entries: ZipEntry[] = []
   const expressions: ExpressionDef[] = []
+  // Personaje del sistema: solo la referencia, sin copiar imágenes al paquete.
+  const library = manifest.character.library ?? null
   for (const e of manifest.expressions) {
-    const blob = images[e.id]
+    const blob = library ? undefined : images[e.id]
     if (!blob) {
       expressions.push({ ...e, sprite: null })
       continue
@@ -94,7 +103,7 @@ export async function buildPackage(manifest: VisualManifest, images: Record<stri
     entries.push({ name: path, data })
     expressions.push({ ...e, sprite: path })
   }
-  const finalManifest: VisualManifest = { ...manifest, expressions, createdAt: new Date().toISOString() }
+  const finalManifest: VisualManifest = { ...manifest, version: PACKAGE_VERSION, character: { ...manifest.character, library }, expressions, createdAt: new Date().toISOString() }
   validateManifest(finalManifest)
   const json = new TextEncoder().encode(JSON.stringify(finalManifest, null, 2))
   return writeZip([{ name: 'manifest.json', data: json }, ...entries])

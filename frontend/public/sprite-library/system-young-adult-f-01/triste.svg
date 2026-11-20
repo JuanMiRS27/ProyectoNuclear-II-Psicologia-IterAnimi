@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 720" width="480" height="720">
+  <title>Inés: Triste (sprite provisional)</title>
+  <path d="M138 300 C130 200 180 156 240 156 C300 156 350 200 342 300 C350 420 372 520 360 610 L120 610 C108 520 130 420 138 300 Z" fill="#6b4430"/>
+  <path d="M54 720 C58 616 98 566 176 540 L304 540 C382 566 422 616 426 720 Z" fill="#b8775e" stroke="#3b2b2b" stroke-width="3" stroke-linejoin="round"/><path d="M54 720 C58 640 84 596 130 572 C120 620 118 670 124 720 Z M426 720 C422 640 396 596 350 572 C360 620 362 670 356 720 Z" fill="#000" opacity="0.12"/><path d="M196 540 C206 566 274 566 284 540" fill="none" stroke="#f3e6dc" stroke-width="8"/><path d="M90 660 L390 660" stroke="#000" stroke-width="2" opacity="0.1"/>
+  <path d="M208 430 L208 548 Q240 566 272 548 L272 430 Z" fill="#f1d2bd" stroke="#3b2b2b" stroke-width="3"/>
+  <path d="M208 470 Q240 500 272 470 L272 446 L208 446 Z" fill="#dcb39a" opacity="0.7"/>
+  <ellipse cx="152" cy="324" rx="14" ry="22" fill="#f1d2bd" stroke="#3b2b2b" stroke-width="3"/>
+  <ellipse cx="328" cy="324" rx="14" ry="22" fill="#f1d2bd" stroke="#3b2b2b" stroke-width="3"/>
+  <path d="M150 300 C150 214 190 176 240 176 C290 176 330 214 330 300 C330 372 304 430 240 452 C176 430 150 372 150 300 Z" fill="#f1d2bd" stroke="#3b2b2b" stroke-width="3.2" stroke-linejoin="round"/>
+  <path d="M160 300 C170 260 200 236 240 236 C280 236 310 260 320 300 C300 274 274 262 240 262 C206 262 180 274 160 300 Z" fill="#dcb39a" opacity="0.35"/>
+  
+  
+  <circle cx="176" cy="352" r="2" fill="#dcb39a"/><circle cx="188" cy="358" r="2" fill="#dcb39a"/><circle cx="200" cy="352" r="2" fill="#dcb39a"/><circle cx="280" cy="358" r="2" fill="#dcb39a"/><circle cx="292" cy="352" r="2" fill="#dcb39a"/><circle cx="304" cy="358" r="2" fill="#dcb39a"/>
+  <path d="M178 289 Q198 273 220 273 M260 273 Q282 273 302 289" fill="none" stroke="#6b4430" stroke-width="6.5" stroke-linecap="round"/>
+  
+    <clipPath id="e-1"><ellipse cx="200" cy="322" rx="22" ry="10.799999999999999"/></clipPath>
+    <ellipse cx="200" cy="322" rx="22" ry="10.799999999999999" fill="#fbfaf8"/>
+    <g clip-path="url(#e-1)">
+      <circle cx="200" cy="325" r="13" fill="#5b7a3a"/>
+      <circle cx="200" cy="325" r="6.24" fill="#16110f"/>
+      <circle cx="196" cy="320" r="3.9" fill="#fff"/>
+      <circle cx="204" cy="329" r="1.8200000000000003" fill="#fff" opacity="0.8"/>
+      <path d="M222 314.06 Q200 305.2 178 322.06 L178 292 L222 292 Z" fill="#f1d2bd"/>
+    </g>
+    <path d="M222 314.06 Q200 305.2 178 322.06" fill="none" stroke="#3b2b2b" stroke-width="5" stroke-linecap="round"/>
+    <path d="M182 331.18 Q200 334.8 218 331.18" fill="none" stroke="#3b2b2b" stroke-width="1.8" opacity="0.55"/>
+  
+    <clipPath id="e1"><ellipse cx="280" cy="322" rx="22" ry="10.799999999999999"/></clipPath>
+    <ellipse cx="280" cy="322" rx="22" ry="10.799999999999999" fill="#fbfaf8"/>
+    <g clip-path="url(#e1)">
+      <circle cx="280" cy="325" r="13" fill="#5b7a3a"/>
+      <circle cx="280" cy="325" r="6.24" fill="#16110f"/>
+      <circle cx="276" cy="320" r="3.9" fill="#fff"/>
+      <circle cx="284" cy="329" r="1.8200000000000003" fill="#fff" opacity="0.8"/>
+      <path d="M258 314.06 Q280 305.2 302 322.06 L302 292 L258 292 Z" fill="#f1d2bd"/>
+    </g>
+    <path d="M258 314.06 Q280 305.2 302 322.06" fill="none" stroke="#3b2b2b" stroke-width="5" stroke-linecap="round"/>
+    <path d="M262 331.18 Q280 334.8 298 331.18" fill="none" stroke="#3b2b2b" stroke-width="1.8" opacity="0.55"/>
+  <path d="M240 340 L234 368 Q240 372 246 368" fill="none" stroke="#dcb39a" stroke-width="3" stroke-linecap="round"/>
+  <path d="M222 404 Q240 392 258 404" fill="none" stroke="#3b2b2b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M296 336 C292 350 290 360 296 366 C302 360 300 350 296 336 Z" fill="#9cc8ee" stroke="#5f8fb9" stroke-width="1.5"/>
+  
+  <path d="M146 310 C140 214 186 170 240 170 C296 170 342 214 334 310 C326 270 312 240 288 224 C276 250 252 262 224 262 C204 262 186 254 176 242 C160 262 150 286 146 310 Z" fill="#6b4430" stroke="#3b2b2b" stroke-width="3" stroke-linejoin="round"/>
+</svg>

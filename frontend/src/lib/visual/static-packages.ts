@@ -2,6 +2,7 @@
 // El simulador los carga por URL relativa: no depende de IndexedDB, del equipo del docente ni de una API nueva.
 // El cuestionario del estudiante no expone el id del caso, así que el índice relaciona cada paquete con los
 // ids de sus escenas (únicos por caso) y se elige el paquete cuyas escenas coinciden con las del cuestionario.
+import { libraryUrls, loadLibrary } from './library.ts'
 import { validateManifest } from './package.ts'
 import type { VisualManifest } from './types.ts'
 
@@ -47,6 +48,8 @@ export async function loadStaticPackage(escenarioIds: string[]): Promise<StaticP
   } catch {
     return null
   }
+  // Personaje del sistema: las imágenes vienen de la biblioteca estática (si falta, personaje sin rostro).
+  if (manifest.character.library) return { manifest, spriteUrls: libraryUrls(await loadLibrary(), manifest) }
   const spriteUrls: Record<string, string | null> = {}
   for (const e of manifest.expressions) spriteUrls[e.id] = e.sprite ? new URL(e.sprite, manifestUrl).href : null
   return { manifest, spriteUrls }

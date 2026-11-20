@@ -1,39 +1,55 @@
 {
   "format": "iter-animi-paquete-visual",
-  "version": 1,
+  "version": 2,
   "case": {
     "id": "2c2f099a-0e5e-41be-9a0e-43b403e2a41c",
     "nombre": "Conformidad grupal"
   },
   "character": {
-    "name": "Camila",
-    "defaultExpression": "neutral"
+    "name": "Inés",
+    "defaultExpression": "neutral",
+    "library": "system-young-adult-f-01"
   },
   "expressions": [
     {
       "id": "neutral",
       "label": "Neutral",
-      "sprite": "sprites/neutral.png"
+      "sprite": null
     },
     {
-      "id": "inquieto",
-      "label": "Inquieto",
-      "sprite": "sprites/inquieto.png"
+      "id": "feliz",
+      "label": "Feliz",
+      "sprite": null
+    },
+    {
+      "id": "triste",
+      "label": "Triste",
+      "sprite": null
+    },
+    {
+      "id": "enojado",
+      "label": "Enojado",
+      "sprite": null
+    },
+    {
+      "id": "preocupado",
+      "label": "Preocupado",
+      "sprite": null
+    },
+    {
+      "id": "sorprendido",
+      "label": "Sorprendido",
+      "sprite": null
     },
     {
       "id": "incomodo",
       "label": "Incómodo",
-      "sprite": "sprites/incomodo.png"
+      "sprite": null
     },
     {
       "id": "reflexivo",
       "label": "Reflexivo",
-      "sprite": "sprites/reflexivo.png"
-    },
-    {
-      "id": "aliviado",
-      "label": "Aliviado",
-      "sprite": "sprites/aliviado.png"
+      "sprite": null
     }
   ],
   "scenes": [
@@ -57,7 +73,7 @@
       "preguntaId": "75923e9a-72dd-48f0-979e-42bf9108b8ad",
       "escenarioId": "9db4528b-e2b7-4285-bd8c-14bb98db017f",
       "signature": "ea161efe",
-      "expression": "inquieto",
+      "expression": "preocupado",
       "motion": "rise"
     },
     {
@@ -65,15 +81,15 @@
       "preguntaId": "c4a018bb-8c4a-45cb-966b-c19e51706269",
       "escenarioId": "9db4528b-e2b7-4285-bd8c-14bb98db017f",
       "signature": "4ba6498a",
-      "expression": "aliviado",
-      "motion": "breathe"
+      "expression": "feliz",
+      "motion": "fade"
     },
     {
       "opcionId": "c947ba14-0b2d-4405-b935-6c7610e34934",
       "preguntaId": "c4a018bb-8c4a-45cb-966b-c19e51706269",
       "escenarioId": "9db4528b-e2b7-4285-bd8c-14bb98db017f",
       "signature": "3b42e876",
-      "expression": "incomodo",
+      "expression": "enojado",
       "motion": "fade"
     },
     {
@@ -81,9 +97,9 @@
       "preguntaId": "c4a018bb-8c4a-45cb-966b-c19e51706269",
       "escenarioId": "9db4528b-e2b7-4285-bd8c-14bb98db017f",
       "signature": "452b87c0",
-      "expression": "inquieto",
+      "expression": "triste",
       "motion": "fade"
     }
   ],
-  "createdAt": "2026-11-19T06:33:26.239Z"
+  "createdAt": "2026-11-20T22:35:30.383Z"
 }

@@ -1,5 +1,6 @@
 // Paquete visual: estático para el estudiante y borrador local (IndexedDB) para el docente.
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { loadLibrary } from '../lib/visual/library'
 import { loadStaticPackage } from '../lib/visual/static-packages'
 import { draftKey, visualStorage } from '../lib/visual/storage'
 import type { VisualDraft } from '../lib/visual/types'
@@ -14,6 +15,11 @@ export function useStaticVisualPackage(escenarioIds: string[]) {
     staleTime: Infinity,
     retry: false,
   })
+}
+
+/** Catálogo de personajes del sistema servido por el frontend (null si falta: solo quedan los sprites propios). */
+export function useSpriteLibrary() {
+  return useQuery({ queryKey: ['sprite-library'], queryFn: loadLibrary, staleTime: Infinity, retry: false })
 }
 
 function useDraftKey(caseId: string) {

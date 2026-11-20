@@ -14,6 +14,24 @@ import { fileURLToPath } from 'node:url'
 import { detectImage, parsePackage, SPRITE_PATH_RE, validateManifest } from '../src/lib/visual/package.ts'
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'visual-packages')
+const LIBRARY = resolve(ROOT, '..', 'sprite-library', 'index.json')
+
+/** Comprueba que el personaje del sistema referido exista en la biblioteca incluida en este frontend. */
+async function checkLibrary(manifest) {
+  const id = manifest.character.library
+  if (!id) return
+  let ok = false
+  try {
+    const lib = JSON.parse(await readFile(LIBRARY, 'utf8'))
+    const ch = lib.characters?.find((c) => c.id === id)
+    ok = Boolean(ch)
+    const missing = ch ? manifest.expressions.filter((e) => !ch.expressions.some((x) => x.id === e.id)).map((e) => e.id) : []
+    if (missing.length) console.warn(`Aviso: ${id} no tiene las expresiones ${missing.join(', ')}; se mostrará el personaje sin rostro en ellas.`)
+  } catch {
+    ok = false
+  }
+  if (!ok) console.warn(`Aviso: el personaje del sistema ${id} no está en public/sprite-library/; el caso se jugará con el personaje sin rostro.`)
+}
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 function inside(base, target) {
@@ -37,10 +55,12 @@ async function install(zipPath) {
   const { manifest, files } = await parsePackage(bytes)
   const dest = inside(ROOT, manifest.case.id)
   await rm(dest, { recursive: true, force: true })
-  await mkdir(join(dest, 'sprites'), { recursive: true })
+  await mkdir(Object.keys(files).length ? join(dest, 'sprites') : dest, { recursive: true })
   await writeFile(join(dest, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n')
   for (const [name, data] of Object.entries(files)) await writeFile(inside(dest, name), data)
-  console.log(`Instalado: ${manifest.case.nombre} (${manifest.case.id}) con ${Object.keys(files).length} imágenes.`)
+  await checkLibrary(manifest)
+  const origin = manifest.character.library ? `personaje del sistema ${manifest.character.library}` : `${Object.keys(files).length} imágenes`
+  console.log(`Instalado: ${manifest.case.nombre} (${manifest.case.id}) con ${origin}.`)
   await index()
 }
 

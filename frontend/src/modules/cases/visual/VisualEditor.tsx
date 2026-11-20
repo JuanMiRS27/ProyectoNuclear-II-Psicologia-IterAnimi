@@ -3,11 +3,12 @@ import { Notice } from '../../../components/design-system/layout'
 import { InlineError, LoadingState } from '../../../components/design-system/states'
 import { Button } from '../../../components/ui/Button'
 import { ConfirmDialog } from '../../../components/ui/Dialog'
-import { useDeleteVisualDraft, useSaveVisualDraft, useVisualDraft } from '../../../hooks/use-visual'
+import { useDeleteVisualDraft, useSaveVisualDraft, useSpriteLibrary, useVisualDraft } from '../../../hooks/use-visual'
 import { formatDateTime } from '../../../lib/format'
+import { libraryUrls, remapToExpressions, systemExpressions, type LibraryCharacter, type RemapReport } from '../../../lib/visual/library'
 import { buildPackage, parsePackage, PackageError } from '../../../lib/visual/package'
 import { buildRuntime, emptyManifest } from '../../../lib/visual/runtime'
-import type { VisualDraft, VisualManifest } from '../../../lib/visual/types'
+import { DEFAULT_EXPRESSIONS, type VisualDraft, type VisualManifest } from '../../../lib/visual/types'
 import type { CasoDetalle } from '../../../types/api'
 import { ScenePreview } from '../../simulator/ScenePreview'
 import { CharacterPanel } from './CharacterPanel'
@@ -41,15 +42,18 @@ function Editor({ caso, initial }: { caso: CasoDetalle; initial: VisualDraft | n
   const [images, setImages] = useState<Record<string, Blob>>(() => initial?.images ?? {})
   const [dirty, setDirty] = useState(false)
   const [zone, setZone] = useState<Zone>('personaje')
-  const [notice, setNotice] = useState<{ tone: 'ok' | 'error' | 'info'; text: string } | null>(null)
+  const [notice, setNotice] = useState<{ tone: 'ok' | 'error' | 'info' | 'warn'; text: string } | null>(null)
   const [confirmImport, setConfirmImport] = useState<{ manifest: VisualManifest; images: Record<string, Blob> } | null>(null)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
   const [savedAt, setSavedAt] = useState<string | null>(initial?.savedAt ?? null)
+  const [stash, setStash] = useState<VisualDraft['stash']>(initial?.stash ?? null)
+  const library = useSpriteLibrary()
+  const systemId = manifest.character.library ?? null
 
   // URLs temporales de las imágenes del borrador. Se crean y liberan en el mismo efecto para que el doble
   // montaje de StrictMode no deje URLs ya revocadas.
-  const [urls, setUrls] = useState<Record<string, string>>({})
+  const [objectUrls, setUrls] = useState<Record<string, string>>({})
   useEffect(() => {
     const created = Object.fromEntries(Object.entries(images).map(([k, b]) => [k, URL.createObjectURL(b)]))
     // Sincroniza con un recurso externo (URLs de objeto del navegador) que debe crearse y liberarse en pareja.
@@ -58,6 +62,11 @@ function Editor({ caso, initial }: { caso: CasoDetalle; initial: VisualDraft | n
     return () => Object.values(created).forEach((u) => URL.revokeObjectURL(u))
   }, [images])
 
+  // Personaje del sistema: URLs de la biblioteca estática. Sprites propios: URLs temporales de los Blob del borrador.
+  const urls = useMemo<Record<string, string | null>>(
+    () => (systemId ? libraryUrls(library.data ?? null, manifest) : objectUrls),
+    [systemId, library.data, manifest, objectUrls],
+  )
   const runtime = useMemo(() => buildRuntime(manifest, caso), [manifest, caso])
   const orphans = runtime.issues.filter((i) => i.kind === 'opcion-inexistente' || i.kind === 'escena-inexistente')
   const changed = runtime.issues.filter((i) => i.kind === 'opcion-cambiada' || i.kind === 'escena-cambiada')
@@ -77,9 +86,43 @@ function Editor({ caso, initial }: { caso: CasoDetalle; initial: VisualDraft | n
     setNotice(null)
   }
 
+  const describe = (r: RemapReport, next: VisualManifest) => {
+    const all = [...next.expressions, ...manifest.expressions, ...DEFAULT_EXPRESSIONS]
+    const label = (id: string) => all.find((e) => e.id === id)?.label ?? id
+    const parts: string[] = []
+    if (r.remapped.length) parts.push(`Equivalencias aplicadas: ${r.remapped.map(([a, b]) => `${label(a)} → ${label(b)}`).join(', ')}.`)
+    if (r.dropped.length) parts.push(`Sin equivalente (vuelven a «Sin cambio» o a la expresión por defecto): ${r.dropped.map(label).join(', ')}.`)
+    return parts.join(' ')
+  }
+
+  const applySystem = (ch: LibraryCharacter) => {
+    // Los sprites propios se apartan para poder volver a ellos; los del sistema no se copian al borrador.
+    if (!systemId) setStash({ expressions: manifest.expressions, images, defaultExpression: manifest.character.defaultExpression })
+    const keepDefault = ch.expressions.some((e) => e.id === manifest.character.defaultExpression)
+    const { manifest: next, report } = remapToExpressions(manifest, systemExpressions(ch), keepDefault ? manifest.character.defaultExpression : ch.defaultExpression, ch.id)
+    // El nombre sigue al personaje salvo que el docente haya escrito uno propio.
+    const current = manifest.character.name.trim()
+    const previousName = library.data?.characters.find((c) => c.id === systemId)?.name
+    const name = !current || current === previousName ? ch.name : manifest.character.name
+    setManifest({ ...next, character: { ...next.character, name } })
+    setImages({})
+    setDirty(true)
+    setNotice({ tone: 'ok', text: `Personaje del sistema: ${ch.name}. Se conservaron las asociaciones compatibles. ${describe(report, next)}`.trim() })
+  }
+
+  const applyCustom = () => {
+    const expressions = stash?.expressions ?? DEFAULT_EXPRESSIONS.map((e) => ({ ...e, sprite: null }))
+    const { manifest: next, report } = remapToExpressions(manifest, expressions, stash?.defaultExpression ?? 'neutral', null)
+    setManifest(next)
+    setImages(stash?.images ?? {})
+    setStash(null)
+    setDirty(true)
+    setNotice({ tone: 'ok', text: `De vuelta a tus sprites propios. ${describe(report, next)}`.trim() })
+  }
+
   const onSave = () =>
     save.mutate(
-      { manifest, images },
+      { manifest, images: systemId ? {} : images, stash },
       {
         onSuccess: (saved) => {
           setDirty(false)
@@ -110,6 +153,8 @@ function Editor({ caso, initial }: { caso: CasoDetalle; initial: VisualDraft | n
       const parsed = await parsePackage(new Uint8Array(await file.arrayBuffer()))
       if (parsed.manifest.case.id !== caso.id)
         throw new PackageError(`Este paquete es del caso «${parsed.manifest.case.nombre}», no de este. No se importó.`)
+      if (parsed.manifest.character.library && library.data && !library.data.characters.some((c) => c.id === parsed.manifest.character.library))
+        setNotice({ tone: 'warn', text: `El paquete usa el personaje del sistema «${parsed.manifest.character.library}», que no está en esta versión de la biblioteca. Se mostrará el personaje sin rostro hasta instalarlo.` })
       const imgs: Record<string, Blob> = {}
       for (const e of parsed.manifest.expressions)
         if (e.sprite) imgs[e.id] = new Blob([parsed.files[e.sprite]! as BlobPart], { type: e.sprite.endsWith('.png') ? 'image/png' : 'image/webp' })
@@ -195,7 +240,16 @@ function Editor({ caso, initial }: { caso: CasoDetalle; initial: VisualDraft | n
       <div className="visual-layout" data-zone={zone}>
         <div className="visual-config">
           <div className="zone-personaje">
-            <CharacterPanel manifest={manifest} urls={urls} onChange={change} />
+            <CharacterPanel
+              manifest={manifest}
+              urls={objectUrls}
+              onChange={change}
+              catalog={library.data}
+              catalogLoading={library.isPending}
+              onUseSystem={applySystem}
+              onUseCustom={applyCustom}
+              hasStash={Boolean(stash)}
+            />
           </div>
           <div className="zone-reacciones">
             <ReactionsPanel caso={caso} manifest={manifest} runtime={runtime} onChange={(m) => change(m)} />
@@ -215,9 +269,12 @@ function Editor({ caso, initial }: { caso: CasoDetalle; initial: VisualDraft | n
           if (!confirmImport) return
           setManifest(confirmImport.manifest)
           setImages(confirmImport.images)
+          setStash(null)
           setDirty(true)
           setConfirmImport(null)
-          setNotice({ tone: 'ok', text: 'Paquete importado. Revisa las asociaciones y guarda el borrador para conservarlo.' })
+          setNotice((prev) =>
+            prev?.tone === 'warn' ? prev : { tone: 'ok', text: 'Paquete importado. Revisa las asociaciones y guarda el borrador para conservarlo.' },
+          )
         }}
         onClose={() => setConfirmImport(null)}
       >
@@ -235,6 +292,7 @@ function Editor({ caso, initial }: { caso: CasoDetalle; initial: VisualDraft | n
               setConfirmDelete(false)
               setManifest(emptyManifest(caso))
               setImages({})
+              setStash(null)
               setSavedAt(null)
               setDirty(false)
               setNotice({ tone: 'info', text: 'Borrador visual descartado de este navegador.' })

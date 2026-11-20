@@ -3,7 +3,9 @@
 // Vive solo en el frontend (borrador en IndexedDB → paquete exportado → carpeta estática del despliegue).
 
 export const PACKAGE_FORMAT = 'iter-animi-paquete-visual'
-export const PACKAGE_VERSION = 1
+/** Versión que se escribe al exportar. La 2 añade personajes de la biblioteca del sistema; la 1 sigue siendo válida. */
+export const PACKAGE_VERSION = 2
+export const SUPPORTED_VERSIONS = [1, 2] as const
 
 export type Motion = 'fade' | 'rise' | 'breathe' | 'none'
 export const MOTIONS: Motion[] = ['fade', 'rise', 'breathe', 'none']
@@ -13,7 +15,10 @@ export interface ExpressionDef {
   id: string
   /** Etiqueta editable que ve el docente. */
   label: string
-  /** Ruta relativa dentro del paquete (sprites/x.png) o null si usa el personaje sin imagen. */
+  /**
+   * Ruta relativa dentro del paquete (sprites/x.png) o null. Con un personaje del sistema siempre es null: la imagen
+   * se resuelve desde la biblioteca estática del frontend por el id de la expresión.
+   */
   sprite: string | null
 }
 
@@ -37,9 +42,14 @@ export interface ReactionDef {
 
 export interface VisualManifest {
   format: typeof PACKAGE_FORMAT
-  version: typeof PACKAGE_VERSION
+  version: (typeof SUPPORTED_VERSIONS)[number]
   case: { id: string; nombre: string }
-  character: { name: string; defaultExpression: string }
+  character: {
+    name: string
+    defaultExpression: string
+    /** Id estable de un personaje del sistema (p. ej. system-young-adult-m-01); ausente o null = sprites propios. */
+    library?: string | null
+  }
   expressions: ExpressionDef[]
   scenes: SceneDef[]
   reactions: ReactionDef[]
@@ -49,7 +59,10 @@ export interface VisualManifest {
 /** Borrador local: el manifiesto más las imágenes en memoria (Blob por expresión). */
 export interface VisualDraft {
   manifest: VisualManifest
+  /** Solo sprites propios. Los del sistema nunca se copian aquí: se guardan como referencia en el manifiesto. */
   images: Record<string, Blob>
+  /** Personaje propio guardado mientras se usa uno del sistema, para poder volver a él sin perderlo. */
+  stash?: { expressions: ExpressionDef[]; images: Record<string, Blob>; defaultExpression: string } | null
   savedAt?: string
 }
 
