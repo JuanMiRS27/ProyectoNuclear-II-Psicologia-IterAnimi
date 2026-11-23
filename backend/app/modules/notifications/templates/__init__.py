@@ -18,7 +18,7 @@ from datetime import datetime, timedelta, timezone
 
 from app.modules.notifications.models import TipoNotificacionEnum as T
 
-MARCA = "Inter Nos"
+MARCA = "Iter Animi"
 
 
 @dataclass(frozen=True, slots=True)

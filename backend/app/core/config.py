@@ -53,7 +53,7 @@ class Settings(BaseSettings):
     SMTP_USERNAME: str | None = None
     SMTP_PASSWORD: SecretStr | None = None
     SMTP_FROM_EMAIL: str | None = None
-    SMTP_FROM_NAME: str = "Inter Nos"
+    SMTP_FROM_NAME: str = "Iter Animi"
     # STARTTLS (puerto 587) o TLS implícito (SMTP_USE_SSL, puerto 465). Sin cifrado solo se
     # admite hacia localhost (p. ej., Mailpit en desarrollo); nunca se desactiva la verificación.
     SMTP_USE_STARTTLS: bool = True

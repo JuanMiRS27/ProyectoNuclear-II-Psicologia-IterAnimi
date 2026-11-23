@@ -434,7 +434,7 @@ def adaptador_smtp(fabrica, **extra) -> AdaptadorCorreoSMTP:
     return AdaptadorCorreoSMTP(**(datos | extra))
 
 
-MENSAJE = MensajeCorreo("ana@u.edu.co", "Inter Nos: aviso", "Texto plano", "<p>HTML</p>", "<entrega-1@u.edu.co>")
+MENSAJE = MensajeCorreo("ana@u.edu.co", "Iter Animi: aviso", "Texto plano", "<p>HTML</p>", "<entrega-1@u.edu.co>")
 
 
 class TestAdaptadorSMTP:
@@ -442,7 +442,7 @@ class TestAdaptadorSMTP:
         smtp = SMTPFalso()
         adaptador_smtp(smtp).enviar(MENSAJE)
         correo, remitente, destinatarios = smtp.enviado
-        assert (correo["To"], correo["Subject"], correo["Message-ID"]) == ("ana@u.edu.co", "Inter Nos: aviso", "<entrega-1@u.edu.co>")
+        assert (correo["To"], correo["Subject"], correo["Message-ID"]) == ("ana@u.edu.co", "Iter Animi: aviso", "<entrega-1@u.edu.co>")
         assert "no-responder@u.edu.co" in correo["From"] and correo.is_multipart()
         assert (remitente, destinatarios) == ("no-responder@u.edu.co", ["ana@u.edu.co"])
         assert smtp.llamadas[1] == ("starttls", True, True)
@@ -547,7 +547,7 @@ DATOS = plantillas.DatosAviso(
 class TestPlantillas:
     def test_convocatoria_completa(self):
         c = plantillas.correo(T.CONVOCATORIA, DATOS, TZ, codigo=CODIGO, url="https://internos.u.edu.co")
-        for dato in ("Inter Nos", "10/11/2026", "08:00 (UTC-05:00)", "10:00 (UTC-05:00)", "40 minutos", "Aula 301 & virtual",
+        for dato in ("Iter Animi", "10/11/2026", "08:00 (UTC-05:00)", "10:00 (UTC-05:00)", "40 minutos", "Aula 301 & virtual",
                      "ana@u.edu.co", CODIGO, "https://internos.u.edu.co", "Traigan audífonos"):
             assert dato in c.texto
         assert CODIGO in c.html and "Conformidad" in c.asunto

@@ -1,4 +1,4 @@
-# Inter Nos — Simulador de Psicología Social (Backend)
+# Iter Animi — Simulador de Psicología Social (Backend)
 
 Monolito modular en **FastAPI + PostgreSQL**. Estado actual: módulos **1 — Autenticación y Usuarios**, **2 — Gestión de Casos Académicos** y **3 — Sesiones y Convocatorias**, **4 — Participaciones**, **5 — Evaluación y Retroalimentación**, **6 — Notificaciones y Eventos** y **7 — Seguimiento y Reportes** (en revisión).
 
@@ -1363,7 +1363,7 @@ La clave `resultados:<convocatoria>` hace que el aviso salga una sola vez por cu
 | `NOTIFICATIONS_EMAIL_ENABLED` | `false` | Sin envío real: los avisos internos se crean y las entregas quedan PENDIENTES |
 | `SMTP_HOST`, `SMTP_PORT` | —, `587` | Servidor |
 | `SMTP_USERNAME`, `SMTP_PASSWORD` | — | Autenticación. La contraseña es `SecretStr`: no aparece en `repr`, logs ni errores |
-| `SMTP_FROM_EMAIL`, `SMTP_FROM_NAME` | —, `Inter Nos` | Remitente |
+| `SMTP_FROM_EMAIL`, `SMTP_FROM_NAME` | —, `Iter Animi` | Remitente |
 | `SMTP_USE_STARTTLS`, `SMTP_USE_SSL` | `true`, `false` | STARTTLS o TLS implícito, con verificación de certificado y nombre de host (`ssl.create_default_context()`) |
 | `SMTP_TIMEOUT_SECONDS` | `10` | Tiempo máximo de conexión y de cada operación |
 | `SIMULATOR_ACCESS_URL` | — | URL de acceso en las invitaciones. **Debe configurarse antes de enviar convocatorias reales**: aún no hay frontend definitivo y no se inventa una dirección. Exige https, salvo en localhost. |
