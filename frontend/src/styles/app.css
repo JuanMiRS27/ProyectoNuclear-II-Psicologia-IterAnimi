@@ -3,7 +3,7 @@
  * Azul tinta para estructura y navegación, azul medio para acción, azul grisáceo para escena y fondos
  * secundarios, blanco cálido para superficies, gris pizarra para texto secundario, negro suave para texto.
  * Rojo apagado solo para avisos y errores.
- * Literata: lectura y títulos. Atkinson Hyperlegible Next: interfaz.
+ * Manrope: interfaz. Source Serif 4: narración del simulador.
  * Motivo propio: el círculo que se llena (○ ◐ ●) para el avance de sesiones e intentos.
  */
 
@@ -17,11 +17,11 @@
   --fs-2xl: 1.953rem;
   --fs-3xl: 2.441rem;
 
-  --radius-sm: 6px;
-  --radius: 10px;
-  --radius-lg: 14px;
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 20px;
   --gutter: clamp(1rem, 4vw, 2.75rem);
-  --sidebar-w: 16.5rem;
+  --sidebar-w: 15.5rem;
 }
 
 *,

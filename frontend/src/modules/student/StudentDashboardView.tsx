@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
-import { Page } from '../../components/design-system/layout'
+import { DashboardIntro, Figures, Page } from '../../components/design-system/layout'
 import { ErrorState, LoadingState } from '../../components/design-system/states'
 import { Status, type Fill } from '../../components/design-system/Status'
 import { Icon } from '../../components/ui/Icon'
@@ -46,36 +46,50 @@ export function StudentDashboardView() {
   const recientes = (notices.data?.items ?? []).slice(0, 4)
 
   return (
-    <Page>
-      <header className="greeting">
-        {v.estudiante && <p className="muted">Hola, {v.estudiante.split(' ')[0]}</p>}
-        <h1>{v.status === 'finalizada' ? 'Tus resultados ya están aquí' : 'Tu próxima decisión te espera'}</h1>
-      </header>
+    <Page className="dashboard dashboard-student">
+      <DashboardIntro
+        eyebrow={v.estudiante ? `Hola, ${v.estudiante.split(' ')[0]}` : 'Espacio del estudiante'}
+        title={v.status === 'finalizada' ? 'Tus resultados ya están aquí' : 'Tu próxima decisión te espera'}
+        description="Un momento para observar, comprender y descubrir nuevas perspectivas."
+      />
 
       <div className="dash-student">
-        <section className="hero-session" aria-labelledby="h-prioritaria">
-          <div className="hero-scene" aria-hidden="true">
-            <SceneCharacter className="hero-figure" decorative />
-          </div>
-          <div className="hero-body">
-            <p className="hero-kicker">
-              {v.aula.nombre} ({v.aula.periodo})
-            </p>
-            <h2 id="h-prioritaria">{v.casoNombre}</h2>
-            <div className="row-meta">
-              <StudentStatus status={v.status} />
-              {v.inicio && v.fin && <span>{formatRange(v.inicio, v.fin)}</span>}
-              {v.lugar && <span>{v.lugar}</span>}
+        <div className="dash-primary">
+          <section className="hero-session" aria-labelledby="h-prioritaria">
+            <div className="hero-scene" aria-hidden="true">
+              <SceneCharacter className="hero-figure" decorative />
             </div>
-            {v.mensaje && (
-              <blockquote className="teacher-note">
-                <span>Mensaje de tu docente</span>
-                {v.mensaje}
-              </blockquote>
-            )}
-            <StudentPrimaryAction view={v} from="/estudiante" />
-          </div>
-        </section>
+            <div className="hero-body">
+              <p className="eyebrow">{v.mode === 'results' ? 'Tu experiencia' : v.intentoEnCurso ? 'Continúa tu experiencia' : 'Tu siguiente experiencia'}</p>
+              <p className="hero-kicker">
+                {v.aula.nombre} ({v.aula.periodo})
+              </p>
+              <h2 id="h-prioritaria">{v.casoNombre}</h2>
+              <div className="row-meta">
+                <StudentStatus status={v.status} />
+                {v.inicio && v.fin && <span>{formatRange(v.inicio, v.fin)}</span>}
+                {v.lugar && <span>{v.lugar}</span>}
+              </div>
+              {v.mensaje && (
+                <blockquote className="teacher-note">
+                  <span>Mensaje de tu docente</span>
+                  {v.mensaje}
+                </blockquote>
+              )}
+              <StudentPrimaryAction view={v} from="/estudiante" />
+            </div>
+          </section>
+
+          <Figures items={[
+            { label: 'intentos realizados', value: v.intentosUsados, icon: 'clipboard' },
+            ...(v.intentosAutorizados !== undefined ? [{ label: 'intentos autorizados', value: v.intentosAutorizados, icon: 'key' as const }] : []),
+            ...(v.tiempoMaxMin !== undefined ? [{ label: 'por intento', value: `${v.tiempoMaxMin} min`, icon: 'clock' as const }] : []),
+          ]} />
+          <nav className="student-shortcuts" aria-label="Accesos a tu aprendizaje">
+            <Link to="/estudiante/aula"><span className="figure-icon"><Icon name="classroom" /></span><span>Mi aula<small>{v.aula.nombre}</small></span><Icon name="chevronRight" size={16} /></Link>
+            <Link to={v.mode === 'results' ? '/estudiante/resultados' : '/estudiante/sesion'}><span className="figure-icon"><Icon name={v.mode === 'results' ? 'chart' : 'calendar'} /></span><span>{v.mode === 'results' ? 'Mis resultados' : 'Mi sesión'}<small>{v.mode === 'results' ? 'Consulta tu recorrido' : 'Revisa los detalles de tu actividad'}</small></span><Icon name="chevronRight" size={16} /></Link>
+          </nav>
+        </div>
 
         <aside className="dash-side" aria-label="Agenda y avisos">
           {agenda.length > 0 && (
@@ -152,6 +166,9 @@ function IntentosResumen({ view }: { view: StudentSessionView }) {
       <p className="small">
         Has usado {view.intentosUsados} de {view.intentosAutorizados} {view.intentosAutorizados === 1 ? 'intento' : 'intentos'}.
       </p>
+      {view.intentosAutorizados !== undefined && view.intentosAutorizados > 0 && (
+        <meter className="attempt-meter" min={0} max={view.intentosAutorizados} value={view.intentosUsados} aria-label="Intentos usados de los autorizados" />
+      )}
       <Link to="/estudiante/sesion" className="side-link">
         Ver detalle de la sesión
       </Link>

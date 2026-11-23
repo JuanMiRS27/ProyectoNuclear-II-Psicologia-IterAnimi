@@ -1,17 +1,18 @@
 import { Link } from 'react-router'
 import { DataTable } from '../../components/design-system/DataTable'
-import { Page, PageHeader, Section } from '../../components/design-system/layout'
+import { DashboardIntro, Page, Section } from '../../components/design-system/layout'
 import { InlineError, LoadingState } from '../../components/design-system/states'
 import { ButtonLink } from '../../components/ui/Button'
-import { Icon } from '../../components/ui/Icon'
+import { Icon, type IconName } from '../../components/ui/Icon'
 import { useDeliveries } from '../../hooks/use-admin'
 import { useSpaces, useUsers } from '../../hooks/use-academic'
 import { formatDateTime } from '../../lib/format'
 import { TIPO_NOTIFICACION } from '../../lib/labels'
 
-function Count({ q, label }: { q: { isPending: boolean; isError: boolean; data?: { total: number } }; label: string }) {
+function Count({ q, label, icon }: { q: { isPending: boolean; isError: boolean; data?: { total: number } }; label: string; icon: IconName }) {
   return (
     <div className="count-cell">
+      <span className="figure-icon"><Icon name={icon} size={18} /></span>
       <span className="count-value">{q.isPending ? '…' : q.isError ? '—' : q.data?.total}</span>
       <span className="count-label">{label}</span>
     </div>
@@ -27,8 +28,9 @@ export function AdminDashboardView() {
   const fallidas = useDeliveries('FALLIDA')
 
   return (
-    <Page>
-      <PageHeader
+    <Page className="dashboard dashboard-admin">
+      <DashboardIntro
+        eyebrow="Gestión del campus"
         title="Administración"
         description="Cuentas, aulas y el estado de los correos del simulador. La administración no accede a casos, sesiones ni notas."
         actions={
@@ -44,11 +46,11 @@ export function AdminDashboardView() {
       />
 
       <div className="count-strip">
-        <Count q={docentes} label="docentes" />
-        <Count q={estudiantes} label="estudiantes" />
-        <Count q={inactivos} label="cuentas desactivadas" />
-        <Count q={aulas} label="aulas activas" />
-        <Count q={fallidas} label="correos fallidos" />
+        <Count q={docentes} label="docentes" icon="book" />
+        <Count q={estudiantes} label="estudiantes" icon="users" />
+        <Count q={inactivos} label="cuentas desactivadas" icon="lock" />
+        <Count q={aulas} label="aulas activas" icon="classroom" />
+        <Count q={fallidas} label="correos fallidos" icon="mail" />
       </div>
 
       <div className="two-col">

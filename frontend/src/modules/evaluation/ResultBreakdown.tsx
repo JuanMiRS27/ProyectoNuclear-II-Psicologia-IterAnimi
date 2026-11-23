@@ -1,3 +1,4 @@
+import { DataTable } from '../../components/design-system/DataTable'
 import type { DetalleResultadoBase } from '../../types/api'
 import { CALIFICACION, CONDICION, MOTIVO_CIERRE, RESULTADO_PREGUNTA } from '../../lib/labels'
 import { formatDecimal, formatPercent, plural } from '../../lib/format'
@@ -84,42 +85,18 @@ export function ResultBreakdown({ r, viewer = 'student' }: { r: DetalleResultado
       {r.criterios.length > 0 && (
         <section className="section" aria-labelledby="h-criterios">
           <h2 id="h-criterios">Desempeño por criterio</h2>
-          <div className="table-wrap">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Criterio</th>
-                  <th className="num">Aciertos</th>
-                  <th>Nivel</th>
-                  <th className="num">Puntaje</th>
-                  <th className="num">Peso</th>
-                </tr>
-              </thead>
-              <tbody>
-                {r.criterios.map((c) => (
-                  <tr key={c.criterio_id}>
-                    <td>
-                      {c.descripcion}
-                      {c.advertencia && <div className="small muted">{c.advertencia}</div>}
-                    </td>
-                    <td className="num">
-                      {c.politica === 'SIN_EVIDENCIA' ? (
-                        <span className="muted">Sin preguntas</span>
-                      ) : (
-                        <>
-                          {c.aciertos} de {c.total_preguntas}
-                          <div className="small muted">{formatPercent(c.porcentaje_aciertos)}</div>
-                        </>
-                      )}
-                    </td>
-                    <td>{c.nivel ?? <span className="muted">—</span>}</td>
-                    <td className="num">{formatDecimal(c.puntaje)}</td>
-                    <td className="num">{formatPercent(c.peso_efectivo)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <DataTable
+            caption="Resultado por criterio"
+            rows={r.criterios}
+            rowKey={(c) => c.criterio_id}
+            columns={[
+              { key: 'criterio', header: 'Criterio', cell: (c) => <>{c.descripcion}{c.advertencia && <div className="small muted">{c.advertencia}</div>}</> },
+              { key: 'aciertos', header: 'Aciertos', numeric: true, cell: (c) => c.politica === 'SIN_EVIDENCIA' ? <span className="muted">Sin preguntas</span> : <>{c.aciertos} de {c.total_preguntas}<div className="small muted">{formatPercent(c.porcentaje_aciertos)}</div></> },
+              { key: 'nivel', header: 'Nivel', cell: (c) => c.nivel ?? <span className="muted">—</span> },
+              { key: 'puntaje', header: 'Puntaje', numeric: true, cell: (c) => formatDecimal(c.puntaje) },
+              { key: 'peso', header: 'Peso', numeric: true, cell: (c) => formatPercent(c.peso_efectivo) },
+            ]}
+          />
         </section>
       )}
 

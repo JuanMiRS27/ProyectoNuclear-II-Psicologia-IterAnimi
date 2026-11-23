@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
-import { Figures, Page, PageHeader, Section } from '../../components/design-system/layout'
+import { DashboardIntro, Figures, Page, Section } from '../../components/design-system/layout'
 import { EmptyState, QueryBoundary } from '../../components/design-system/states'
 import { ButtonLink } from '../../components/ui/Button'
 import { Icon, type IconName } from '../../components/ui/Icon'
@@ -30,8 +30,9 @@ export function TeacherDashboardView() {
   const nombre = session?.kind === 'staff' ? session.user.nombre_completo.split(' ')[0] : ''
 
   return (
-    <Page>
-      <PageHeader
+    <Page className="dashboard dashboard-teacher">
+      <DashboardIntro
+        eyebrow="Espacio docente"
         title={`Hola${nombre ? `, ${nombre}` : ''}`}
         description={formatLongDate(new Date(now).toISOString())}
         actions={
@@ -96,10 +97,10 @@ export function TeacherDashboardView() {
               <div className="dash-teacher-figures">
                 <Figures
                   items={[
-                    { label: 'en curso', value: enCurso.length },
-                    { label: 'próximas', value: proximas.length },
-                    { label: 'por evaluar', value: porEvaluar.length },
-                    { label: 'finalizadas', value: finalizadas.length },
+                    { label: 'en curso', value: enCurso.length, icon: 'play' },
+                    { label: 'próximas', value: proximas.length, icon: 'calendar' },
+                    { label: 'por evaluar', value: porEvaluar.length, icon: 'clipboard' },
+                    { label: 'finalizadas', value: finalizadas.length, icon: 'check' },
                   ]}
                 />
               </div>
@@ -128,6 +129,15 @@ export function TeacherDashboardView() {
                   )}
                 </Section>
               </div>
+
+              <aside className="dashboard-resources" aria-label="Herramientas docentes">
+                <p className="eyebrow">Tu espacio de trabajo</p>
+                <h2>Del caso al aprendizaje</h2>
+                <p className="small muted">Prepara experiencias y acompaña cada decisión de tus estudiantes.</p>
+                <Link to="/docente/aulas"><Icon name="classroom" /><span>Explorar aulas<small>Organiza tu próxima sesión</small></span><Icon name="chevronRight" size={16} /></Link>
+                <Link to="/docente/casos"><Icon name="book" /><span>Biblioteca de casos<small>Encuentra una nueva perspectiva</small></span><Icon name="chevronRight" size={16} /></Link>
+                <Link to="/docente/evaluacion"><Icon name="clipboard" /><span>Evaluaciones<small>Revisa y retroalimenta</small></span><Icon name="chevronRight" size={16} /></Link>
+              </aside>
 
               <div className="two-col dash-teacher-agenda">
                 <Section title="Próximas sesiones">

@@ -13,7 +13,7 @@ export const THEME_OPTIONS: { id: ThemePref; label: string }[] = [
 ]
 
 /** Color de la barra del navegador móvil para cada tema (coincide con --bg). */
-const THEME_COLOR: Record<ResolvedTheme, string> = { light: '#fbfaf7', dark: '#131a24' }
+const THEME_COLOR: Record<ResolvedTheme, string> = { light: '#f6f8fc', dark: '#101722' }
 
 export function readThemePref(): ThemePref {
   try {

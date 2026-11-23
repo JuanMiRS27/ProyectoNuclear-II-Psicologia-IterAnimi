@@ -1,3 +1,4 @@
+import { DataTable } from '../../components/design-system/DataTable'
 import { Link } from 'react-router'
 import { AttemptStatus } from '../../components/design-system/domain-status'
 import { Notice } from '../../components/design-system/layout'
@@ -73,61 +74,22 @@ export function ResultsPanel({ sesion }: { sesion: Sesion }) {
       {r.participaciones.length === 0 ? (
         <EmptyState icon="clipboard" title="Todavía no hay intentos">Cuando los estudiantes empiecen el caso, sus intentos aparecerán aquí.</EmptyState>
       ) : (
-        <div className="table-wrap">
-          <table className="table">
-            <caption className="visually-hidden">Intentos de la sesión</caption>
-            <thead>
-              <tr>
-                <th>Estudiante</th>
-                <th className="num">Intento</th>
-                <th>Estado</th>
-                <th>Calificación</th>
-                <th className="num">Nota</th>
-                <th>
-                  <span className="visually-hidden">Acciones</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {r.participaciones.map((x) => (
-                <tr key={x.participacion_id}>
-                  <td>
-                    {x.estudiante_nombre}
-                    <div className="small muted">{x.estudiante_correo}</div>
-                  </td>
-                  <td className="num">{x.numero_intento}</td>
-                  <td>
-                    <AttemptStatus estado={x.estado} motivo={x.motivo_cierre} />
-                  </td>
-                  <td>
-                    {x.estado === 'EN_PROGRESO' ? (
-                      <span className="muted">—</span>
-                    ) : !x.evaluacion_registrada ? (
-                      'Por evaluar'
-                    ) : x.calificacion ? (
-                      CALIFICACION[x.calificacion]
-                    ) : (
-                      '—'
-                    )}
-                    {x.evaluacion_registrada && x.requiere_procesamiento && (
-                      <div>
-                        <span className="tag tag-alert">Nota desactualizada</span>
-                      </div>
-                    )}
-                  </td>
-                  <td className="num">{x.nota_final ? `${formatDecimal(x.nota_final)} / ${formatDecimal(r.escala_max)}` : '—'}</td>
-                  <td>
-                    {x.estado !== 'EN_PROGRESO' && (
-                      <Link className="btn btn-secondary btn-sm" to={`/docente/sesiones/${sesion.id}/intentos/${x.participacion_id}`}>
-                        Ver detalle
-                      </Link>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable
+          caption="Intentos de la sesión"
+          rows={r.participaciones}
+          rowKey={(x) => x.participacion_id}
+          columns={[
+            { key: 'estudiante', header: 'Estudiante', cell: (x) => <>{x.estudiante_nombre}<div className="small muted">{x.estudiante_correo}</div></> },
+            { key: 'intento', header: 'Intento', numeric: true, cell: (x) => x.numero_intento },
+            { key: 'estado', header: 'Estado', cell: (x) => <AttemptStatus estado={x.estado} motivo={x.motivo_cierre} /> },
+            { key: 'calificacion', header: 'Calificación', cell: (x) => <>
+              {x.estado === 'EN_PROGRESO' ? <span className="muted">—</span> : !x.evaluacion_registrada ? 'Por evaluar' : x.calificacion ? CALIFICACION[x.calificacion] : '—'}
+              {x.evaluacion_registrada && x.requiere_procesamiento && <div><span className="tag tag-alert">Nota desactualizada</span></div>}
+            </> },
+            { key: 'nota', header: 'Nota', numeric: true, cell: (x) => x.nota_final ? `${formatDecimal(x.nota_final)} / ${formatDecimal(r.escala_max)}` : '—' },
+            { key: 'acciones', header: 'Acciones', srOnlyHeader: true, cell: (x) => x.estado !== 'EN_PROGRESO' && <Link className="btn btn-secondary btn-sm" to={`/docente/sesiones/${sesion.id}/intentos/${x.participacion_id}`}>Ver detalle</Link> },
+          ]}
+        />
       )}
 
       {r.ausencias.length > 0 && (

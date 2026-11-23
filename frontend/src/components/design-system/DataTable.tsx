@@ -30,7 +30,7 @@ export function DataTable<T>({ caption, columns, rows, rowKey, empty }: { captio
             <tr key={rowKey(r)}>
               {columns.map((c) => (
                 <td key={c.key} className={c.numeric ? 'num' : undefined} data-label={c.srOnlyHeader ? undefined : c.header}>
-                  {c.cell(r)}
+                  <div className="table-cell-content">{c.cell(r)}</div>
                 </td>
               ))}
             </tr>

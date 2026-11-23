@@ -2,12 +2,28 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router'
 import { Icon, type IconName } from '../ui/Icon'
+import { ReflectionMotif } from './ReflectionMotif'
 
-export function Page({ children, width = 'wide' }: { children: ReactNode; width?: 'wide' | 'narrow' | 'reading' }) {
+export function Page({ children, width = 'wide', className = '' }: { children: ReactNode; width?: 'wide' | 'narrow' | 'reading'; className?: string }) {
   return (
-    <main className={`page page-${width}`} id="contenido" tabIndex={-1}>
+    <main className={`page page-${width} ${className}`} id="contenido" tabIndex={-1}>
       {children}
     </main>
+  )
+}
+
+/** Cabecera de inicio por rol; el motivo decorativo nunca sustituye información académica. */
+export function DashboardIntro({ eyebrow, title, description, actions }: { eyebrow: string; title: ReactNode; description: ReactNode; actions?: ReactNode }) {
+  return (
+    <header className="dashboard-intro">
+      <div className="dashboard-intro-copy">
+        <p className="eyebrow">{eyebrow}</p>
+        <h1>{title}</h1>
+        <p className="lede">{description}</p>
+        {actions && <div className="btn-row">{actions}</div>}
+      </div>
+      <ReflectionMotif />
+    </header>
   )
 }
 
@@ -80,12 +96,13 @@ export function Notice({ tone = 'info', title, children, icon }: { tone?: 'info'
 }
 
 /** Cifras con etiqueta, en línea (no tarjetas idénticas). */
-export function Figures({ items }: { items: { label: string; value: ReactNode; hint?: string }[] }) {
+export function Figures({ items }: { items: { label: string; value: ReactNode; hint?: string; icon?: IconName }[] }) {
   return (
     <dl className="figures">
       {items.map((it) => (
         <div key={it.label}>
           <dt>
+            {it.icon && <span className="figure-icon"><Icon name={it.icon} size={17} /></span>}
             {it.label}
             {it.hint && <span className="small"> {it.hint}</span>}
           </dt>

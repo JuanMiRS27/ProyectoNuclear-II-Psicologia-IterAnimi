@@ -12,14 +12,14 @@
   color-scheme: light;
 
   /* Lienzo y superficies */
-  --bg: #fbfaf7; /* blanco cálido */
+  --bg: #f6f8fc; /* lienzo azul perla */
   --surface: #ffffff;
   --surface-muted: #ecf1f7; /* azul bruma */
   --surface-strong: #dce5ef;
   --surface-hover: #f3f6fa;
-  --sidebar-bg: #f1f4f8;
+  --sidebar-bg: #f9fafc;
   --sidebar-hover: #e5ebf2;
-  --topbar-bg: rgba(251, 250, 247, 0.94);
+  --topbar-bg: rgba(246, 248, 252, 0.94);
   --overlay: rgba(21, 39, 64, 0.45);
 
   /* Texto */
@@ -35,11 +35,11 @@
   --control-border: #7d8a9b; /* 3:1 frente a superficie y lienzo (WCAG 1.4.11) */
 
   /* Acción, enlaces, selección y foco */
-  --action: #3f6a9a; /* azul medio */
+  --action: #4269a5; /* azul académico */
   --action-hover: #345a85;
   --on-action: #ffffff;
   --link: #335b88;
-  --selection-bg: #eef3f9;
+  --selection-bg: #eaf0fa;
   --selection-border: #3f6a9a;
   --focus-ring: #3f6a9a;
 
@@ -76,21 +76,21 @@
   --brand-accent: #9fb6d3;
 
   --shadow-sm: 0 1px 2px rgba(30, 51, 80, 0.05);
-  --shadow: 0 1px 2px rgba(30, 51, 80, 0.04), 0 6px 18px -8px rgba(30, 51, 80, 0.12);
+  --shadow: 0 2px 4px rgba(30, 51, 80, 0.02), 0 12px 32px -16px rgba(30, 51, 80, 0.14);
   --shadow-lg: 0 20px 50px rgba(21, 39, 64, 0.24);
 }
 
 [data-theme='dark'] {
   color-scheme: dark;
 
-  --bg: #131a24; /* azul carbón, no negro */
+  --bg: #101722; /* azul medianoche */
   --surface: #1a2330; /* pizarra azulada */
   --surface-muted: #212c3b;
   --surface-strong: #2a3748;
   --surface-hover: #222d3c;
   --sidebar-bg: #161e2a;
   --sidebar-hover: #202b3a;
-  --topbar-bg: rgba(19, 26, 36, 0.92);
+  --topbar-bg: rgba(16, 23, 34, 0.94);
   --overlay: rgba(5, 9, 15, 0.62);
 
   --text: #e6e2da; /* blanco cálido, no puro */

@@ -84,6 +84,7 @@ export function LoginView() {
   return (
     <form className="login-form" onSubmit={onSubmit} noValidate aria-describedby={formError ? 'login-error' : undefined}>
       <div>
+        <p className="eyebrow">Tu campus de reflexión</p>
         <h2>Ingresar</h2>
         <p className="muted small" style={{ marginTop: '0.35rem' }}>
           Docentes y administración ingresan con su contraseña. Los estudiantes usan el código de acceso que recibieron con su

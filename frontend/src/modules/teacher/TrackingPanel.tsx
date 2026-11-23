@@ -1,3 +1,4 @@
+import { DataTable } from '../../components/design-system/DataTable'
 import { ErrorState, InlineError, LoadingState } from '../../components/design-system/states'
 import { Button } from '../../components/ui/Button'
 import { useCriteriaReport, useExportSession, useGrades, useQuestionsReport, useSessionSummary } from '../../hooks/use-academic'
@@ -99,32 +100,16 @@ export function TrackingPanel({ sesion }: { sesion: Sesion }) {
               </div>
             </dl>
             <p className="small muted">Sobre una escala de {formatDecimal(g.escala_max)}. Cada intento cuenta por separado.</p>
-            <div className="table-wrap">
-              <table className="table">
-                <caption className="visually-hidden">Distribución de notas</caption>
-                <thead>
-                  <tr>
-                    <th>Rango</th>
-                    <th className="num">Intentos</th>
-                    <th style={{ width: '45%' }}>Proporción</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {g.distribucion.map((t, i) => (
-                    <tr key={i}>
-                      <td className="num" style={{ textAlign: 'left' }}>
-                        {formatDecimal(t.desde)} a {formatDecimal(t.hasta)}
-                        {t.incluye_hasta ? '' : ' (sin incluir)'}
-                      </td>
-                      <td className="num">{t.cantidad}</td>
-                      <td>
-                        <Bar value={t.porcentaje} />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <DataTable
+              caption="Distribución de notas"
+              rows={g.distribucion}
+              rowKey={(t) => `${t.desde}-${t.hasta}`}
+              columns={[
+                { key: 'rango', header: 'Rango', cell: (t) => `${formatDecimal(t.desde)} a ${formatDecimal(t.hasta)}${t.incluye_hasta ? '' : ' (sin incluir)'}` },
+                { key: 'intentos', header: 'Intentos', numeric: true, cell: (t) => t.cantidad },
+                { key: 'proporcion', header: 'Proporción', cell: (t) => <Bar value={t.porcentaje} /> },
+              ]}
+            />
           </>
         )}
       </section>
@@ -138,40 +123,17 @@ export function TrackingPanel({ sesion }: { sesion: Sesion }) {
         ) : criteria.data.intentos_considerados === 0 ? (
           <p className="muted">Se mostrará cuando haya intentos cerrados.</p>
         ) : (
-          <div className="table-wrap">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Criterio</th>
-                  <th className="num">Aciertos</th>
-                  <th style={{ width: '30%' }}>Porcentaje</th>
-                  <th className="num">Puntaje medio</th>
-                </tr>
-              </thead>
-              <tbody>
-                {criteria.data.criterios.map((c) => (
-                  <tr key={c.criterio_id}>
-                    <td>
-                      {c.descripcion}
-                      {c.advertencia && <div className="small muted">{c.advertencia}</div>}
-                    </td>
-                    <td className="num">{c.evaluable ? `${c.aciertos}` : '—'}</td>
-                    <td>
-                      {c.evaluable ? (
-                        <>
-                          <span className="small">{formatPercent(c.porcentaje_aciertos)}</span>
-                          <Bar value={c.porcentaje_aciertos} />
-                        </>
-                      ) : (
-                        <span className="muted small">Sin preguntas asociadas</span>
-                      )}
-                    </td>
-                    <td className="num">{formatDecimal(c.puntaje_promedio)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <DataTable
+            caption="Desempeño por criterio"
+            rows={criteria.data.criterios}
+            rowKey={(c) => c.criterio_id}
+            columns={[
+              { key: 'criterio', header: 'Criterio', cell: (c) => <>{c.descripcion}{c.advertencia && <div className="small muted">{c.advertencia}</div>}</> },
+              { key: 'aciertos', header: 'Aciertos', numeric: true, cell: (c) => c.evaluable ? `${c.aciertos}` : '—' },
+              { key: 'porcentaje', header: 'Porcentaje', cell: (c) => c.evaluable ? <><span className="small">{formatPercent(c.porcentaje_aciertos)}</span><Bar value={c.porcentaje_aciertos} /></> : <span className="muted small">Sin preguntas asociadas</span> },
+              { key: 'puntaje', header: 'Puntaje medio', numeric: true, cell: (c) => formatDecimal(c.puntaje_promedio) },
+            ]}
+          />
         )}
       </section>
 
@@ -184,33 +146,18 @@ export function TrackingPanel({ sesion }: { sesion: Sesion }) {
         ) : questions.data.intentos_considerados === 0 ? (
           <p className="muted">Se mostrará cuando haya intentos cerrados.</p>
         ) : (
-          <div className="table-wrap">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Pregunta</th>
-                  <th className="num">Aciertos</th>
-                  <th className="num">No acertadas</th>
-                  <th className="num">Sin responder</th>
-                  <th className="num">% aciertos</th>
-                </tr>
-              </thead>
-              <tbody>
-                {questions.data.preguntas.map((p) => (
-                  <tr key={p.pregunta_id}>
-                    <td>
-                      <div className="small muted">{p.escenario}</div>
-                      {p.enunciado}
-                    </td>
-                    <td className="num">{p.aciertos ?? '—'}</td>
-                    <td className="num">{p.errores ?? '—'}</td>
-                    <td className="num">{p.sin_responder}</td>
-                    <td className="num">{p.corregible ? formatPercent(p.porcentaje_aciertos) : 'No corregible'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <DataTable
+            caption="Desempeño por decisión"
+            rows={questions.data.preguntas}
+            rowKey={(p) => p.pregunta_id}
+            columns={[
+              { key: 'pregunta', header: 'Pregunta', cell: (p) => <><div className="small muted">{p.escenario}</div>{p.enunciado}</> },
+              { key: 'aciertos', header: 'Aciertos', numeric: true, cell: (p) => p.aciertos ?? '—' },
+              { key: 'errores', header: 'No acertadas', numeric: true, cell: (p) => p.errores ?? '—' },
+              { key: 'sin-responder', header: 'Sin responder', numeric: true, cell: (p) => p.sin_responder },
+              { key: 'porcentaje', header: '% aciertos', numeric: true, cell: (p) => p.corregible ? formatPercent(p.porcentaje_aciertos) : 'No corregible' },
+            ]}
+          />
         )}
       </section>
 

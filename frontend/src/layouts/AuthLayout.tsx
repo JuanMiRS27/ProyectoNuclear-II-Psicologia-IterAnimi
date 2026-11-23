@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router'
-import { SceneCharacter } from '../modules/simulator/SceneCharacter'
+import { ReflectionMotif } from '../components/design-system/ReflectionMotif'
 import { ThemeSwitcher } from '../components/ui/ThemeSwitcher'
 import { BrandMark } from './BrandMark'
 
@@ -13,12 +13,14 @@ export function AuthLayout() {
           <span>Iter Animi</span>
         </span>
         <div className="login-copy">
-          <h1>Casos de psicología social para decidir y reflexionar</h1>
+          <p className="eyebrow">Un espacio para comprender</p>
+          <h1>Decidir con criterio.<br />Aprender con sentido.</h1>
           <p>Cada caso es una situación que se recorre escena a escena. Lo que importa es cómo razonas cada decisión.</p>
         </div>
         <div className="login-scene" aria-hidden="true">
-          <SceneCharacter className="login-figure" decorative />
+          <ReflectionMotif />
         </div>
+        <p className="login-caption">Psicología social <span aria-hidden="true">/</span> Experiencias de aprendizaje</p>
       </section>
       <main className="login-main" id="contenido">
         <div className="login-theme">
