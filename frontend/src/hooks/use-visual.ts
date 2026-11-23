@@ -2,7 +2,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { loadLibrary } from '../lib/visual/library'
 import { publishAvailable } from '../lib/visual/publish'
-import { loadStaticPackage } from '../lib/visual/static-packages'
+import { loadStaticPackage, loadStaticPackageByCaseName } from '../lib/visual/static-packages'
 import { draftKey, visualStorage } from '../lib/visual/storage'
 import type { VisualDraft } from '../lib/visual/types'
 import { useSession } from './use-session'
@@ -14,6 +14,17 @@ export function useStaticVisualPackage(escenarioIds: string[]) {
     queryFn: () => loadStaticPackage(escenarioIds),
     enabled: escenarioIds.length > 0,
     // Se relee al abrir el simulador: un paquete recién publicado por el docente se ve sin recargar toda la app.
+    staleTime: 0,
+    retry: false,
+  })
+}
+
+/** Paquete instalado de un caso por su nombre (inicio del estudiante, donde no hay id de caso ni escenas). */
+export function useStaticVisualPackageByCaseName(caseName: string | undefined) {
+  return useQuery({
+    queryKey: ['visual-package-by-name', caseName ?? ''],
+    queryFn: () => loadStaticPackageByCaseName(caseName ?? ''),
+    enabled: Boolean(caseName),
     staleTime: 0,
     retry: false,
   })
