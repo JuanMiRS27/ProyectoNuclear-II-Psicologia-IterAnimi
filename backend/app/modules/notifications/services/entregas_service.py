@@ -195,7 +195,7 @@ class EntregasService:
         contenido = plantillas.correo(
             notificacion.tipo, datos, self._tz, codigo=codigo, url=self._settings.SIMULATOR_ACCESS_URL, cambios=cambios
         )
-        dominio = (self._settings.SMTP_FROM_EMAIL or "inter-nos.local").partition("@")[2] or "inter-nos.local"
+        dominio = (self._settings.SMTP_FROM_EMAIL or "iter-animi.local").partition("@")[2] or "iter-animi.local"
         return MensajeCorreo(
             destinatario=notificacion.destinatario.correo,
             asunto=contenido.asunto,

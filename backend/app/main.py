@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.bootstrap import configurar_integraciones
 from app.core.config import get_settings
@@ -18,12 +19,26 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title=settings.APP_NAME,
         version="0.1.0",
-        description="Backend del Simulador de Psicología Social (Inter Nos): módulos 1 a 7.",
+        description="Backend del Simulador de Psicología Social (Iter Animi): módulos 1 a 7.",
         docs_url="/docs" if settings.docs_enabled else None,
         redoc_url="/redoc" if settings.docs_enabled else None,
         openapi_url="/openapi.json" if settings.docs_enabled else None,
     )
     register_exception_handlers(app)
+
+    # Frontend en otro origen: CORS solo si se configuran orígenes explícitos (nunca "*").
+    # getattr: algunas pruebas sustituyen la configuración por un objeto mínimo.
+    cors_origins = getattr(settings, "cors_origins", None) or []
+    if cors_origins:
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=cors_origins,
+            allow_credentials=False,
+            allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
+            allow_headers=["Authorization", "Content-Type"],
+            expose_headers=["Content-Disposition", "Retry-After"],
+            max_age=600,
+        )
 
     # Cada módulo aporta su router (módulos 1 a 7).
     app.include_router(auth_module_router, prefix=settings.API_V1_PREFIX)

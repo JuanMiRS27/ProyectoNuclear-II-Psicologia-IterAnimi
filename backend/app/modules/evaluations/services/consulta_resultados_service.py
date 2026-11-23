@@ -16,6 +16,7 @@ from sqlalchemy.orm import Session
 
 from app.core.exceptions import ConflictError, NotFoundError
 from app.modules.auth.models import Usuario
+from app.modules.sessions.schemas import EspacioEstudianteRead
 from app.modules.evaluations import schemas as s
 from app.modules.evaluations.dominio import EvaluacionNoPosibleError, ResultadoEvaluacion, SituacionAcademica, redondear
 from app.modules.evaluations.repositories import EvaluacionRepository
@@ -169,6 +170,9 @@ class ConsultaResultadosService:
         return s.ResultadosEstudianteRead(
             sesion_id=acceso.sesion.id,
             caso_nombre=acceso.sesion.caso.nombre,
+            espacio_academico=EspacioEstudianteRead(
+                nombre=acceso.sesion.espacio_academico.nombre, periodo=acceso.sesion.espacio_academico.periodo
+            ),
             convocatoria_id=acceso.convocatoria.id,
             resultados=filas,
         )

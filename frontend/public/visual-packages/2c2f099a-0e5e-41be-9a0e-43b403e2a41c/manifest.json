@@ -1,0 +1,105 @@
+{
+  "format": "iter-animi-paquete-visual",
+  "version": 2,
+  "case": {
+    "id": "2c2f099a-0e5e-41be-9a0e-43b403e2a41c",
+    "nombre": "Conformidad grupal"
+  },
+  "character": {
+    "name": "Inés",
+    "defaultExpression": "neutral",
+    "library": "system-young-adult-f-01"
+  },
+  "expressions": [
+    {
+      "id": "neutral",
+      "label": "Neutral",
+      "sprite": null
+    },
+    {
+      "id": "feliz",
+      "label": "Feliz",
+      "sprite": null
+    },
+    {
+      "id": "triste",
+      "label": "Triste",
+      "sprite": null
+    },
+    {
+      "id": "enojado",
+      "label": "Enojado",
+      "sprite": null
+    },
+    {
+      "id": "preocupado",
+      "label": "Preocupado",
+      "sprite": null
+    },
+    {
+      "id": "sorprendido",
+      "label": "Sorprendido",
+      "sprite": null
+    },
+    {
+      "id": "incomodo",
+      "label": "Incómodo",
+      "sprite": null
+    },
+    {
+      "id": "reflexivo",
+      "label": "Reflexivo",
+      "sprite": null
+    }
+  ],
+  "scenes": [
+    {
+      "escenarioId": "9db4528b-e2b7-4285-bd8c-14bb98db017f",
+      "signature": "f652e7c6",
+      "initialExpression": "neutral"
+    }
+  ],
+  "reactions": [
+    {
+      "opcionId": "aa03cb94-7a2b-4a12-9cf9-64069ddb6eb1",
+      "preguntaId": "75923e9a-72dd-48f0-979e-42bf9108b8ad",
+      "escenarioId": "9db4528b-e2b7-4285-bd8c-14bb98db017f",
+      "signature": "d3f3c430",
+      "expression": "reflexivo",
+      "motion": "fade"
+    },
+    {
+      "opcionId": "c82bd39e-e488-4804-966a-5759929e6413",
+      "preguntaId": "75923e9a-72dd-48f0-979e-42bf9108b8ad",
+      "escenarioId": "9db4528b-e2b7-4285-bd8c-14bb98db017f",
+      "signature": "ea161efe",
+      "expression": "preocupado",
+      "motion": "rise"
+    },
+    {
+      "opcionId": "8e61f15e-9c81-4bff-b276-67c50fc47091",
+      "preguntaId": "c4a018bb-8c4a-45cb-966b-c19e51706269",
+      "escenarioId": "9db4528b-e2b7-4285-bd8c-14bb98db017f",
+      "signature": "4ba6498a",
+      "expression": "feliz",
+      "motion": "fade"
+    },
+    {
+      "opcionId": "c947ba14-0b2d-4405-b935-6c7610e34934",
+      "preguntaId": "c4a018bb-8c4a-45cb-966b-c19e51706269",
+      "escenarioId": "9db4528b-e2b7-4285-bd8c-14bb98db017f",
+      "signature": "3b42e876",
+      "expression": "enojado",
+      "motion": "fade"
+    },
+    {
+      "opcionId": "60beef9e-ca59-4486-90d9-9fa97e4633b9",
+      "preguntaId": "c4a018bb-8c4a-45cb-966b-c19e51706269",
+      "escenarioId": "9db4528b-e2b7-4285-bd8c-14bb98db017f",
+      "signature": "452b87c0",
+      "expression": "triste",
+      "motion": "fade"
+    }
+  ],
+  "createdAt": "2026-11-20T22:35:30.383Z"
+}

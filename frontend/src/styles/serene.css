@@ -1,0 +1,817 @@
+/*
+ * Iter Animi — capa v3 «campus digital sereno» (se carga después de app.css).
+ * Superficies blancas cálidas, azul niebla para lo secundario, tinta solo para texto fuerte,
+ * azul medio para la acción principal. Bordes finos, sombras suaves, radios moderados.
+ * Incluye el escenario de novela visual y el editor «Personaje y reacciones».
+ */
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 500;
+  color: var(--ink);
+}
+
+/* Botones: el principal es azul medio, no un bloque de tinta. */
+.btn {
+  box-shadow: var(--shadow-sm);
+}
+.btn:hover {
+  --btn-bg: var(--surface-hover);
+  --btn-border: var(--border-hover);
+}
+.btn-primary {
+  --btn-bg: var(--blue);
+  --btn-fg: var(--on-action);
+  --btn-border: var(--blue);
+}
+.btn-primary:hover {
+  --btn-bg: var(--blue-hover);
+  --btn-border: var(--blue-hover);
+}
+.btn-quiet {
+  box-shadow: none;
+  --btn-fg: var(--blue-ink);
+}
+.btn-quiet:hover {
+  --btn-bg: var(--mist);
+  --btn-border: transparent;
+}
+.btn-danger {
+  --btn-border: var(--danger-border);
+}
+.btn-danger:hover {
+  --btn-bg: var(--danger-bg);
+  --btn-border: var(--danger-border);
+}
+.btn-danger-solid:hover {
+  --btn-bg: var(--danger-hover);
+  --btn-border: var(--danger-hover);
+}
+
+/* Barra lateral clara: la navegación acompaña, no compite con el contenido. */
+.sidebar,
+.drawer {
+  background: var(--sidebar-bg);
+  color: var(--ink-text);
+  border-right: 1px solid var(--line);
+}
+.brand,
+.brand:hover {
+  color: var(--ink);
+}
+.brand small {
+  color: var(--slate);
+}
+.brand:focus-visible,
+.side-nav a:focus-visible,
+.side-logout:focus-visible {
+  box-shadow: var(--focus);
+}
+.side-group-title {
+  color: var(--text-subtle);
+}
+.side-nav a {
+  color: var(--text);
+  font-weight: 400;
+}
+.side-nav a svg {
+  color: var(--text-subtle);
+}
+.side-nav a:hover {
+  background: var(--sidebar-hover);
+  color: var(--ink);
+}
+.side-nav a.active {
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm), inset 3px 0 0 var(--blue);
+}
+.side-nav a.active svg {
+  color: var(--blue);
+}
+.side-user {
+  border-top-color: var(--line);
+}
+.avatar {
+  background: var(--mist-strong);
+  color: var(--ink);
+  border-color: transparent;
+}
+.side-user-name {
+  color: var(--ink-text);
+}
+.side-logout {
+  border-color: var(--line-strong);
+  color: var(--ink);
+  background: var(--surface);
+}
+.side-logout:hover {
+  background: var(--mist);
+}
+.drawer-close {
+  color: var(--ink);
+}
+@media (max-width: 900px) {
+  .topbar {
+    background: var(--topbar-bg);
+    backdrop-filter: blur(6px);
+    color: var(--ink);
+    border-bottom: 1px solid var(--line);
+  }
+  .topbar-menu {
+    color: var(--ink);
+  }
+  .topbar-menu:focus-visible {
+    box-shadow: var(--focus);
+  }
+}
+
+/* Superficies */
+.panel,
+.side-card,
+.table-wrap,
+.hero-session {
+  border-color: var(--line);
+  box-shadow: var(--shadow);
+}
+.panel-mist {
+  box-shadow: none;
+}
+.table thead th {
+  background: transparent;
+  color: var(--slate);
+  font-size: var(--fs-xs);
+  border-bottom-color: var(--line-strong);
+}
+.table tbody tr:hover td {
+  background: var(--surface-hover);
+}
+.tabs a {
+  border-bottom-width: 2px;
+}
+.tabs a[aria-current='page'] {
+  color: var(--ink);
+  border-bottom-color: var(--blue);
+}
+.notice {
+  border-color: transparent;
+}
+
+/* Estados vacíos: niebla, sin borde discontinuo. */
+.state {
+  border: 0;
+  background: var(--mist);
+}
+.state-alert {
+  background: var(--danger-bg);
+}
+.state-icon {
+  background: var(--surface);
+  color: var(--blue);
+}
+.state-lock .state-icon {
+  background: var(--surface);
+  color: var(--ink);
+}
+.empty-line {
+  color: var(--slate);
+  padding: 1rem 1.1rem;
+  border-radius: var(--radius);
+  background: var(--mist);
+  max-width: none;
+}
+
+/* Cifras: discretas, al servicio de la lista de tareas. */
+.figures {
+  border-top: 0;
+  padding: 0;
+  gap: 0.75rem;
+}
+.figures div {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.65rem 1rem;
+  min-width: 7.5rem;
+}
+.figures dd {
+  font-weight: 500;
+  font-size: var(--fs-lg);
+  color: var(--ink);
+}
+
+/* Opciones del simulador: selección en azul medio, no en tinta. */
+.choice {
+  border-width: 1px;
+  box-shadow: var(--shadow-sm);
+}
+.choice:hover {
+  border-color: var(--border-hover);
+  background: var(--surface-hover);
+}
+.choice:has(input:checked) {
+  border-color: var(--blue);
+  border-width: 1px;
+  box-shadow: 0 0 0 1px var(--blue), var(--shadow-sm);
+  background: var(--selection-bg);
+}
+.choice:has(input:checked) .choice-letter {
+  background: var(--blue);
+  border-color: var(--blue);
+}
+.choice:has(input:checked) .choice-mark {
+  color: var(--blue);
+}
+.choice:has(input:focus-visible) {
+  box-shadow: var(--focus);
+}
+.choice-letter {
+  border-width: 1px;
+  font-weight: 600;
+}
+
+/* Barra superior del simulador: clara, con el avance como línea fina. */
+.sim-top {
+  background: var(--surface);
+  color: var(--ink-text);
+  border-bottom: 1px solid var(--line);
+}
+.sim-back {
+  color: var(--blue-ink);
+}
+.sim-back:hover {
+  color: var(--ink);
+}
+.sim-back:focus-visible {
+  box-shadow: var(--focus);
+}
+.sim-title {
+  font-weight: 500;
+  color: var(--ink);
+}
+.sim-meta {
+  color: var(--slate);
+}
+.sim-meta strong {
+  color: var(--ink);
+}
+.sim-time-low strong {
+  color: var(--danger);
+}
+.sim-progress {
+  background: var(--mist);
+}
+.sim-progress > span {
+  background: var(--blue);
+}
+.sim-prompt {
+  font-weight: 500;
+}
+
+/* =============================================================== *
+ * Ritmo por rol
+ * =============================================================== */
+
+/* Docente: lo que hay que hacer va primero en móvil; las cifras resumen después. */
+.dash-teacher {
+  display: grid;
+  gap: 1.85rem;
+}
+.dash-teacher > * {
+  min-width: 0;
+}
+@media (max-width: 700px) {
+  .dash-teacher-todo {
+    order: -1;
+  }
+  .figures div {
+    min-width: 0;
+    flex: 1 1 40%;
+  }
+}
+/* Estudiante: la sesión protagonista en primer plano; la agenda acompaña en una columna tranquila. */
+.dash-side .side-card {
+  box-shadow: none;
+}
+
+/* =============================================================== *
+ * Novela visual: escenario, hueco fijo del personaje y reacciones
+ * =============================================================== */
+
+.sim-stage {
+  background: linear-gradient(180deg, var(--scene-top) 0%, var(--scene-mid) 62%, var(--scene-bottom) 100%);
+}
+.sim-stage-backdrop {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 60% 38% at 50% 82%, var(--scene-glow), transparent 70%);
+}
+/* Hueco del personaje con tamaño fijo: cambiar de expresión no mueve el texto ni el panel. */
+.sim-character-slot {
+  position: relative;
+  z-index: 1;
+  width: min(76%, 20rem);
+  aspect-ratio: 2 / 3;
+  display: grid;
+  place-items: end center;
+  margin-bottom: 3%;
+}
+.sim-sprite,
+.sim-sprite-fallback {
+  grid-area: 1 / 1;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.sim-sprite {
+  object-fit: contain;
+  object-position: bottom center;
+  user-select: none;
+}
+.sim-sprite-fallback .sim-character {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+.sim-nameplate {
+  position: absolute;
+  z-index: 2;
+  left: 1.25rem;
+  bottom: 1rem;
+  margin: 0;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-sm);
+  background: var(--nameplate-bg);
+  color: var(--ink);
+  font-family: var(--font-read);
+  font-size: var(--fs-sm);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Movimientos de reacción: solo opacidad y un desplazamiento mínimo. */
+.motion-fade {
+  animation: sprite-fade 320ms ease-out both;
+}
+.motion-rise {
+  animation: sprite-rise 420ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.motion-breathe {
+  animation:
+    sprite-fade 320ms ease-out both,
+    sprite-breathe 4.2s ease-in-out 320ms infinite;
+  transform-origin: 50% 100%;
+}
+.motion-none {
+  animation: none;
+}
+@keyframes sprite-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes sprite-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes sprite-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.012);
+  }
+}
+/* Movimiento reducido: la expresión cambia igual, pero sin animación. */
+@media (prefers-reduced-motion: reduce) {
+  .motion-fade,
+  .motion-rise,
+  .motion-breathe {
+    animation: none !important;
+  }
+}
+
+@media (max-width: 900px) {
+  /* En móvil el escenario se reduce antes que el texto. */
+  .sim-character-slot {
+    width: auto;
+    height: 96%;
+    margin-bottom: 0;
+  }
+  .sim-nameplate {
+    left: auto;
+    right: 1.25rem;
+    bottom: auto;
+    top: 0.85rem;
+    font-size: var(--fs-xs);
+  }
+}
+
+/* =============================================================== *
+ * Editor «Personaje y reacciones»
+ * =============================================================== */
+
+.visual-editor {
+  display: grid;
+  gap: 1.1rem;
+}
+.visual-editor > * {
+  min-width: 0;
+}
+.visual-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: 0.75rem;
+  z-index: 5;
+}
+.visual-status {
+  font-size: var(--fs-sm);
+  color: var(--slate);
+}
+.status-dot {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+.status-dot::before {
+  content: '';
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--line-strong);
+  flex: none;
+}
+.status-dot.pending::before {
+  background: var(--warn);
+}
+.status-dot.saved::before {
+  background: var(--ok);
+}
+.visual-tabs {
+  display: none;
+}
+.visual-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+.visual-layout > *,
+.visual-config > * {
+  min-width: 0;
+}
+.visual-config {
+  display: grid;
+  gap: 1.25rem;
+}
+.visual-preview {
+  position: sticky;
+  top: 5.5rem;
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+.visual-zone {
+  display: grid;
+  gap: 0.9rem;
+  padding: clamp(1rem, 2.5vw, 1.35rem);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+.visual-zone h3,
+.visual-preview h3 {
+  font-size: var(--fs-lg);
+}
+.expression-list {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+  min-width: 0;
+}
+.expression-list legend {
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  padding: 0;
+  margin-bottom: 0.3rem;
+}
+.expression-row {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper);
+}
+.expression-row.is-default {
+  border-color: var(--selection-border);
+  background: var(--selection-bg);
+}
+.expression-thumb {
+  width: 3.5rem;
+  height: 4.25rem;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(180deg, var(--scene-top), var(--scene-bottom));
+  display: grid;
+  place-items: end center;
+  overflow: hidden;
+}
+.expression-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: bottom;
+}
+.thumb-figure {
+  width: 88%;
+  height: auto;
+}
+.expression-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.85rem;
+  align-items: center;
+  min-width: 0;
+}
+.expression-fields input:not([type='radio']),
+.expression-add input {
+  flex: 1 1 9rem;
+  min-width: 0;
+  min-height: 2.4rem;
+  padding: 0.4rem 0.65rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  background: var(--surface);
+  color: var(--ink-text);
+}
+.expression-fields .check {
+  font-size: var(--fs-sm);
+  color: var(--slate);
+}
+.expression-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  justify-content: flex-end;
+}
+.file-btn {
+  position: relative;
+  cursor: pointer;
+}
+.file-btn:has(input:focus-visible) {
+  box-shadow: var(--focus);
+}
+.expression-add {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.reaction-scene {
+  display: grid;
+  gap: 0.75rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--line);
+}
+.reaction-scene-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  align-items: center;
+  justify-content: space-between;
+}
+.reaction-scene-head h4 {
+  font-size: var(--fs-md);
+}
+.inline-select {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--fs-sm);
+  color: var(--slate);
+  min-width: 0;
+}
+.inline-select select,
+.preview-toolbar select {
+  min-height: 2.35rem;
+  max-width: 100%;
+  padding: 0.3rem 0.55rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--ink-text);
+  font: inherit;
+  font-size: var(--fs-sm);
+}
+.inline-select select:disabled {
+  opacity: 0.55;
+}
+.reaction-question {
+  display: grid;
+  gap: 0.5rem;
+}
+.reaction-question .question-text {
+  font-family: var(--font-read);
+  color: var(--ink);
+}
+.reaction-options {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.45rem;
+}
+.reaction-options li {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr) auto auto auto;
+  gap: 0.6rem;
+  align-items: center;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper);
+}
+.reaction-options .option-letter {
+  width: 2rem;
+  height: 2rem;
+}
+.reaction-text {
+  font-size: var(--fs-sm);
+  line-height: 1.4;
+  display: grid;
+  gap: 0.2rem;
+}
+.reaction-options li.needs-review {
+  border-color: var(--warn-border);
+  background: var(--warn-bg);
+}
+.review-flag {
+  color: var(--warn);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+}
+.link-btn {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: var(--blue-ink);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  cursor: pointer;
+}
+.segmented button {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  color: var(--slate);
+  padding: 0.5rem 0.75rem;
+  border-radius: calc(var(--radius) - 3px);
+  cursor: pointer;
+}
+.segmented button.is-active {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Vista previa jugable: los mismos componentes del simulador, a escala de panel. */
+.preview {
+  display: grid;
+  gap: 0.75rem;
+}
+.preview-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+}
+.preview-frame {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--surface);
+}
+.preview-frame .sim-stage {
+  min-height: 15rem;
+  height: 15rem;
+}
+.preview-frame .sim-character-slot {
+  width: auto;
+  height: 92%;
+  margin-bottom: 0;
+}
+.preview-read {
+  padding: 1rem;
+  display: grid;
+  gap: 1rem;
+}
+.preview-read .sim-context {
+  font-size: var(--fs-md);
+  line-height: 1.65;
+}
+.preview-read .sim-context-scroll {
+  max-height: 10rem;
+}
+.preview-read .sim-prompt {
+  font-size: var(--fs-md);
+}
+/* En la vista previa las acciones nunca quedan fijas en la parte inferior de la ventana. */
+.preview-read .sim-actions {
+  position: static;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+@media (max-width: 1100px) {
+  .visual-layout {
+    grid-template-columns: 1fr;
+  }
+  .visual-preview {
+    position: static;
+  }
+}
+@media (max-width: 900px) {
+  .visual-bar {
+    position: static;
+  }
+  .visual-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    background: var(--mist);
+    border-color: var(--mist-strong);
+    position: sticky;
+    top: 4rem;
+    z-index: 6;
+  }
+  /* En móvil cada zona es una pestaña: personaje, reacciones o vista previa. */
+  .visual-layout[data-zone='personaje'] .zone-reacciones,
+  .visual-layout[data-zone='personaje'] .zone-vista,
+  .visual-layout[data-zone='reacciones'] .zone-personaje,
+  .visual-layout[data-zone='reacciones'] .zone-vista,
+  .visual-layout[data-zone='vista'] .visual-config {
+    display: none;
+  }
+}
+@media (max-width: 640px) {
+  .expression-row {
+    grid-template-columns: 3rem minmax(0, 1fr);
+  }
+  .expression-thumb {
+    width: 3rem;
+    height: 3.75rem;
+  }
+  .expression-actions {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+  .reaction-options li {
+    grid-template-columns: 2rem minmax(0, 1fr);
+  }
+  .reaction-options li > .inline-select,
+  .reaction-options li > .btn {
+    grid-column: 2;
+  }
+  .reaction-options li > .inline-select {
+    display: flex;
+  }
+  .reaction-options li > .inline-select select {
+    width: 100%;
+  }
+}

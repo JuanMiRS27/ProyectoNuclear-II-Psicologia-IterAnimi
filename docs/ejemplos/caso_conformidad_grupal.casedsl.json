@@ -1,0 +1,108 @@
+{
+  "dslVersion": "1.0",
+  "caso": {
+    "nombre": "Conformidad grupal",
+    "desarrolloSituacional": "Un grupo de estudiantes debe decidir si reporta una irregularidad observada durante una práctica.",
+    "historia": "El caso se inspira en los experimentos clásicos de conformidad y presión social.",
+    "tiempoEstimadoMin": 60
+  },
+  "escenarios": [
+    {
+      "titulo": "La reunión del grupo",
+      "contexto": "La mayoría del grupo opina que no vale la pena reportar lo ocurrido.",
+      "preguntas": [
+        {
+          "enunciado": "¿Qué fenómeno describe mejor la presión que siente el estudiante?",
+          "criterio": "conceptos",
+          "opciones": [
+            {
+              "texto": "Conformidad normativa",
+              "esCorrecta": true,
+              "justificacion": "Se ajusta para ser aceptado por el grupo."
+            },
+            {
+              "texto": "Disonancia cognitiva",
+              "esCorrecta": false,
+              "justificacion": "Describe un conflicto interno entre creencias."
+            },
+            {
+              "texto": "Efecto halo",
+              "esCorrecta": false,
+              "justificacion": "Es un sesgo de percepción, no de presión social."
+            }
+          ]
+        },
+        {
+          "enunciado": "¿Qué acción favorece una decisión ética del grupo?",
+          "criterio": "aplicacion",
+          "opciones": [
+            {
+              "texto": "Proponer una discusión abierta con evidencias",
+              "esCorrecta": true,
+              "justificacion": "Reduce la ignorancia pluralista."
+            },
+            {
+              "texto": "Votar de inmediato sin discutir",
+              "esCorrecta": false,
+              "justificacion": "Refuerza la presión de la mayoría."
+            },
+            {
+              "texto": "Aceptar la opinión del líder",
+              "esCorrecta": false,
+              "justificacion": "Favorece la obediencia acrítica."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "rubrica": {
+    "escalaMax": 5.0,
+    "criterios": [
+      {
+        "clave": "conceptos",
+        "descripcion": "Identificación de conceptos de psicología social",
+        "peso": 60,
+        "niveles": [
+          {
+            "nombre": "Alto",
+            "valor": 5.0,
+            "minAciertosPct": 80
+          },
+          {
+            "nombre": "Medio",
+            "valor": 3.0,
+            "minAciertosPct": 50
+          },
+          {
+            "nombre": "Bajo",
+            "valor": 1.0,
+            "minAciertosPct": 0
+          }
+        ]
+      },
+      {
+        "clave": "aplicacion",
+        "descripcion": "Aplicación de los conceptos a la situación",
+        "peso": 40,
+        "niveles": [
+          {
+            "nombre": "Alto",
+            "valor": 5.0,
+            "minAciertosPct": 80
+          },
+          {
+            "nombre": "Medio",
+            "valor": 3.0,
+            "minAciertosPct": 50
+          },
+          {
+            "nombre": "Bajo",
+            "valor": 1.0,
+            "minAciertosPct": 0
+          }
+        ]
+      }
+    ]
+  }
+}

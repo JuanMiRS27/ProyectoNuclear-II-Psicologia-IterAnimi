@@ -1,0 +1,306 @@
+{
+  "version": 1,
+  "note": "Sprites provisionales generados por scripts/generate-provisional-sprites.mjs. Sustituir por el arte final (WebP transparente, 480×720) manteniendo ids de personaje y de expresión.",
+  "characters": [
+    {
+      "id": "system-young-adult-m-01",
+      "name": "Samuel",
+      "profile": "Adulto joven masculino",
+      "description": "Veintitantos años, pelo oscuro corto y sudadera.",
+      "status": "provisional",
+      "defaultExpression": "neutral",
+      "expressions": [
+        {
+          "id": "neutral",
+          "label": "Neutral",
+          "file": "system-young-adult-m-01/neutral.svg"
+        },
+        {
+          "id": "feliz",
+          "label": "Feliz",
+          "file": "system-young-adult-m-01/feliz.svg"
+        },
+        {
+          "id": "triste",
+          "label": "Triste",
+          "file": "system-young-adult-m-01/triste.svg"
+        },
+        {
+          "id": "enojado",
+          "label": "Enojado",
+          "file": "system-young-adult-m-01/enojado.svg"
+        },
+        {
+          "id": "preocupado",
+          "label": "Preocupado",
+          "file": "system-young-adult-m-01/preocupado.svg"
+        },
+        {
+          "id": "sorprendido",
+          "label": "Sorprendido",
+          "file": "system-young-adult-m-01/sorprendido.svg"
+        },
+        {
+          "id": "incomodo",
+          "label": "Incómodo",
+          "file": "system-young-adult-m-01/incomodo.svg"
+        },
+        {
+          "id": "reflexivo",
+          "label": "Reflexivo",
+          "file": "system-young-adult-m-01/reflexivo.svg"
+        }
+      ]
+    },
+    {
+      "id": "system-young-adult-f-01",
+      "name": "Inés",
+      "profile": "Adulta joven femenina",
+      "description": "Veintitantos años, melena larga castaña y jersey de punto.",
+      "status": "provisional",
+      "defaultExpression": "neutral",
+      "expressions": [
+        {
+          "id": "neutral",
+          "label": "Neutral",
+          "file": "system-young-adult-f-01/neutral.svg"
+        },
+        {
+          "id": "feliz",
+          "label": "Feliz",
+          "file": "system-young-adult-f-01/feliz.svg"
+        },
+        {
+          "id": "triste",
+          "label": "Triste",
+          "file": "system-young-adult-f-01/triste.svg"
+        },
+        {
+          "id": "enojado",
+          "label": "Enojado",
+          "file": "system-young-adult-f-01/enojado.svg"
+        },
+        {
+          "id": "preocupado",
+          "label": "Preocupado",
+          "file": "system-young-adult-f-01/preocupado.svg"
+        },
+        {
+          "id": "sorprendido",
+          "label": "Sorprendido",
+          "file": "system-young-adult-f-01/sorprendido.svg"
+        },
+        {
+          "id": "incomodo",
+          "label": "Incómodo",
+          "file": "system-young-adult-f-01/incomodo.svg"
+        },
+        {
+          "id": "reflexivo",
+          "label": "Reflexivo",
+          "file": "system-young-adult-f-01/reflexivo.svg"
+        }
+      ]
+    },
+    {
+      "id": "system-adult-m-01",
+      "name": "Julián",
+      "profile": "Hombre adulto",
+      "description": "Cuarenta y tantos, pelo muy corto, barba recortada y chaqueta.",
+      "status": "provisional",
+      "defaultExpression": "neutral",
+      "expressions": [
+        {
+          "id": "neutral",
+          "label": "Neutral",
+          "file": "system-adult-m-01/neutral.svg"
+        },
+        {
+          "id": "feliz",
+          "label": "Feliz",
+          "file": "system-adult-m-01/feliz.svg"
+        },
+        {
+          "id": "triste",
+          "label": "Triste",
+          "file": "system-adult-m-01/triste.svg"
+        },
+        {
+          "id": "enojado",
+          "label": "Enojado",
+          "file": "system-adult-m-01/enojado.svg"
+        },
+        {
+          "id": "preocupado",
+          "label": "Preocupado",
+          "file": "system-adult-m-01/preocupado.svg"
+        },
+        {
+          "id": "sorprendido",
+          "label": "Sorprendido",
+          "file": "system-adult-m-01/sorprendido.svg"
+        },
+        {
+          "id": "incomodo",
+          "label": "Incómodo",
+          "file": "system-adult-m-01/incomodo.svg"
+        },
+        {
+          "id": "reflexivo",
+          "label": "Reflexivo",
+          "file": "system-adult-m-01/reflexivo.svg"
+        }
+      ]
+    },
+    {
+      "id": "system-adult-f-01",
+      "name": "Carmen",
+      "profile": "Mujer adulta",
+      "description": "Cuarenta y tantos, media melena con flequillo, gafas y rebeca.",
+      "status": "provisional",
+      "defaultExpression": "neutral",
+      "expressions": [
+        {
+          "id": "neutral",
+          "label": "Neutral",
+          "file": "system-adult-f-01/neutral.svg"
+        },
+        {
+          "id": "feliz",
+          "label": "Feliz",
+          "file": "system-adult-f-01/feliz.svg"
+        },
+        {
+          "id": "triste",
+          "label": "Triste",
+          "file": "system-adult-f-01/triste.svg"
+        },
+        {
+          "id": "enojado",
+          "label": "Enojado",
+          "file": "system-adult-f-01/enojado.svg"
+        },
+        {
+          "id": "preocupado",
+          "label": "Preocupado",
+          "file": "system-adult-f-01/preocupado.svg"
+        },
+        {
+          "id": "sorprendido",
+          "label": "Sorprendido",
+          "file": "system-adult-f-01/sorprendido.svg"
+        },
+        {
+          "id": "incomodo",
+          "label": "Incómodo",
+          "file": "system-adult-f-01/incomodo.svg"
+        },
+        {
+          "id": "reflexivo",
+          "label": "Reflexivo",
+          "file": "system-adult-f-01/reflexivo.svg"
+        }
+      ]
+    },
+    {
+      "id": "system-older-m-01",
+      "name": "Ernesto",
+      "profile": "Persona mayor masculina",
+      "description": "Setenta y tantos, pelo canoso con entradas, gafas y jersey.",
+      "status": "provisional",
+      "defaultExpression": "neutral",
+      "expressions": [
+        {
+          "id": "neutral",
+          "label": "Neutral",
+          "file": "system-older-m-01/neutral.svg"
+        },
+        {
+          "id": "feliz",
+          "label": "Feliz",
+          "file": "system-older-m-01/feliz.svg"
+        },
+        {
+          "id": "triste",
+          "label": "Triste",
+          "file": "system-older-m-01/triste.svg"
+        },
+        {
+          "id": "enojado",
+          "label": "Enojado",
+          "file": "system-older-m-01/enojado.svg"
+        },
+        {
+          "id": "preocupado",
+          "label": "Preocupado",
+          "file": "system-older-m-01/preocupado.svg"
+        },
+        {
+          "id": "sorprendido",
+          "label": "Sorprendido",
+          "file": "system-older-m-01/sorprendido.svg"
+        },
+        {
+          "id": "incomodo",
+          "label": "Incómodo",
+          "file": "system-older-m-01/incomodo.svg"
+        },
+        {
+          "id": "reflexivo",
+          "label": "Reflexivo",
+          "file": "system-older-m-01/reflexivo.svg"
+        }
+      ]
+    },
+    {
+      "id": "system-older-f-01",
+      "name": "Rosa",
+      "profile": "Persona mayor femenina",
+      "description": "Setenta y tantos, pelo canoso recogido y blusa con pañuelo.",
+      "status": "provisional",
+      "defaultExpression": "neutral",
+      "expressions": [
+        {
+          "id": "neutral",
+          "label": "Neutral",
+          "file": "system-older-f-01/neutral.svg"
+        },
+        {
+          "id": "feliz",
+          "label": "Feliz",
+          "file": "system-older-f-01/feliz.svg"
+        },
+        {
+          "id": "triste",
+          "label": "Triste",
+          "file": "system-older-f-01/triste.svg"
+        },
+        {
+          "id": "enojado",
+          "label": "Enojado",
+          "file": "system-older-f-01/enojado.svg"
+        },
+        {
+          "id": "preocupado",
+          "label": "Preocupado",
+          "file": "system-older-f-01/preocupado.svg"
+        },
+        {
+          "id": "sorprendido",
+          "label": "Sorprendido",
+          "file": "system-older-f-01/sorprendido.svg"
+        },
+        {
+          "id": "incomodo",
+          "label": "Incómodo",
+          "file": "system-older-f-01/incomodo.svg"
+        },
+        {
+          "id": "reflexivo",
+          "label": "Reflexivo",
+          "file": "system-older-f-01/reflexivo.svg"
+        }
+      ]
+    }
+  ]
+}

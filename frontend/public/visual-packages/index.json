@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "packages": [
+    {
+      "caseId": "2c2f099a-0e5e-41be-9a0e-43b403e2a41c",
+      "nombre": "Conformidad grupal",
+      "path": "2c2f099a-0e5e-41be-9a0e-43b403e2a41c/manifest.json",
+      "escenarioIds": [
+        "9db4528b-e2b7-4285-bd8c-14bb98db017f"
+      ]
+    }
+  ]
+}
