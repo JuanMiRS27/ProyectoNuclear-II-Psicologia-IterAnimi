@@ -12,7 +12,7 @@ Consume la API real del backend (`backend/`, FastAPI, prefijo `/api/v1`); no hay
 ## Requisitos
 
 - Node.js 20 o superior (probado con Node 26 y npm 11).
-- El backend en marcha (ver `README.md` de la raíz: PostgreSQL, `.env`, `alembic upgrade head`, `uvicorn`).
+- El backend en marcha (ver el [`README.md` de la raíz](../README.md): PostgreSQL, `.env`, `alembic upgrade head`, `uvicorn`).
 
 ## Comandos
 
