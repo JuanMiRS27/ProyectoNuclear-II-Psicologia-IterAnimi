@@ -1,0 +1,249 @@
+/*
+ * Biblioteca de personajes del sistema (Personaje y reacciones). Colores solo desde tokens.css:
+ * funciona igual en claro y oscuro. Las ilustraciones nunca se tiñen ni se invierten.
+ */
+
+.source-tabs {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  background: var(--surface-muted);
+  border-color: var(--border);
+}
+.source-tabs button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+.source-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--action);
+  flex: none;
+}
+
+.library {
+  display: grid;
+  gap: 1rem;
+}
+.library-note {
+  margin: 0;
+  max-width: none;
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--radius-sm);
+  background: var(--warn-bg);
+  color: var(--warn);
+  font-size: var(--fs-sm);
+  line-height: 1.45;
+}
+
+/* Tarjetas de personaje: retrato sobre la escena, nombre y perfil. */
+.library-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+  gap: 0.6rem;
+}
+.library-card {
+  position: relative;
+  width: 100%;
+  display: grid;
+  gap: 0.45rem;
+  padding: 0.45rem 0.45rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 140ms ease,
+    box-shadow 140ms ease,
+    transform 140ms ease;
+}
+.library-card:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow);
+}
+.library-card:focus-visible {
+  box-shadow: var(--focus);
+  outline: none;
+}
+/* Enfocada: anillo de selección y fondo de selección (no solo color: también aria-pressed y la vista previa). */
+.library-card.is-focused {
+  border-color: var(--selection-border);
+  box-shadow: 0 0 0 1px var(--selection-border);
+  background: var(--selection-bg);
+}
+.library-card-art,
+.library-expr-art {
+  display: block;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: calc(var(--radius) - 4px);
+  background: linear-gradient(180deg, var(--scene-top), var(--scene-bottom));
+}
+.library-card-art img,
+.library-card-art svg,
+.library-expr-art img,
+.library-expr-art svg {
+  width: 100%;
+  height: 150%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+.library-card-text {
+  display: grid;
+  gap: 0.05rem;
+  line-height: 1.25;
+  padding-inline: 0.15rem;
+}
+.library-card-text strong {
+  color: var(--text-strong);
+  font-size: var(--fs-sm);
+}
+.library-card-text span {
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+}
+.library-badge {
+  position: absolute;
+  top: 0.7rem;
+  left: 0.7rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-strong);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Vista previa amplia: escena con el personaje y todas sus expresiones. */
+.library-detail {
+  display: grid;
+  grid-template-columns: minmax(10rem, 0.9fr) minmax(0, 1.4fr);
+  gap: 1rem;
+  padding: 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface-muted);
+}
+.library-stage {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  max-height: 22rem;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--scene-top) 0%, var(--scene-mid) 64%, var(--scene-bottom) 100%);
+  display: grid;
+  place-items: end center;
+}
+.library-stage-img,
+.library-stage .lib-fallback {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: bottom center;
+  animation: sprite-fade 220ms ease-out both;
+}
+.library-info {
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+  min-width: 0;
+}
+.library-info h4 {
+  font-size: 1.05rem;
+}
+.library-info h4 .muted {
+  font-weight: 500;
+  font-size: var(--fs-sm);
+}
+.library-expressions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.4rem;
+}
+.library-expr {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.3rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-muted);
+  font: inherit;
+  font-size: var(--fs-xs);
+  text-align: center;
+  cursor: pointer;
+}
+.library-expr:hover {
+  border-color: var(--border-hover);
+  color: var(--text-strong);
+}
+.library-expr:focus-visible {
+  outline: none;
+  box-shadow: var(--focus);
+}
+.library-expr.is-shown {
+  border-color: var(--selection-border);
+  background: var(--selection-bg);
+  color: var(--text-strong);
+  font-weight: 700;
+}
+.library-switch {
+  display: grid;
+  gap: 0.6rem;
+  justify-items: start;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius);
+  background: var(--surface-muted);
+}
+.library-switch p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+
+@media (max-width: 720px) {
+  .library-detail {
+    grid-template-columns: 1fr;
+  }
+  .library-stage {
+    max-height: 16rem;
+    aspect-ratio: 4 / 5;
+  }
+  .library-grid {
+    grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .library-card {
+    transition: none;
+  }
+  .library-stage-img,
+  .library-stage .lib-fallback {
+    animation: none;
+  }
+}
+
+/* Las etiquetas largas (Sorprendido, Preocupado) no ensanchan su miniatura. */
+.library-expressions {
+  grid-template-columns: repeat(auto-fill, minmax(4.9rem, 1fr));
+}
+.library-expr {
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+}
+.library-expr > span:last-child {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

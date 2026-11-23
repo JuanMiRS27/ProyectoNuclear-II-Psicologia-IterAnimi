@@ -33,7 +33,7 @@ class AdaptadorCorreoSMTP(ServicioCorreo):
         host: str,
         puerto: int,
         remitente: str,
-        nombre_remitente: str = "Inter Nos",
+        nombre_remitente: str = "Iter Animi",
         usuario: str | None = None,
         clave: str | None = None,
         starttls: bool = True,

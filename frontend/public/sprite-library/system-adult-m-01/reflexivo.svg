@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 720" width="480" height="720">
+  <title>Julián: Reflexivo (sprite provisional)</title>
+  
+  <path d="M54 720 C58 616 98 566 176 540 L304 540 C382 566 422 616 426 720 Z" fill="#3d4a63" stroke="#3b2b2b" stroke-width="3" stroke-linejoin="round"/><path d="M54 720 C58 640 84 596 130 572 C120 620 118 670 124 720 Z M426 720 C422 640 396 596 350 572 C360 620 362 670 356 720 Z" fill="#000" opacity="0.12"/><path d="M200 540 L240 640 L280 540 Z" fill="#dfe5ee" stroke="#3b2b2b" stroke-width="3" stroke-linejoin="round"/><path d="M200 540 L222 600 L196 620 L176 552 Z M280 540 L258 600 L284 620 L304 552 Z" fill="#000" opacity="0.18"/>
+  <path d="M208 430 L208 548 Q240 566 272 548 L272 430 Z" fill="#8a5a3c" stroke="#3b2b2b" stroke-width="3"/>
+  <path d="M208 470 Q240 500 272 470 L272 446 L208 446 Z" fill="#734a30" opacity="0.7"/>
+  <ellipse cx="152" cy="324" rx="14" ry="22" fill="#8a5a3c" stroke="#3b2b2b" stroke-width="3"/>
+  <ellipse cx="328" cy="324" rx="14" ry="22" fill="#8a5a3c" stroke="#3b2b2b" stroke-width="3"/>
+  <path d="M150 300 C150 214 190 176 240 176 C290 176 330 214 330 300 C330 372 304 430 240 452 C176 430 150 372 150 300 Z" fill="#8a5a3c" stroke="#3b2b2b" stroke-width="3.2" stroke-linejoin="round"/>
+  <path d="M160 300 C170 260 200 236 240 236 C280 236 310 260 320 300 C300 274 274 262 240 262 C206 262 180 274 160 300 Z" fill="#734a30" opacity="0.35"/>
+  <path d="M164 360 C172 418 206 450 240 452 C274 450 308 418 316 360 C302 400 280 420 240 422 C200 420 178 400 164 360 Z" fill="#241b17" opacity="0.85"/><path d="M212 384 Q240 376 268 384 Q258 392 240 390 Q222 392 212 384 Z" fill="#241b17"/>
+  
+  
+  <path d="M178 281 Q198 275 220 285 M260 285 Q282 275 302 281" fill="none" stroke="#1d1714" stroke-width="6.5" stroke-linecap="round"/>
+  
+    <clipPath id="e-1"><ellipse cx="200" cy="322" rx="22" ry="10.5"/></clipPath>
+    <ellipse cx="200" cy="322" rx="22" ry="10.5" fill="#fbfaf8"/>
+    <g clip-path="url(#e-1)">
+      <circle cx="192" cy="316" r="13" fill="#2f2019"/>
+      <circle cx="192" cy="316" r="6.24" fill="#16110f"/>
+      <circle cx="188" cy="311" r="3.9" fill="#fff"/>
+      <circle cx="196" cy="320" r="1.8200000000000003" fill="#fff" opacity="0.8"/>
+      
+    </g>
+    <path d="M222 316.225 Q200 305.5 178 316.225" fill="none" stroke="#3b2b2b" stroke-width="5" stroke-linecap="round"/>
+    <path d="M182 330.925 Q200 334.5 218 330.925" fill="none" stroke="#3b2b2b" stroke-width="1.8" opacity="0.55"/>
+  
+    <clipPath id="e1"><ellipse cx="280" cy="322" rx="22" ry="10.5"/></clipPath>
+    <ellipse cx="280" cy="322" rx="22" ry="10.5" fill="#fbfaf8"/>
+    <g clip-path="url(#e1)">
+      <circle cx="272" cy="316" r="13" fill="#2f2019"/>
+      <circle cx="272" cy="316" r="6.24" fill="#16110f"/>
+      <circle cx="268" cy="311" r="3.9" fill="#fff"/>
+      <circle cx="276" cy="320" r="1.8200000000000003" fill="#fff" opacity="0.8"/>
+      
+    </g>
+    <path d="M258 316.225 Q280 305.5 302 316.225" fill="none" stroke="#3b2b2b" stroke-width="5" stroke-linecap="round"/>
+    <path d="M262 330.925 Q280 334.5 298 330.925" fill="none" stroke="#3b2b2b" stroke-width="1.8" opacity="0.55"/>
+  <path d="M240 340 L234 368 Q240 372 246 368" fill="none" stroke="#734a30" stroke-width="3" stroke-linecap="round"/>
+  <path d="M228 400 Q238 403 248 399" fill="none" stroke="#3b2b2b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  
+  <path d="M152 288 C150 214 190 178 240 178 C290 178 330 214 328 288 C320 246 300 222 240 220 C180 222 160 246 152 288 Z" fill="#1d1714" opacity="0.92" stroke="#3b2b2b" stroke-width="3" stroke-linejoin="round"/>
+</svg>

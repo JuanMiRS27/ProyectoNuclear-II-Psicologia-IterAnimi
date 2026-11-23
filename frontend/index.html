@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#f6f8fc" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      // Tema antes del primer render (sin destello). Misma clave y lógica que src/lib/theme.ts.
+      ;(function () {
+        var pref = 'system'
+        try {
+          var v = localStorage.getItem('iter-animi.theme')
+          if (v === 'light' || v === 'dark') pref = v
+        } catch (e) {}
+        var dark = pref === 'dark' || (pref === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+        var t = dark ? 'dark' : 'light'
+        var r = document.documentElement
+        r.setAttribute('data-theme', t)
+        r.setAttribute('data-theme-pref', pref)
+        r.style.colorScheme = t
+        r.style.backgroundColor = dark ? '#101722' : '#f6f8fc'
+        document.querySelector('meta[name="theme-color"]').setAttribute('content', dark ? '#101722' : '#f6f8fc')
+      })()
+    </script>
+    <meta name="description" content="Iter Animi: simulador académico de casos de psicología social." />
+    <title>Iter Animi</title>
+  </head>
+  <body>
+    <noscript>Iter Animi necesita JavaScript para funcionar.</noscript>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

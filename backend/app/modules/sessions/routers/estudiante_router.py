@@ -4,7 +4,13 @@ from fastapi import APIRouter, Request, Response
 
 from app.modules.auth.schemas import MessageResponse
 from app.modules.sessions.dependencies import AccesoEstudiantilDep, AccesoServiceDep, LimitadorDep, RelojDep
-from app.modules.sessions.schemas import AccesoEstudiantilRead, SesionEstudianteRead, StudentLoginRequest, StudentTokenResponse
+from app.modules.sessions.schemas import (
+    AccesoEstudiantilRead,
+    EspacioEstudianteRead,
+    SesionEstudianteRead,
+    StudentLoginRequest,
+    StudentTokenResponse,
+)
 
 router = APIRouter(tags=["Acceso estudiantil"])
 
@@ -52,6 +58,9 @@ def student_session(session_id: uuid.UUID, acceso: AccesoEstudiantilDep, reloj: 
         sesion=SesionEstudianteRead(
             id=sesion.id,
             caso_nombre=sesion.caso.nombre,
+            espacio_academico=EspacioEstudianteRead(
+                nombre=sesion.espacio_academico.nombre, periodo=sesion.espacio_academico.periodo
+            ),
             inicio=sesion.inicio,
             fin=sesion.fin,
             limite_ingreso=sesion.limite_ingreso,

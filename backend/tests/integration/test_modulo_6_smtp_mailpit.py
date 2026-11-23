@@ -110,7 +110,7 @@ def test_convocatoria_llega_a_mailpit_y_la_entrega_queda_enviada(entorno, smtp_l
     # 9-10. Destinatario único, asunto, cuerpo, URL de acceso y código vigente.
     assert [t["Address"] for t in detalle["To"]] == [estudiante.correo] and not detalle.get("Cc") and not detalle.get("Bcc")
     assert detalle["From"]["Address"] == REMITENTE
-    assert detalle["Subject"] == "Inter Nos: Convocatoria a una sesión académica — Conformidad en el aula"
+    assert detalle["Subject"] == "Iter Animi: Convocatoria a una sesión académica — Conformidad en el aula"
     assert codigo in detalle["Text"] and URL_ACCESO in detalle["Text"] and estudiante.correo in detalle["Text"]
     assert "Tiempo máximo de participación: 40 minutos" in detalle["Text"] and "Aula 301" in detalle["Text"]
     assert codigo in detalle["HTML"]

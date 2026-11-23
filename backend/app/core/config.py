@@ -53,7 +53,7 @@ class Settings(BaseSettings):
     SMTP_USERNAME: str | None = None
     SMTP_PASSWORD: SecretStr | None = None
     SMTP_FROM_EMAIL: str | None = None
-    SMTP_FROM_NAME: str = "Inter Nos"
+    SMTP_FROM_NAME: str = "Iter Animi"
     # STARTTLS (puerto 587) o TLS implícito (SMTP_USE_SSL, puerto 465). Sin cifrado solo se
     # admite hacia localhost (p. ej., Mailpit en desarrollo); nunca se desactiva la verificación.
     SMTP_USE_STARTTLS: bool = True
@@ -84,6 +84,17 @@ class Settings(BaseSettings):
         if len(clave) != 32:
             raise ValueError("CONVOCATION_CODE_ENCRYPTION_KEY debe codificar exactamente 32 bytes (AES-256).")
         return valor
+
+    # --- Frontend (SPA) ---
+    # Orígenes autorizados por CORS, separados por comas (p. ej. "https://simulador.universidad.edu.co").
+    # Vacío por defecto: sin CORS, como hasta ahora. Solo hace falta si el frontend se sirve desde
+    # otro origen que la API; en desarrollo el servidor de Vite actúa como proxy y no lo necesita.
+    # La autenticación viaja en la cabecera Authorization (no hay cookies), así que no se habilitan credenciales.
+    CORS_ALLOWED_ORIGINS: str = ""
+
+    @property
+    def cors_origins(self) -> list[str]:
+        return [o.strip().rstrip("/") for o in self.CORS_ALLOWED_ORIGINS.split(",") if o.strip()]
 
     @property
     def docs_enabled(self) -> bool:
