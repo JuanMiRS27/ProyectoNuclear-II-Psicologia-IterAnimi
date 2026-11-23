@@ -9,6 +9,25 @@ mismo y no se usa ningún servicio externo de imágenes.
 
 > Desde la versión 2 del paquete, el personaje puede ser uno de la biblioteca del sistema: el paquete solo guarda su id y las imágenes salen de `public/sprite-library/`. Ver [`BIBLIOTECA_PERSONAJES.md`](BIBLIOTECA_PERSONAJES.md).
 
+## Publicación automática («Guardar y publicar»)
+
+Cuando el frontend se sirve con `npm run dev` o `npm run preview`, el editor muestra **Guardar y publicar** en lugar de
+«Guardar borrador». Al pulsarlo, y también al **Exportar paquete visual**:
+
+1. guarda el borrador en este navegador (IndexedDB), como siempre;
+2. arma el paquete (manifiesto más imágenes propias; un personaje del sistema solo viaja como id) y lo envía al servidor del
+   frontend;
+3. el servidor lo valida con las mismas reglas que `npm run visual:install` y lo instala en `public/visual-packages/<caso>/`;
+4. los estudiantes del caso ven el personaje y sus reacciones al abrir o volver a entrar al simulador. Los sprites del sistema
+   se cargan desde `public/sprite-library/` y los propios desde la carpeta del paquete.
+
+Lo hace un plugin del servidor del frontend (`vite-plugins/visual-publish.ts`), no el backend. Solo acepta peticiones del
+propio equipo, del mismo origen y con la cabecera del editor. La carpeta `public/visual-packages/` forma parte del frontend,
+así que lo publicado queda incluido en el siguiente `npm run build`.
+
+**Límite:** si se despliega solo `dist/` como archivos estáticos (Nginx, Netlify…), no hay servidor del frontend que reciba
+la publicación. El editor lo detecta, vuelve a mostrar «Guardar borrador» y queda el recorrido manual descrito abajo.
+
 ## Recorrido: borrador local → paquete exportado → paquete en el despliegue
 
 ```

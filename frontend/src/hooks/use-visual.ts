@@ -1,6 +1,7 @@
 // Paquete visual: estático para el estudiante y borrador local (IndexedDB) para el docente.
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { loadLibrary } from '../lib/visual/library'
+import { publishAvailable } from '../lib/visual/publish'
 import { loadStaticPackage } from '../lib/visual/static-packages'
 import { draftKey, visualStorage } from '../lib/visual/storage'
 import type { VisualDraft } from '../lib/visual/types'
@@ -12,7 +13,8 @@ export function useStaticVisualPackage(escenarioIds: string[]) {
     queryKey: ['visual-package', escenarioIds.join(',')],
     queryFn: () => loadStaticPackage(escenarioIds),
     enabled: escenarioIds.length > 0,
-    staleTime: Infinity,
+    // Se relee al abrir el simulador: un paquete recién publicado por el docente se ve sin recargar toda la app.
+    staleTime: 0,
     retry: false,
   })
 }
@@ -20,6 +22,11 @@ export function useStaticVisualPackage(escenarioIds: string[]) {
 /** Catálogo de personajes del sistema servido por el frontend (null si falta: solo quedan los sprites propios). */
 export function useSpriteLibrary() {
   return useQuery({ queryKey: ['sprite-library'], queryFn: loadLibrary, staleTime: Infinity, retry: false })
+}
+
+/** ¿El servidor del frontend acepta la publicación automática del paquete visual? */
+export function usePublishAvailable() {
+  return useQuery({ queryKey: ['visual-publish'], queryFn: publishAvailable, staleTime: 60_000, retry: false })
 }
 
 function useDraftKey(caseId: string) {
