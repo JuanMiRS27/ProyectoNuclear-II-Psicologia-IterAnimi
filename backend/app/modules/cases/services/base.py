@@ -39,7 +39,8 @@ class ServicioCasoBase:
         self._contenido = ContenidoCasoRepository(session)
 
     def _caso_lectura(self, caso_id: uuid.UUID, autor: Usuario, *, cargar_contenido: bool = False) -> CasoEstudio:
-        caso = self._casos.get_owned(caso_id, autor.id, cargar_contenido=cargar_contenido)
+        """Solo lectura: los casos propios y los publicados por otros docentes. Editar sigue exigiendo autoría."""
+        caso = self._casos.get_visible(caso_id, autor.id, cargar_contenido=cargar_contenido)
         if caso is None:
             raise NotFoundError(CASO_NO_ENCONTRADO)
         return caso

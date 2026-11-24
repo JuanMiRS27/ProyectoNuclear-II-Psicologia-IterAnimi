@@ -37,7 +37,8 @@ class CasoService(ServicioCasoBase):
     def listar(
         self, autor: Usuario, *, estado: EstadoCasoEnum | None, skip: int, limit: int
     ) -> tuple[list[CasoEstudio], int]:
-        return self._casos.list_by_author(autor.id, estado=estado, skip=skip, limit=limit)
+        # Los propios en cualquier estado y los publicados por otros docentes (solo lectura y programación).
+        return self._casos.list_visible(autor.id, estado=estado, skip=skip, limit=limit)
 
     def obtener(self, autor: Usuario, caso_id: uuid.UUID) -> CasoEstudio:
         return self._caso_lectura(caso_id, autor, cargar_contenido=True)

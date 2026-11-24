@@ -451,6 +451,8 @@ def _con_dobles(clase):
     servicio._casos = MagicMock()
     servicio._contenido = MagicMock()
     servicio._casos.get_owned.return_value = caso_valido()
+    # Lectura: casos propios o publicados por otros docentes (get_visible); edición: solo propios (get_owned).
+    servicio._casos.get_visible.return_value = caso_valido()
     return servicio
 
 
@@ -494,6 +496,7 @@ def test_transaccion_revierte_ante_integridad_y_error_generico(autor):
 def test_caso_ajeno_responde_igual_que_inexistente(autor, for_update):
     servicio = _con_dobles(ServicioCasoBase)
     servicio._casos.get_owned.return_value = None
+    servicio._casos.get_visible.return_value = None
 
     with pytest.raises(NotFoundError, match="Caso no encontrado"):
         (servicio._caso_bloqueado if for_update else servicio._caso_lectura)(uuid.uuid4(), autor)
@@ -581,12 +584,12 @@ def test_solo_se_eliminan_borradores(autor, estado):
     servicio._session.rollback.assert_called_once()
 
 
-def test_listar_filtra_por_autor(autor):
+def test_listar_incluye_propios_y_publicados_ajenos(autor):
     servicio = _con_dobles(CasoService)
 
     servicio.listar(autor, estado=EstadoCasoEnum.PUBLICADO, skip=1, limit=2)
 
-    servicio._casos.list_by_author.assert_called_once_with(autor.id, estado=EstadoCasoEnum.PUBLICADO, skip=1, limit=2)
+    servicio._casos.list_visible.assert_called_once_with(autor.id, estado=EstadoCasoEnum.PUBLICADO, skip=1, limit=2)
 
 
 def test_validar_no_confirma_nada(autor):

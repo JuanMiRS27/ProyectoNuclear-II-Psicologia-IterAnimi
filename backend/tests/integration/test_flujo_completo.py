@@ -185,13 +185,20 @@ def test_tiempo_agotado_por_worker_mantiene_consistencia_entre_tablas(client, es
     assert huerfanas == 0
 
 
-def test_dos_docentes_trabajan_aislados_en_todo_el_flujo(client, admin_headers, escenario, make_user):
+def test_dos_docentes_comparten_casos_publicados_pero_no_sesiones(client, admin_headers, escenario, make_user):
     otro = make_user(RolUsuario.DOCENTE, puede_crear_casos=True)
     otro_headers = bearer(login(client, otro.correo))
     sesion, convs, _ = _programar(client, escenario)
     conv = next(iter(convs.values()))
+    caso_url = f"{CASES_URL}/{escenario['caso']['id']}"
 
-    assert _ok(client.get(CASES_URL, headers=otro_headers))["total"] == 0
+    # El caso publicado de un docente es visible (solo lectura) para los demás docentes...
+    listado = _ok(client.get(CASES_URL, headers=otro_headers))
+    assert listado["total"] == 1 and listado["items"][0]["id"] == escenario["caso"]["id"]
+    assert client.get(caso_url, headers=otro_headers).status_code == 200
+    # ...pero solo su autor puede modificarlo o archivarlo.
+    assert client.patch(caso_url, json={"nombre": "Ajeno"}, headers=otro_headers).status_code == 404
+    assert client.post(f"{caso_url}/archive", headers=otro_headers).status_code == 404
+    # Las sesiones y los códigos de convocatoria siguen siendo de cada docente.
     assert _ok(client.get(SESSIONS_URL, headers=otro_headers))["total"] == 0
-    assert client.get(f"{CASES_URL}/{escenario['caso']['id']}", headers=otro_headers).status_code == 404
     assert client.get(f"{SESSIONS_URL}/{sesion['id']}/convocations/{conv['id']}/code", headers=otro_headers).status_code == 404
