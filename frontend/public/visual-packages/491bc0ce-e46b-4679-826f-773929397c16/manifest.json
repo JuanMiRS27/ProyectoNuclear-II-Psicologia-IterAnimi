@@ -1,0 +1,69 @@
+{
+  "format": "iter-animi-paquete-visual",
+  "version": 2,
+  "case": {
+    "id": "491bc0ce-e46b-4679-826f-773929397c16",
+    "nombre": "Violencia familiar y tentativa de feminicidio"
+  },
+  "character": {
+    "name": "Inés",
+    "defaultExpression": "neutral",
+    "library": "system-young-adult-f-01"
+  },
+  "expressions": [
+    {
+      "id": "neutral",
+      "label": "Neutral",
+      "sprite": null
+    },
+    {
+      "id": "feliz",
+      "label": "Feliz",
+      "sprite": null
+    },
+    {
+      "id": "triste",
+      "label": "Triste",
+      "sprite": null
+    },
+    {
+      "id": "enojado",
+      "label": "Enojado",
+      "sprite": null
+    },
+    {
+      "id": "preocupado",
+      "label": "Preocupado",
+      "sprite": null
+    },
+    {
+      "id": "sorprendido",
+      "label": "Sorprendido",
+      "sprite": null
+    },
+    {
+      "id": "incomodo",
+      "label": "Incómodo",
+      "sprite": null
+    },
+    {
+      "id": "reflexivo",
+      "label": "Reflexivo",
+      "sprite": null
+    }
+  ],
+  "scenes": [
+    {
+      "escenarioId": "6d9f0ae7-94e1-4f57-9c3f-1b1a50598464",
+      "signature": "7a4297b6",
+      "initialExpression": null
+    },
+    {
+      "escenarioId": "9d94bb1f-ec7c-4ace-a465-534c0850cddf",
+      "signature": "6de43f09",
+      "initialExpression": null
+    }
+  ],
+  "reactions": [],
+  "createdAt": "2026-11-23T23:15:46.964Z"
+}

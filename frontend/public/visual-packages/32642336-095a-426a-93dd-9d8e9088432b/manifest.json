@@ -1,0 +1,81 @@
+{
+  "format": "iter-animi-paquete-visual",
+  "version": 2,
+  "case": {
+    "id": "32642336-095a-426a-93dd-9d8e9088432b",
+    "nombre": "Fory Caso"
+  },
+  "character": {
+    "name": "Samuel",
+    "defaultExpression": "enojado",
+    "library": "system-young-adult-m-01"
+  },
+  "expressions": [
+    {
+      "id": "neutral",
+      "label": "Neutral",
+      "sprite": null
+    },
+    {
+      "id": "feliz",
+      "label": "Feliz",
+      "sprite": null
+    },
+    {
+      "id": "triste",
+      "label": "Triste",
+      "sprite": null
+    },
+    {
+      "id": "enojado",
+      "label": "Enojado",
+      "sprite": null
+    },
+    {
+      "id": "preocupado",
+      "label": "Preocupado",
+      "sprite": null
+    },
+    {
+      "id": "sorprendido",
+      "label": "Sorprendido",
+      "sprite": null
+    },
+    {
+      "id": "incomodo",
+      "label": "Incómodo",
+      "sprite": null
+    },
+    {
+      "id": "reflexivo",
+      "label": "Reflexivo",
+      "sprite": null
+    }
+  ],
+  "scenes": [
+    {
+      "escenarioId": "6cfee168-5e65-45c1-b19d-8a936172f324",
+      "signature": "73417c85",
+      "initialExpression": null
+    }
+  ],
+  "reactions": [
+    {
+      "opcionId": "0035dd64-eb69-45cd-b198-1c92b2fb890d",
+      "preguntaId": "20d620fc-fecd-4d0a-a195-064c3c795d6d",
+      "escenarioId": "6cfee168-5e65-45c1-b19d-8a936172f324",
+      "signature": "d5b6d5b7",
+      "expression": "sorprendido",
+      "motion": "fade"
+    },
+    {
+      "opcionId": "a3ba47f5-654e-483d-b201-a894f0650227",
+      "preguntaId": "20d620fc-fecd-4d0a-a195-064c3c795d6d",
+      "escenarioId": "6cfee168-5e65-45c1-b19d-8a936172f324",
+      "signature": "1aea107b",
+      "expression": "neutral",
+      "motion": "breathe"
+    }
+  ],
+  "createdAt": "2026-11-23T22:24:21.353Z"
+}
