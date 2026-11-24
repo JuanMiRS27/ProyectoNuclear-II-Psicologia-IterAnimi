@@ -10,18 +10,11 @@ Proyecto Nuclear II · Ingeniería de Software
 
 ![Pantalla de acceso de Iter Animi](docs/capturas/acceso.png)
 
-| Inicio del estudiante | Panel docente |
-|---|---|
-| ![Inicio del estudiante](docs/capturas/estudiante-inicio.png) | ![Panel docente](docs/capturas/docente-panel.png) |
-
-![Simulador: escena, narración y decisiones](docs/capturas/simulador.png)
-
-<sub>Las capturas usan datos de prueba.</sub>
-
 ## Contenido
 
 - [Qué resuelve](#qué-resuelve)
 - [Funcionalidades por rol](#funcionalidades-por-rol)
+- [Recorrido visual](#recorrido-visual)
 - [Arquitectura](#arquitectura)
 - [Puesta en marcha](#puesta-en-marcha)
 - [Pruebas](#pruebas)
@@ -56,6 +49,51 @@ flowchart LR
 | **Estudiante** | Correo y código de convocatoria | Consultar su sesión, resolver el caso en el simulador (se puede retomar dentro del tiempo del intento) y ver sus resultados, la retroalimentación y los avisos. |
 
 La interfaz es adaptable a móvil y ofrece tema claro, oscuro o el del sistema.
+
+## Recorrido visual
+
+### Simulador
+
+El estudiante lee la escena, elige y confirma cada decisión, con el tiempo y el avance a la vista.
+
+| Tema claro | Tema oscuro |
+|---|---|
+| ![Simulador en tema claro: escena, narración y opciones](docs/capturas/simulador.png) | ![Simulador en tema oscuro](docs/capturas/simulador-oscuro.png) |
+
+### Personajes y reacciones
+
+El docente elige un personaje del sistema o sube el suyo; su expresión cambia según la decisión confirmada, sin indicar si es
+correcta.
+
+<p align="center">
+  <img src="docs/capturas/personajes.png" alt="Biblioteca de personajes del sistema" width="440">
+  &nbsp;
+  <img src="docs/capturas/personaje-reaccion.png" alt="Reacción del personaje en el simulador" width="250">
+</p>
+
+### Docente
+
+| Panel | Editor de casos |
+|---|---|
+| ![Panel docente con las tareas pendientes](docs/capturas/docente-panel.png) | ![Editor de casos con escenas, decisiones y opciones](docs/capturas/docente-editor-de-casos.png) |
+| **Evaluación** | **Seguimiento** |
+| ![Evaluación de un intento y comentario del docente](docs/capturas/docente-evaluacion.png) | ![Indicadores de participación y notas de una sesión](docs/capturas/docente-seguimiento.png) |
+
+### Estudiante y administración
+
+| Inicio del estudiante | Administración |
+|---|---|
+| ![Inicio del estudiante con su sesión en curso](docs/capturas/estudiante-inicio.png) | ![Inicio de administración](docs/capturas/administracion.png) |
+
+### En el móvil
+
+<p align="center">
+  <img src="docs/capturas/movil-estudiante-oscuro.png" alt="Inicio del estudiante en móvil, tema oscuro" width="270">
+  &nbsp;&nbsp;
+  <img src="docs/capturas/movil-simulador.png" alt="Simulador en móvil con una opción seleccionada" width="270">
+</p>
+
+<sub>Todas las capturas usan datos de prueba.</sub>
 
 ## Arquitectura
 

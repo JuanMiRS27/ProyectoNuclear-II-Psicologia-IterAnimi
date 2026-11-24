@@ -1,0 +1,842 @@
+{
+  "info": {
+    "_postman_id": "96e45da5-c2d3-48f7-9d69-3d98288c0462",
+    "name": "Inter Nos - Preparación módulo 4 (login estudiante suelto)",
+    "description": "Deja todo listo para correr **solo** la carpeta `4. Participaciones y respuestas` de la colección principal.\n\n**Uso**\n1. Seleccione el entorno `Inter Nos - Local`.\n2. Ejecute la carpeta `1. Preparación` (crea docente, estudiante, caso publicado, espacio, sesión EN_CURSO y obtiene el código de convocatoria).\n3. Ejecute `2. Login estudiante (suelto)`: guarda `token_estudiante`.\n4. En la colección principal ejecute la carpeta `4. Participaciones y respuestas`.\n\nSi el token del estudiante vence, basta con repetir solo el paso 3 (la sesión dura 2 horas). Para empezar de cero (otro intento), vuelva al paso 2.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "event": [
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.test(\"Tiempo de respuesta < 3000 ms\", () => pm.expect(pm.response.responseTime).to.be.below(3000));"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Preparación",
+      "item": [
+        {
+          "name": "Health check (prepara la ejecución)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "health"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Identificador único por ejecución: evita correos duplicados (409) al repetir la colección.",
+                  "const run = Date.now().toString(36);",
+                  "pm.environment.set(\"run_id\", run);",
+                  "const dominio = pm.environment.get(\"dominio_correo\") || \"universidad.edu.co\";",
+                  "pm.environment.set(\"docente_correo\", `docente.${run}@${dominio}`);",
+                  "pm.environment.set(\"docente_b_correo\", `docente.b.${run}@${dominio}`);",
+                  "pm.environment.set(\"estudiante_correo\", `estudiante.${run}@${dominio}`);",
+                  "pm.environment.set(\"estudiante2_correo\", `estudiante.dos.${run}@${dominio}`);"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"status = ok\", () => pm.expect(pm.response.json().status).to.eql(\"ok\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login administrador",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Requiere un administrador creado con `python -m app.scripts.create_admin`. Configure `admin_correo` y `admin_clave` en el entorno.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"{{admin_correo}}\",\n  \"clave\": \"{{admin_clave}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código 200\", () => pm.response.to.have.status(200));",
+                  "const r = pm.response.json();",
+                  "pm.test(\"Devuelve token bearer\", () => { pm.expect(r.access_token).to.be.a(\"string\"); pm.expect(r.token_type).to.eql(\"bearer\"); });",
+                  "pm.test(\"expires_in > 0\", () => pm.expect(r.expires_in).to.be.above(0));",
+                  "pm.environment.set(\"token_admin\", r.access_token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Registrar docente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/teachers",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "teachers"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_admin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre_completo\": \"Docente Postman {{run_id}}\",\n  \"correo\": \"{{docente_correo}}\",\n  \"clave\": \"{{docente_clave}}\",\n  \"codigo_institucional\": \"DOC-{{run_id}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código 201\", () => pm.response.to.have.status(201));",
+                  "const r = pm.response.json();",
+                  "pm.test(\"Rol DOCENTE sin permiso de casos\", () => { pm.expect(r.rol).to.eql(\"DOCENTE\"); pm.expect(r.puede_crear_casos).to.be.false; });",
+                  "pm.environment.set(\"docente_id\", r.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Conceder permiso de crear casos",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/{{docente_id}}/case-permission",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "{{docente_id}}",
+                "case-permission"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_admin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"puede_crear_casos\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"puede_crear_casos = true\", () => pm.expect(pm.response.json().puede_crear_casos).to.be.true);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Registrar estudiante (sin contraseña)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/students",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "students"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_admin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre_completo\": \"Estudiante Postman {{run_id}}\",\n  \"correo\": \"{{estudiante_correo}}\",\n  \"codigo_institucional\": \"EST-{{run_id}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código 201\", () => pm.response.to.have.status(201));",
+                  "const r = pm.response.json();",
+                  "pm.test(\"Rol ESTUDIANTE\", () => pm.expect(r.rol).to.eql(\"ESTUDIANTE\"));",
+                  "pm.environment.set(\"estudiante_id\", r.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login docente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"{{docente_correo}}\",\n  \"clave\": \"{{docente_clave}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código 200\", () => pm.response.to.have.status(200));",
+                  "pm.environment.set(\"token_docente\", pm.response.json().access_token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Crear caso completo desde CaseDSL (Builder)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/cases/full",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cases",
+                "full"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_docente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dslVersion\": \"1.0\",\n  \"caso\": {\n    \"nombre\": \"Conformidad grupal {{run_id}}\",\n    \"desarrolloSituacional\": \"Un grupo de estudiantes debe decidir si reporta una irregularidad observada durante una práctica.\",\n    \"historia\": \"El caso se inspira en los experimentos clásicos de conformidad y presión social.\",\n    \"tiempoEstimadoMin\": 60\n  },\n  \"escenarios\": [\n    {\n      \"titulo\": \"La reunión del grupo\",\n      \"contexto\": \"La mayoría del grupo opina que no vale la pena reportar lo ocurrido.\",\n      \"preguntas\": [\n        {\n          \"enunciado\": \"¿Qué fenómeno describe mejor la presión que siente el estudiante?\",\n          \"criterio\": \"conceptos\",\n          \"opciones\": [\n            {\n              \"texto\": \"Conformidad normativa\",\n              \"esCorrecta\": true,\n              \"justificacion\": \"Se ajusta para ser aceptado por el grupo.\"\n            },\n            {\n              \"texto\": \"Disonancia cognitiva\",\n              \"esCorrecta\": false,\n              \"justificacion\": \"Describe un conflicto interno entre creencias.\"\n            },\n            {\n              \"texto\": \"Efecto halo\",\n              \"esCorrecta\": false,\n              \"justificacion\": \"Es un sesgo de percepción, no de presión social.\"\n            }\n          ]\n        },\n        {\n          \"enunciado\": \"¿Qué acción favorece una decisión ética del grupo?\",\n          \"criterio\": \"aplicacion\",\n          \"opciones\": [\n            {\n              \"texto\": \"Proponer una discusión abierta con evidencias\",\n              \"esCorrecta\": true,\n              \"justificacion\": \"Reduce la ignorancia pluralista.\"\n            },\n            {\n              \"texto\": \"Votar de inmediato sin discutir\",\n              \"esCorrecta\": false,\n              \"justificacion\": \"Refuerza la presión de la mayoría.\"\n            },\n            {\n              \"texto\": \"Aceptar la opinión del líder\",\n              \"esCorrecta\": false,\n              \"justificacion\": \"Favorece la obediencia acrítica.\"\n            }\n          ]\n        }\n      ]\n    }\n  ],\n  \"rubrica\": {\n    \"escalaMax\": 5.0,\n    \"criterios\": [\n      {\n        \"clave\": \"conceptos\",\n        \"descripcion\": \"Identificación de conceptos de psicología social\",\n        \"peso\": 60,\n        \"niveles\": [\n          {\n            \"nombre\": \"Alto\",\n            \"valor\": 5.0,\n            \"minAciertosPct\": 80\n          },\n          {\n            \"nombre\": \"Medio\",\n            \"valor\": 3.0,\n            \"minAciertosPct\": 50\n          },\n          {\n            \"nombre\": \"Bajo\",\n            \"valor\": 1.0,\n            \"minAciertosPct\": 0\n          }\n        ]\n      },\n      {\n        \"clave\": \"aplicacion\",\n        \"descripcion\": \"Aplicación de los conceptos a la situación\",\n        \"peso\": 40,\n        \"niveles\": [\n          {\n            \"nombre\": \"Alto\",\n            \"valor\": 5.0,\n            \"minAciertosPct\": 80\n          },\n          {\n            \"nombre\": \"Medio\",\n            \"valor\": 3.0,\n            \"minAciertosPct\": 50\n          },\n          {\n            \"nombre\": \"Bajo\",\n            \"valor\": 1.0,\n            \"minAciertosPct\": 0\n          }\n        ]\n      }\n    ]\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código 201\", () => pm.response.to.have.status(201));",
+                  "const r = pm.response.json();",
+                  "pm.test(\"Queda en BORRADOR\", () => pm.expect(r.estado).to.eql(\"BORRADOR\"));",
+                  "pm.test(\"1 escenario, 2 preguntas, rúbrica con 2 criterios\", () => {",
+                  "  pm.expect(r.escenarios).to.have.lengthOf(1);",
+                  "  pm.expect(r.escenarios[0].preguntas).to.have.lengthOf(2);",
+                  "  pm.expect(r.rubrica.criterios).to.have.lengthOf(2);",
+                  "});",
+                  "pm.environment.set(\"caso_id\", r.id);",
+                  "const [q1, q2] = r.escenarios[0].preguntas;",
+                  "pm.environment.set(\"q1_id\", q1.id);",
+                  "pm.environment.set(\"q1_correcta_id\", q1.opciones.find(o => o.es_correcta).id);",
+                  "pm.environment.set(\"q1_incorrecta_id\", q1.opciones.find(o => !o.es_correcta).id);",
+                  "pm.environment.set(\"q2_id\", q2.id);",
+                  "pm.environment.set(\"q2_correcta_id\", q2.opciones.find(o => o.es_correcta).id);",
+                  "pm.environment.set(\"q2_incorrecta_id\", q2.opciones.find(o => !o.es_correcta).id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Publicar caso",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/cases/{{caso_id}}/publish",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cases",
+                "{{caso_id}}",
+                "publish"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_docente}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Estado PUBLICADO\", () => pm.expect(pm.response.json().estado).to.eql(\"PUBLICADO\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Crear espacio académico (admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/academic-spaces",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "academic-spaces"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_admin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Psicología Social {{run_id}}\",\n  \"periodo\": \"2026-2\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código 201\", () => pm.response.to.have.status(201));",
+                  "pm.environment.set(\"espacio_id\", pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Programar sesión (con convocatoria del estudiante)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/sessions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "sessions"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_docente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"caso_id\": \"{{caso_id}}\",\n  \"espacio_academico_id\": \"{{espacio_id}}\",\n  \"inicio\": \"{{sesion_inicio}}\",\n  \"fin\": \"{{sesion_fin}}\",\n  \"tiempo_max_min\": 30,\n  \"lugar\": \"Aula 204\",\n  \"mensaje\": \"Traer el material leído en clase.\",\n  \"estudiantes\": [\"{{estudiante_correo}}\"]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Verifica que las peticiones previas hayan guardado lo necesario.",
+                  "const faltan = {",
+                  "  token_docente: \"Login docente\",",
+                  "  caso_id: \"Crear caso completo desde CaseDSL (Builder) + Publicar caso\",",
+                  "  espacio_id: \"Crear espacio académico (admin)\",",
+                  "  estudiante_correo: \"Health check + Registrar estudiante (sin contraseña)\",",
+                  "};",
+                  "const vacias = Object.keys(faltan).filter(k => !pm.environment.get(k));",
+                  "if (vacias.length) {",
+                  "  throw new Error(\"Faltan variables en el entorno: \" + vacias.map(k => `${k} (ejecute antes: ${faltan[k]})`).join(\"; \"));",
+                  "}",
+                  "// La sesión empieza hace 2 minutos y termina en 2 horas: así puede iniciarse ya",
+                  "// y el límite de ingreso (mitad de la ventana) queda ~1 hora en el futuro.",
+                  "const ahora = Date.now();",
+                  "pm.environment.set(\"sesion_inicio\", new Date(ahora - 2 * 60 * 1000).toISOString());",
+                  "pm.environment.set(\"sesion_fin\", new Date(ahora + 120 * 60 * 1000).toISOString());"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código 201\", () => pm.response.to.have.status(201));",
+                  "const r = pm.response.json();",
+                  "pm.test(\"Estado SIN_INICIAR con 1 convocatoria\", () => { pm.expect(r.estado).to.eql(\"SIN_INICIAR\"); pm.expect(r.total_convocatorias).to.eql(1); });",
+                  "pm.test(\"Calcula limite_ingreso\", () => pm.expect(r.limite_ingreso).to.be.a(\"string\"));",
+                  "pm.environment.set(\"sesion_id\", r.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar convocatorias activas (sin códigos)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/sessions/{{sesion_id}}/convocations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "sessions",
+                "{{sesion_id}}",
+                "convocations"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_docente}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código 200\", () => pm.response.to.have.status(200));",
+                  "const r = pm.response.json();",
+                  "pm.test(\"No expone codigo_autorizacion\", () => r.forEach(c => pm.expect(c).to.not.have.property(\"codigo_autorizacion\")));",
+                  "const propia = r.find(c => c.estudiante.correo === pm.environment.get(\"estudiante_correo\"));",
+                  "pm.test(\"Incluye al estudiante 1\", () => pm.expect(propia).to.not.be.undefined);",
+                  "pm.environment.set(\"convocatoria_id\", propia.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar código de convocatoria (docente responsable)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/sessions/{{sesion_id}}/convocations/{{convocatoria_id}}/code",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "sessions",
+                "{{sesion_id}}",
+                "convocations",
+                "{{convocatoria_id}}",
+                "code"
+              ]
+            },
+            "description": "Requiere CONVOCATION_CODE_RETRIEVAL_ENABLED=true en el .env.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_docente}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código 200\", () => pm.response.to.have.status(200));",
+                  "const r = pm.response.json();",
+                  "pm.test(\"Coincide con el regenerado\", () => pm.expect(r.codigo_autorizacion).to.eql(pm.environment.get(\"codigo_convocatoria\")));",
+                  "pm.environment.set(\"codigo_convocatoria\", r.codigo_autorizacion);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Iniciar sesión",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/sessions/{{sesion_id}}/start",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "sessions",
+                "{{sesion_id}}",
+                "start"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_docente}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Estado EN_CURSO\", () => pm.expect(pm.response.json().estado).to.eql(\"EN_CURSO\"));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Login estudiante (suelto)",
+      "item": [
+        {
+          "name": "Login estudiante (suelto)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/student/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "student",
+                "login"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"{{estudiante_correo}}\",\n  \"codigo\": \"{{codigo_convocatoria}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Ingreso del estudiante con `estudiante_correo` + `codigo_convocatoria` del entorno. Guarda `token_estudiante`. Puede repetirse sola cuando el token venza, mientras la sesión siga EN_CURSO."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código 200\", () => pm.response.to.have.status(200));",
+                  "const r = pm.response.json();",
+                  "pm.test(\"Token ligado a la sesión\", () => pm.expect(r.sesion_id).to.eql(pm.environment.get(\"sesion_id\")));",
+                  "pm.environment.set(\"token_estudiante\", r.access_token);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
