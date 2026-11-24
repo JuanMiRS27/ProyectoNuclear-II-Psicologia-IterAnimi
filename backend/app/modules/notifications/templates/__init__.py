@@ -136,14 +136,188 @@ def aviso_interno(tipo: T, d: DatosAviso, tz: timezone, *, cambios: list[str] | 
 # --- Correos (no se persisten) -------------------------------------------------------------------
 
 
-def _documento(titulo: str, parrafos: list[str], filas: list[tuple[str, str]]) -> str:
-    e = html.escape
-    tabla = "".join(f"<tr><th align='left'>{e(k)}</th><td>{e(v)}</td></tr>" for k, v in filas)
-    cuerpo = "".join(f"<p>{e(p)}</p>" for p in parrafos)
+# Paleta del frontend (frontend/src/styles/tokens.css, tema claro). Los correos usan estilos en
+# línea y tablas: es lo único que respetan Gmail, Outlook y los clientes móviles.
+_C = {
+    "fondo": "#f6f8fc",
+    "superficie": "#ffffff",
+    "bruma": "#ecf1f7",
+    "tinta": "#1e3350",
+    "texto": "#1f2530",
+    "suave": "#556070",
+    "borde": "#e1e6ec",
+    "accion": "#4269a5",
+    "acento": "#9fb6d3",
+    "panel_texto": "#e3eaf3",
+}
+# Sin comillas simples: los atributos `style` del HTML van entre comillas simples.
+_FUENTE = 'Manrope,"Segoe UI",Helvetica,Arial,sans-serif'
+# Etiqueta y color por tipo de aviso: (texto de la insignia, color, fondo, borde).
+_TONOS = {
+    T.CONVOCATORIA: ("Nueva convocatoria", "#335b88", "#eaf0fa", "#c9d7ec"),
+    T.CODIGO_REGENERADO: ("Código actualizado", "#835410", "#fbf3e4", "#e8d4a8"),
+    T.REPROGRAMACION: ("Cambio de programación", "#835410", "#fbf3e4", "#e8d4a8"),
+    T.REVOCACION: ("Convocatoria retirada", "#a3404a", "#f8eced", "#e6c6c9"),
+    T.RESULTADOS_DISPONIBLES: ("Resultados disponibles", "#2c6549", "#e9f3ee", "#c4ddd0"),
+    T.CALIFICACION_ACTUALIZADA: ("Evaluación actualizada", "#2c6549", "#e9f3ee", "#c4ddd0"),
+}
+_BOTONES = {
+    T.CONVOCATORIA: "Ingresar al simulador",
+    T.CODIGO_REGENERADO: "Ingresar al simulador",
+    T.REPROGRAMACION: "Abrir Iter Animi",
+    T.RESULTADOS_DISPONIBLES: "Consultar mis resultados",
+    T.CALIFICACION_ACTUALIZADA: "Ver mi evaluación",
+}
+_DIAS = ("lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo")
+_MESES = ("enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre",
+          "octubre", "noviembre", "diciembre")
+
+
+def _fecha_larga(valor: datetime, tz: timezone) -> str:
+    local = valor.astimezone(tz)
+    return f"{_DIAS[local.weekday()].capitalize()} {local.day} de {_MESES[local.month - 1]} de {local.year}"
+
+
+def _marca_html() -> str:
+    """Logotipo de la app (dos aros enlazados) dibujado con CSS: sin imágenes externas."""
+    aro = (
+        "display:inline-block;width:18px;height:18px;border-radius:50%;"
+        "vertical-align:middle;border:2px solid {color};"
+    )
     return (
-        f"<!doctype html><html><body><h1>{e(MARCA)}</h1><h2>{e(titulo)}</h2>{cuerpo}"
-        f"{'<table>' + tabla + '</table>' if filas else ''}"
-        "<p><small>Mensaje automático. No respondas a este correo.</small></p></body></html>"
+        "<table role='presentation' cellpadding='0' cellspacing='0' border='0'><tr>"
+        "<td style='vertical-align:middle;padding-right:10px;'>"
+        f"<span style='{aro.format(color='#ffffff')}'></span>"
+        f"<span style='{aro.format(color=_C['acento'])}margin-left:-9px;'></span></td>"
+        f"<td style='vertical-align:middle;font-family:{_FUENTE};font-size:18px;font-weight:700;"
+        f"letter-spacing:0.2px;color:#ffffff;'>{html.escape(MARCA)}</td></tr></table>"
+    )
+
+
+def _documento(
+    tipo: T,
+    titulo: str,
+    parrafos: list[str],
+    d: DatosAviso,
+    tz: timezone,
+    *,
+    con_programacion: bool,
+    codigo: str | None,
+    url: str | None,
+) -> str:
+    e = html.escape
+    etiqueta, tono, tono_fondo, tono_borde = _TONOS[tipo]
+
+    insignia = (
+        f"<span style='display:inline-block;padding:5px 12px;border-radius:999px;font-size:12px;"
+        f"font-weight:700;letter-spacing:0.4px;text-transform:uppercase;color:{tono};"
+        f"background:{tono_fondo};border:1px solid {tono_borde};'>{e(etiqueta)}</span>"
+    )
+    cuerpo = "".join(
+        f"<p style='margin:0 0 14px;font-size:15px;line-height:1.6;color:{_C['texto']};'>{e(p)}</p>"
+        for p in parrafos
+    )
+
+    bloque_codigo = ""
+    if codigo:
+        bloque_codigo = (
+            f"<table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0' "
+            f"style='margin:8px 0 22px;background:{_C['bruma']};border:1px dashed {_C['acento']};border-radius:14px;'>"
+            "<tr><td align='center' style='padding:20px 16px;'>"
+            f"<div style='font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;"
+            f"color:{_C['suave']};margin-bottom:8px;'>Código de autorización</div>"
+            f"<div style=\"font-family:Consolas,'Courier New',monospace;font-size:30px;font-weight:700;"
+            f"letter-spacing:6px;color:{_C['tinta']};\">{e(codigo)}</div>"
+            + (
+                f"<div style='font-size:13px;color:{_C['suave']};margin-top:10px;'>Úsalo junto con "
+                f"<strong style='color:{_C['texto']};'>{e(d.correo_estudiante)}</strong></div>"
+                if d.correo_estudiante
+                else ""
+            )
+            + "</td></tr></table>"
+        )
+
+    tarjeta = ""
+    if con_programacion:
+        filas = [
+            ("Caso académico", d.caso_nombre),
+            ("Horario", f"{d.inicio.astimezone(tz):%H:%M} – {_hora(d.fin, tz)}"),
+            ("Tiempo máximo", f"{d.tiempo_max_min} minutos"),
+        ]
+        if d.lugar:
+            filas.append(("Lugar o modalidad", d.lugar))
+        celdas = "".join(
+            "<tr>"
+            f"<td style='padding:10px 0;border-top:1px solid {_C['borde']};font-size:13px;color:{_C['suave']};"
+            f"width:42%;vertical-align:top;'>{e(k)}</td>"
+            f"<td style='padding:10px 0;border-top:1px solid {_C['borde']};font-size:14px;font-weight:600;"
+            f"color:{_C['texto']};vertical-align:top;'>{e(v)}</td></tr>"
+            for k, v in filas
+        )
+        mensaje = ""
+        if d.mensaje_docente:
+            mensaje = (
+                f"<tr><td colspan='2' style='padding:14px 0 0;'>"
+                f"<div style='border-left:3px solid {_C['accion']};background:{_C['fondo']};"
+                f"padding:12px 14px;border-radius:0 10px 10px 0;'>"
+                f"<div style='font-size:12px;font-weight:700;color:{_C['suave']};margin-bottom:4px;'>"
+                "Mensaje del docente</div>"
+                f"<div style='font-size:14px;line-height:1.55;color:{_C['texto']};font-style:italic;'>"
+                f"{e(d.mensaje_docente)}</div></div></td></tr>"
+            )
+        tarjeta = (
+            f"<table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0' "
+            f"style='margin:4px 0 22px;border:1px solid {_C['borde']};border-radius:14px;'>"
+            "<tr><td style='padding:18px 20px;'>"
+            f"<div style='font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;"
+            f"color:{_C['accion']};margin-bottom:4px;'>Sesión programada</div>"
+            f"<div style='font-size:19px;font-weight:700;color:{_C['tinta']};margin-bottom:12px;'>"
+            f"{e(_fecha_larga(d.inicio, tz))}</div>"
+            f"<table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0'>"
+            f"{celdas}{mensaje}</table></td></tr></table>"
+        )
+
+    boton = ""
+    if url and tipo in _BOTONES:
+        boton = (
+            "<table role='presentation' cellpadding='0' cellspacing='0' border='0' style='margin:4px 0 8px;'>"
+            f"<tr><td style='border-radius:10px;background:{_C['accion']};'>"
+            f"<a href='{e(url, quote=True)}' target='_blank' style='display:inline-block;padding:13px 26px;"
+            f"font-family:{_FUENTE};font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;"
+            f"border-radius:10px;'>{e(_BOTONES[tipo])} &rarr;</a></td></tr></table>"
+            f"<p style='margin:8px 0 0;font-size:12px;color:{_C['suave']};'>O copia este enlace: "
+            f"<a href='{e(url, quote=True)}' style='color:#335b88;'>{e(url)}</a></p>"
+        )
+
+    # Texto oculto de vista previa (lo que muestra la bandeja junto al asunto).
+    previa = f"{etiqueta} · {d.caso_nombre}"
+    return (
+        "<!doctype html><html lang='es'><head><meta charset='utf-8'>"
+        "<meta name='viewport' content='width=device-width,initial-scale=1'>"
+        f"<title>{e(titulo)}</title></head>"
+        f"<body style='margin:0;padding:0;background:{_C['fondo']};'>"
+        f"<div style='display:none;max-height:0;overflow:hidden;opacity:0;'>{e(previa)}</div>"
+        f"<table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0' "
+        f"style='background:{_C['fondo']};font-family:{_FUENTE};'><tr><td align='center' style='padding:32px 12px;'>"
+        "<table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0' "
+        f"style='max-width:580px;background:{_C['superficie']};border-radius:18px;overflow:hidden;"
+        f"border:1px solid {_C['borde']};box-shadow:0 12px 32px -16px rgba(30,51,80,0.18);'>"
+        # Cabecera con la marca
+        f"<tr><td style='background:{_C['tinta']};padding:22px 28px;'>{_marca_html()}"
+        f"<div style='font-size:12px;color:{_C['panel_texto']};margin-top:6px;letter-spacing:0.3px;'>"
+        "Simulador de Psicología Social</div></td></tr>"
+        f"<tr><td style='height:4px;background:{_C['accion']};line-height:4px;font-size:0;'>&nbsp;</td></tr>"
+        # Cuerpo
+        f"<tr><td style='padding:28px 28px 8px;'>{insignia}"
+        f"<h1 style='margin:16px 0 16px;font-size:24px;line-height:1.3;font-weight:800;color:{_C['tinta']};'>"
+        f"{e(titulo)}</h1>{cuerpo}{bloque_codigo}{tarjeta}{boton}</td></tr>"
+        # Pie
+        f"<tr><td style='padding:22px 28px 26px;'>"
+        f"<div style='border-top:1px solid {_C['borde']};padding-top:16px;font-size:12px;line-height:1.6;"
+        f"color:{_C['suave']};'>Mensaje automático de {e(MARCA)}. No respondas a este correo."
+        + ("<br>Tu código es personal: no lo compartas con nadie." if codigo else "")
+        + "</div></td></tr>"
+        "</table></td></tr></table></body></html>"
     )
 
 
@@ -204,7 +378,13 @@ def correo(
     else:
         raise ValueError(f"El aviso {tipo.value} no se envía por correo.")
     asunto = f"{MARCA}: {titulo} — {d.caso_nombre}"[:200]
-    return ContenidoCorreo(asunto, _texto(titulo, parrafos, filas), _documento(titulo, parrafos, filas))
+    documento = _documento(
+        tipo, titulo, parrafos, d, tz,
+        con_programacion=tipo in (T.CONVOCATORIA, T.CODIGO_REGENERADO, T.REPROGRAMACION),
+        codigo=codigo if tipo in (T.CONVOCATORIA, T.CODIGO_REGENERADO) else None,
+        url=url,
+    )
+    return ContenidoCorreo(asunto, _texto(titulo, parrafos, filas), documento)
 
 
 # Avisos que además se envían por correo (el resto son solo internos).

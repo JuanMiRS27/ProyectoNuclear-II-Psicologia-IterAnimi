@@ -420,14 +420,30 @@ def test_bucle_valida_el_correo_una_vez_y_sobrevive_a_fallos(caplog):
     class Detener(Exception):
         pass
 
+    detener = MagicMock()
+    detener.is_set.return_value = False
+    detener.wait.side_effect = [None, Detener]
     with (
         patch.object(runner, "crear_servicio_correo") as fabrica,
         patch.object(runner, "ejecutar_una_vez", side_effect=[RuntimeError("bd caída"), None]) as pasada,
-        patch.object(runner.time, "sleep", side_effect=[None, Detener]),
     ):
         with pytest.raises(Detener):
-            runner.ejecutar_periodicamente(30)
+            runner.ejecutar_periodicamente(30, detener=detener)
 
     fabrica.assert_called_once()
     assert pasada.call_count == 2
+    detener.wait.assert_called_with(30)
     assert "fallo en la pasada de notificaciones" in caplog.text
+
+
+def test_bucle_termina_al_detener():
+    import threading
+
+    detener = threading.Event()
+    detener.set()
+    with (
+        patch.object(runner, "crear_servicio_correo"),
+        patch.object(runner, "ejecutar_una_vez") as pasada,
+    ):
+        runner.ejecutar_periodicamente(30, detener=detener)
+    pasada.assert_not_called()

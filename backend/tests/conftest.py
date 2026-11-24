@@ -41,6 +41,9 @@ _test_db_url: str = _env.TEST_DATABASE_URL  # type: ignore[assignment]
 # Debe ocurrir antes de importar la aplicación: el motor se crea al importar app.core.database.
 os.environ["DATABASE_URL"] = _test_db_url
 os.environ["ENVIRONMENT"] = "testing"
+# Las pruebas nunca envían correos reales ni arrancan el worker integrado, aunque .env los active.
+os.environ["NOTIFICATIONS_EMAIL_ENABLED"] = "false"
+os.environ["NOTIFICATIONS_WORKER_INTERVAL_SECONDS"] = "0"
 os.environ.setdefault("JWT_SECRET_KEY", secrets.token_urlsafe(48))
 os.environ.setdefault("CONVOCATION_CODE_ENCRYPTION_KEY", base64.urlsafe_b64encode(os.urandom(32)).decode())
 
