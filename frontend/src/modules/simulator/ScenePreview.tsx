@@ -56,7 +56,7 @@ export function ScenePreview({ caso, runtime, spriteUrls }: { caso: CasoDetalle;
 
   const shown = stage.shown
   const sprite = shown
-    ? { expression: shown.expression, motion: shown.motion, src: spriteUrls[shown.expression] ?? null, alt: `${runtime.characterName || 'Personaje'}: ${runtime.label(shown.expression)}` }
+    ? { expression: shown.expression, motion: shown.motion, label: runtime.label(shown.expression), src: spriteUrls[shown.expression] ?? null, alt: `${runtime.characterName || 'Personaje'}: ${runtime.label(shown.expression)}` }
     : null
   const goTo = (i: number) => {
     setIndex(i)
