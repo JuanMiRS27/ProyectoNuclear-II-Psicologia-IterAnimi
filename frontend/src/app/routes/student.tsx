@@ -15,11 +15,14 @@ export const studentRoutes: RouteObject = {
     { path: 'resultados/:participationId', ...view(() => import('../../modules/student/StudentResultDetailView'), 'StudentResultDetailView') },
     { path: 'retroalimentacion', ...view(() => import('../../modules/student/StudentFeedbackView'), 'StudentFeedbackView') },
     { path: 'avisos', ...view(() => import('../../modules/student/StudentNoticesView'), 'StudentNoticesView') },
-    { path: 'caso/:participationId/cierre', ...view(() => import('../../modules/simulator/AttemptClosedView'), 'AttemptClosedView') },
   ],
 }
 
 export const simulatorRoutes: RouteObject = {
   element: <SimulatorLayout />,
-  children: [{ path: '/estudiante/caso/:participationId', ...view(() => import('../../modules/simulator/SimulatorPlayView'), 'SimulatorPlayView') }],
+  children: [
+    { path: '/estudiante/caso/:participationId', ...view(() => import('../../modules/simulator/SimulatorPlayView'), 'SimulatorPlayView') },
+    // El cierre tras entregar también es inmersivo: así la barra lateral no aparece de golpe durante la carga.
+    { path: '/estudiante/caso/:participationId/cierre', ...view(() => import('../../modules/simulator/AttemptClosedView'), 'AttemptClosedView') },
+  ],
 }
