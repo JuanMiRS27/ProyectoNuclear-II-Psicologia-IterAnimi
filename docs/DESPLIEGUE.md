@@ -104,6 +104,8 @@ Esta configuración no equivale a un sistema con procesos continuos: revisa las 
    No cambies las claves después de crear datos sin un plan de rotación.
 7. Antes de arrancar, la API ejecuta `alembic upgrade head`. En Free no se usa `preDeployCommand`.
    Si una migración falla, el despliegue falla; comprueba los logs antes de repetirlo.
+   El comando `python -m app.scripts.start_server` aplica las migraciones y reemplaza el proceso por
+   Uvicorn, evitando diferencias de interpretacion de comillas entre Docker y Render.
 8. Crea el administrador desde tu equipo, en un contenedor temporal con las **mismas** variables
    de la API en un archivo local ignorado por Git (por ejemplo `backend/.env.render`):
 
@@ -123,17 +125,19 @@ Esta configuración no equivale a un sistema con procesos continuos: revisa las 
 - La API gratuita duerme tras 15 minutos sin tráfico y puede tardar cerca de un minuto en despertar.
   El cliente actual cancela las peticiones a los 20 segundos: abre `/health` y espera su respuesta
   antes de comenzar una sustentación; si un acceso agota el tiempo, reinténtalo cuando despierte.
-- El Blueprint habilita el worker integrado de **notificaciones**, que ya existe en la API.
-  Solo trabaja mientras la instancia está activa. No se añaden workers de expiración a la aplicación.
-  Para ejecutar los cierres automáticos con esta demo, usa desde tu equipo las mismas variables remotas:
+- El Blueprint habilita los tres workers integrados en la API: notificaciones cada 30 segundos,
+  expiracion de intentos cada 60 y cierre de sesiones cada 300. Se detienen al apagar la API y
+  recuperan el trabajo pendiente al arrancar. No necesitan procesos adicionales en tu PC.
+  Para una ejecucion externa opcional, usa las mismas variables remotas:
 
   ```powershell
   docker run --rm --env-file backend/.env.render iter-animi-backend python -m app.workers.participation_expiration --intervalo 60
   docker run --rm --env-file backend/.env.render iter-animi-backend python -m app.workers.session_expiration --intervalo 300
   ```
 
-  Cada comando ocupa una terminal y deja de trabajar al cerrarla. Para autonomía completa se necesita
-  un entorno donde esos procesos puedan mantenerse activos; Render Background Workers es de pago.
+  Cada comando ocupa una terminal y deja de trabajar al cerrarla; no es necesario para la demo.
+  Para trabajo continuo incluso mientras la API duerme se necesita un entorno donde esos procesos
+  puedan mantenerse activos; Render Background Workers es de pago.
   Los workers consultan PostgreSQL periódicamente y pueden impedir que Neon suspenda su cómputo:
   ejecútalos durante las pruebas, no indefinidamente si debes respetar la cuota gratuita.
 - El envío SMTP está desactivado. Render Free bloquea los puertos 25, 465 y 587. Para correos reales

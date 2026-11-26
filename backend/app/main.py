@@ -18,18 +18,33 @@ from app.modules.sessions.routers import router as sessions_module_router
 
 @asynccontextmanager
 async def _ciclo_de_vida(app: FastAPI) -> AsyncIterator[None]:
-    """Arranca el worker de notificaciones integrado si está configurado (nunca en pruebas)."""
+    """Arranca los workers integrados configurados y los detiene al cerrar (nunca en pruebas)."""
     settings = get_settings()
     intervalo = getattr(settings, "NOTIFICATIONS_WORKER_INTERVAL_SECONDS", 0)
-    detener = None
-    if intervalo > 0 and getattr(settings, "ENVIRONMENT", "development") != "testing":
-        from app.workers.notifications.runner import iniciar_en_segundo_plano
-
-        detener = iniciar_en_segundo_plano(intervalo)
+    detenciones = []
     try:
+        if getattr(settings, "ENVIRONMENT", "development") != "testing":
+            if intervalo > 0:
+                from app.workers.notifications.runner import iniciar_en_segundo_plano
+
+                detenciones.append(iniciar_en_segundo_plano(intervalo))
+
+            participaciones = getattr(settings, "PARTICIPATION_EXPIRATION_WORKER_INTERVAL_SECONDS", 0)
+            sesiones = getattr(settings, "SESSION_EXPIRATION_WORKER_INTERVAL_SECONDS", 0)
+            if participaciones > 0 or sesiones > 0:
+                from app.workers.periodic import iniciar_en_segundo_plano as iniciar_periodico
+
+                if participaciones > 0:
+                    from app.workers.participation_expiration.runner import ejecutar_una_vez
+
+                    detenciones.append(iniciar_periodico("expiracion-participaciones", participaciones, ejecutar_una_vez))
+                if sesiones > 0:
+                    from app.workers.session_expiration.runner import ejecutar_una_vez
+
+                    detenciones.append(iniciar_periodico("expiracion-sesiones", sesiones, ejecutar_una_vez))
         yield
     finally:
-        if detener is not None:
+        for detener in detenciones:
             detener.set()
 
 

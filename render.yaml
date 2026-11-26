@@ -1,5 +1,5 @@
 # DEMO gratuita: frontend estático + API. PostgreSQL externo en Neon.
-# No incluye workers de expiración ni correo SMTP. Ver docs/DESPLIEGUE.md.
+# Workers integrados mientras la API esta activa; correo SMTP desactivado.
 services:
   - type: web
     name: iter-animi-api
@@ -29,6 +29,10 @@ services:
         value: "false"
       - key: NOTIFICATIONS_WORKER_INTERVAL_SECONDS
         value: "30"
+      - key: PARTICIPATION_EXPIRATION_WORKER_INTERVAL_SECONDS
+        value: "60"
+      - key: SESSION_EXPIRATION_WORKER_INTERVAL_SECONDS
+        value: "300"
   - type: web
     name: iter-animi-web
     runtime: static

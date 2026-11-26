@@ -28,6 +28,9 @@ class Settings(BaseSettings):
     # --- Módulo 3: sesiones y convocatorias ---
     # Plazo tras la hora de fin programada para que el cierre automático finalice una sesión.
     SESSION_AUTO_CLOSE_HOURS: int = Field(default=24, ge=0, le=24 * 30)
+    # Opcionales: ejecutan los cierres dentro de la API mientras la instancia esta activa.
+    SESSION_EXPIRATION_WORKER_INTERVAL_SECONDS: int = Field(default=0, ge=0, le=3600)
+    PARTICIPATION_EXPIRATION_WORKER_INTERVAL_SECONDS: int = Field(default=0, ge=0, le=3600)
     # Limitación de intentos fallidos de acceso estudiantil (ventana deslizante).
     STUDENT_LOGIN_WINDOW_SECONDS: int = Field(default=900, gt=0)
     STUDENT_LOGIN_MAX_FAILURES_PER_EMAIL: int = Field(default=5, gt=0)
