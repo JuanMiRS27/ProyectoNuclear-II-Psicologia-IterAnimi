@@ -1,5 +1,26 @@
 # Despliegue de Iter Animi
 
+## Despliegue publico verificado
+
+- Frontend: <https://iter-animi-web-5vqr.onrender.com>
+- API: <https://iter-animi-api-5vqr.onrender.com/health>
+- Rama desplegada: `main`, con despliegue automatico al recibir cambios.
+- Neon: proyecto `iter-animi`, PostgreSQL 16 en Ohio; migraciones hasta la 0012.
+- Credenciales iniciales: archivo local `.env.initial-admin`, ignorado por Git. Incluye la cuenta
+  administrativa y el docente de demostracion. Cambia la clave administrativa desde **Mi cuenta**.
+
+Se verificaron por HTTP los tres roles y el recorrido caso → convocatoria → intento → respuestas →
+entrega → evaluacion → retroalimentacion → resultados. El caso **Conformidad grupal - demostracion publica**
+incluye un paquete visual asociado a los ids reales de Neon. La sesion de comprobacion queda finalizada;
+el docente puede programar otra sesion con el mismo caso para probar el simulador.
+
+`node deploy/smoke-public.mjs` repite esta verificacion usando `.env.initial-admin`, crea o reutiliza
+usuarios ficticios de demostracion y finaliza su sesion. Prepara un manifiesto visual local que debe
+incorporarse al siguiente build del frontend. Nunca imprime claves, codigos ni tokens.
+
+El envio de correo sigue desactivado en el plan gratuito; los codigos se consultan desde el portal
+docente. La publicacion de cambios de sprites conserva el flujo exportar → instalar paquete → desplegar.
+
 Hay dos configuraciones: Docker Compose para ejecutar y verificar el sistema completo en el equipo,
 y un Blueprint de Render para una demo gratuita con PostgreSQL en Neon.
 Dockerizar el frontend es útil para servirlo con Nginx, pero Render Static Site no necesita Docker.

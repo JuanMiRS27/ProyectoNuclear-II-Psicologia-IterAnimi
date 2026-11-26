@@ -42,6 +42,14 @@
       "escenarioIds": [
         "f6e04a8f-61df-45fa-b44a-ba24cb8a6b71"
       ]
+    },
+    {
+      "caseId": "eccab9d0-f84c-41d3-a461-3a38bd28b4fd",
+      "nombre": "Conformidad grupal - demostracion publica",
+      "path": "eccab9d0-f84c-41d3-a461-3a38bd28b4fd/manifest.json",
+      "escenarioIds": [
+        "fb0626b4-2110-4cd2-ade3-0dc9cd00171c"
+      ]
     }
   ]
 }

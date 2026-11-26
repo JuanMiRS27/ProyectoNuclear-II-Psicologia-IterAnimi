@@ -1,0 +1,88 @@
+{
+  "format": "iter-animi-paquete-visual",
+  "version": 2,
+  "case": {
+    "id": "eccab9d0-f84c-41d3-a461-3a38bd28b4fd",
+    "nombre": "Conformidad grupal - demostracion publica"
+  },
+  "character": {
+    "name": "Ines",
+    "defaultExpression": "neutral",
+    "library": "system-young-adult-f-01"
+  },
+  "expressions": [
+    {
+      "id": "neutral",
+      "label": "neutral",
+      "sprite": null
+    },
+    {
+      "id": "preocupado",
+      "label": "preocupado",
+      "sprite": null
+    },
+    {
+      "id": "reflexivo",
+      "label": "reflexivo",
+      "sprite": null
+    }
+  ],
+  "scenes": [
+    {
+      "escenarioId": "fb0626b4-2110-4cd2-ade3-0dc9cd00171c",
+      "signature": "f652e7c6",
+      "initialExpression": "neutral"
+    }
+  ],
+  "reactions": [
+    {
+      "opcionId": "7ab0fa79-b13e-4e26-bc88-5a5c30fcb9a5",
+      "preguntaId": "f210a365-35d6-4633-af9f-4ff4e69d12af",
+      "escenarioId": "fb0626b4-2110-4cd2-ade3-0dc9cd00171c",
+      "signature": "d3f3c430",
+      "expression": "reflexivo",
+      "motion": "fade"
+    },
+    {
+      "opcionId": "d3928ea5-a027-4966-a9d0-3fec654350dc",
+      "preguntaId": "f210a365-35d6-4633-af9f-4ff4e69d12af",
+      "escenarioId": "fb0626b4-2110-4cd2-ade3-0dc9cd00171c",
+      "signature": "ea161efe",
+      "expression": "preocupado",
+      "motion": "fade"
+    },
+    {
+      "opcionId": "55e7da21-ded1-4e25-80b2-d0d311ba65ba",
+      "preguntaId": "f210a365-35d6-4633-af9f-4ff4e69d12af",
+      "escenarioId": "fb0626b4-2110-4cd2-ade3-0dc9cd00171c",
+      "signature": "911896a1",
+      "expression": null,
+      "motion": "fade"
+    },
+    {
+      "opcionId": "ed215b02-6082-4353-a7f1-68100bc16488",
+      "preguntaId": "a363d990-ed1a-4706-a42c-5a49933d00ee",
+      "escenarioId": "fb0626b4-2110-4cd2-ade3-0dc9cd00171c",
+      "signature": "4ba6498a",
+      "expression": "reflexivo",
+      "motion": "fade"
+    },
+    {
+      "opcionId": "077edecc-8873-4907-80b7-4b37ca828b04",
+      "preguntaId": "a363d990-ed1a-4706-a42c-5a49933d00ee",
+      "escenarioId": "fb0626b4-2110-4cd2-ade3-0dc9cd00171c",
+      "signature": "3b42e876",
+      "expression": "preocupado",
+      "motion": "fade"
+    },
+    {
+      "opcionId": "13da4fb8-5eb5-40cb-9e21-c6d68fcfe4a0",
+      "preguntaId": "a363d990-ed1a-4706-a42c-5a49933d00ee",
+      "escenarioId": "fb0626b4-2110-4cd2-ade3-0dc9cd00171c",
+      "signature": "452b87c0",
+      "expression": null,
+      "motion": "fade"
+    }
+  ],
+  "createdAt": "2026-11-26T12:46:48.247Z"
+}
