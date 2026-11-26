@@ -250,6 +250,10 @@ la cobertura por módulo están en los [reportes](#documentación) y en [`docs/e
 
 ## Despliegue
 
+Para ejecutar el sistema completo con Docker o preparar una demo gratuita en Render + Neon, consulte
+[`docs/DESPLIEGUE.md`](docs/DESPLIEGUE.md). Incluye imágenes de frontend/backend, Compose con PostgreSQL
+y los tres workers, y un Blueprint de Render con sus límites de correo y procesos en segundo plano.
+
 1. Compile el frontend con `npm run build` y sirva `frontend/dist/` en el mismo origen que la API;
    [`frontend/deploy/nginx.conf`](frontend/deploy/nginx.conf) es un ejemplo. Con orígenes distintos, use `VITE_API_BASE_URL` al
    compilar y `CORS_ALLOWED_ORIGINS` en el backend.
