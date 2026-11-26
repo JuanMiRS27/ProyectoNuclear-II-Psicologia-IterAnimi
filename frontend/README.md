@@ -12,7 +12,7 @@ Consume la API real del backend (`backend/`, FastAPI, prefijo `/api/v1`); no hay
 ## Requisitos
 
 - Node.js 20 o superior (probado con Node 26 y npm 11).
-- El backend en marcha (ver `README.md` de la raíz: PostgreSQL, `.env`, `alembic upgrade head`, `uvicorn`).
+- El backend en marcha (ver el [`README.md` de la raíz](../README.md): PostgreSQL, `.env`, `alembic upgrade head`, `uvicorn`).
 
 ## Comandos
 
@@ -47,10 +47,15 @@ Cada petición tiene un tiempo límite de 20 s: si la API no responde, la interf
 
 ## Despliegue
 
+El frontend ya dispone de una imagen multietapa (Node → Nginx) y Compose en la raíz del repositorio.
+Consulte [`../docs/DESPLIEGUE.md`](../docs/DESPLIEGUE.md) para ejecutarlo, configurar el proxy y desplegar
+en Render + Neon. Render Static Site puede alojar este frontend sin utilizar Docker.
+
 `npm run build` genera una SPA estática en `dist/`. Dos formas de conectarla con la API:
 
 **A. Mismo origen (recomendada, sin CORS).** Un servidor web sirve `dist/` y reenvía `/api/` al backend.
-`deploy/nginx.conf` es un ejemplo listo para usar. Compile sin `VITE_API_BASE_URL`.
+`deploy/nginx.conf` es la plantilla de la imagen Docker (sustituye `PORT` y `BACKEND_UPSTREAM` al arrancar).
+Si se usa Nginx fuera de Docker, sustituya esas variables manualmente. Compile sin `VITE_API_BASE_URL`.
 
 **B. Orígenes distintos.** Compile con `VITE_API_BASE_URL=https://api.ejemplo.edu.co/api/v1` y, en el backend, defina
 `CORS_ALLOWED_ORIGINS=https://simulador.ejemplo.edu.co` (orígenes separados por comas; nunca `*`). La autenticación viaja en la

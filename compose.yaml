@@ -1,0 +1,84 @@
+name: iter-animi
+
+x-backend: &backend
+  image: iter-animi-backend:local
+  build: ./backend
+  init: true
+  environment:
+    ENVIRONMENT: production
+    DATABASE_URL: postgresql+psycopg://iter_animi:${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD en .env.docker}@db:5432/iter_animi
+    JWT_SECRET_KEY: ${JWT_SECRET_KEY:?Defina JWT_SECRET_KEY en .env.docker}
+    CONVOCATION_CODE_ENCRYPTION_KEY: ${CONVOCATION_CODE_ENCRYPTION_KEY:?Defina CONVOCATION_CODE_ENCRYPTION_KEY en .env.docker}
+    NOTIFICATIONS_EMAIL_ENABLED: "false"
+    NOTIFICATIONS_WORKER_INTERVAL_SECONDS: "0"
+    CONVOCATION_CODE_RETRIEVAL_ENABLED: "true"
+    SIMULATOR_ACCESS_URL: http://localhost:${FRONTEND_PORT:-8080}/ingresar
+  depends_on:
+    migrate:
+      condition: service_completed_successfully
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: iter_animi
+      POSTGRES_USER: iter_animi
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD en .env.docker}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  migrate:
+    <<: *backend
+    command: [alembic, upgrade, head]
+    healthcheck:
+      disable: true
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  backend:
+    <<: *backend
+    restart: unless-stopped
+
+  notifications:
+    <<: *backend
+    command: [python, -m, app.workers.notifications, --intervalo, "30"]
+    healthcheck:
+      disable: true
+    restart: unless-stopped
+
+  participation-expiration:
+    <<: *backend
+    command: [python, -m, app.workers.participation_expiration, --intervalo, "60"]
+    healthcheck:
+      disable: true
+    restart: unless-stopped
+
+  session-expiration:
+    <<: *backend
+    command: [python, -m, app.workers.session_expiration, --intervalo, "300"]
+    healthcheck:
+      disable: true
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "127.0.0.1:${FRONTEND_PORT:-8080}:8080"
+    environment:
+      PORT: "8080"
+      BACKEND_UPSTREAM: http://backend:8000
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

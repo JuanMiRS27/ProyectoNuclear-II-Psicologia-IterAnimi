@@ -192,8 +192,8 @@ class SesionService(_ConvocatoriasMixin):
     # --- Validaciones ---------------------------------------------------------------------
 
     def _caso_programable(self, docente: Usuario, caso_id: uuid.UUID) -> CasoEstudio:
-        """Reutiliza las reglas del módulo 2: autoría del caso y su estado (State de casos)."""
-        caso = CasoRepository(self._session).get_owned(caso_id, docente.id)
+        """Casos propios o publicados por otros docentes (módulo 2); además, solo se programan casos publicados."""
+        caso = CasoRepository(self._session).get_visible(caso_id, docente.id)
         if caso is None:
             raise NotFoundError("Caso no encontrado.")
         if not CicloVidaCaso(caso).admite_programacion():

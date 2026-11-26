@@ -8,6 +8,40 @@
       "escenarioIds": [
         "9db4528b-e2b7-4285-bd8c-14bb98db017f"
       ]
+    },
+    {
+      "caseId": "32642336-095a-426a-93dd-9d8e9088432b",
+      "nombre": "Fory Caso",
+      "path": "32642336-095a-426a-93dd-9d8e9088432b/manifest.json",
+      "escenarioIds": [
+        "6cfee168-5e65-45c1-b19d-8a936172f324"
+      ]
+    },
+    {
+      "caseId": "491bc0ce-e46b-4679-826f-773929397c16",
+      "nombre": "Violencia familiar y tentativa de feminicidio",
+      "path": "491bc0ce-e46b-4679-826f-773929397c16/manifest.json",
+      "escenarioIds": [
+        "6d9f0ae7-94e1-4f57-9c3f-1b1a50598464",
+        "9d94bb1f-ec7c-4ace-a465-534c0850cddf"
+      ]
+    },
+    {
+      "caseId": "d3a114e8-aa14-4955-b172-ac0defc5ae7c",
+      "nombre": "Violencia familiar y tentativa de feminicidio",
+      "path": "d3a114e8-aa14-4955-b172-ac0defc5ae7c/manifest.json",
+      "escenarioIds": [
+        "502fea8b-9f70-4f36-9345-318abe6c3cf7",
+        "6f6918d4-4eb3-4893-9685-2d94a3ca522e"
+      ]
+    },
+    {
+      "caseId": "e182fd5f-65cc-4321-9eb1-da762bfba452",
+      "nombre": "Simulacion",
+      "path": "e182fd5f-65cc-4321-9eb1-da762bfba452/manifest.json",
+      "escenarioIds": [
+        "f6e04a8f-61df-45fa-b44a-ba24cb8a6b71"
+      ]
     }
   ]
 }

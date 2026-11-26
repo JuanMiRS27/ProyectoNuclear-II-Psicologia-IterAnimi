@@ -815,3 +815,166 @@ h4 {
     width: 100%;
   }
 }
+
+/* =============================================================== *
+ * Ánimo del personaje: animación continua según la expresión
+ * Usa propiedades de transformación independientes (scale / rotate / translate)
+ * para combinar respiración, balanceo y sacudidas sin pisarse entre sí.
+ * =============================================================== */
+.sim-mood {
+  grid-area: 1 / 1;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: end center;
+  transform-origin: 50% 100%;
+  will-change: transform;
+}
+.sim-mood > * {
+  grid-area: 1 / 1;
+}
+
+/* Tranquilo / neutral: respiración lenta y un balanceo casi imperceptible. */
+.mood-calm {
+  --mood-anim:
+    mood-breathe-soft 4.6s ease-in-out infinite,
+    mood-sway-soft 9s ease-in-out infinite;
+}
+/* Feliz / aliviado: respiración ligera y pequeños rebotes. */
+.mood-happy {
+  --mood-anim:
+    mood-breathe-soft 3.2s ease-in-out infinite,
+    mood-bounce 1.8s ease-in-out infinite;
+}
+/* Triste: respiración honda y lenta, figura algo hundida con suspiros. */
+.mood-sad {
+  --mood-anim:
+    mood-sigh 6s ease-in-out infinite,
+    mood-slump 6s ease-in-out infinite;
+}
+/* Preocupado / inquieto: respiración rápida y un vaivén nervioso. */
+.mood-anxious {
+  --mood-anim:
+    mood-breathe-fast 1.05s ease-in-out infinite,
+    mood-fidget 2.6s ease-in-out infinite;
+}
+/* Incómodo: cambia el peso de un pie a otro, respiración algo acelerada. */
+.mood-uneasy {
+  --mood-anim:
+    mood-breathe-mid 2s ease-in-out infinite,
+    mood-shift 3.4s ease-in-out infinite;
+}
+/* Enojado: sacudida fuerte al aparecer, después temblor y respiración agitada. */
+.mood-angry {
+  --mood-anim:
+    mood-shake 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) 1,
+    mood-tremble 0.16s linear 0.6s infinite,
+    mood-breathe-heavy 0.85s ease-in-out infinite,
+    mood-lean 2.2s ease-in-out 0.6s infinite;
+}
+/* Sorprendido: respingo al aparecer y respiración entrecortada. */
+.mood-surprised {
+  --mood-anim:
+    mood-jolt 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) 1,
+    mood-breathe-mid 1.5s ease-in-out 0.55s infinite;
+}
+/* Reflexivo: respiración pausada e inclinación lenta, como pensando. */
+.mood-thoughtful {
+  --mood-anim:
+    mood-breathe-soft 5.2s ease-in-out infinite,
+    mood-ponder 8s ease-in-out infinite;
+}
+
+@keyframes mood-breathe-soft {
+  0%, 100% { scale: 1 1; }
+  50% { scale: 1.006 1.018; }
+}
+@keyframes mood-breathe-mid {
+  0%, 100% { scale: 1 1; }
+  50% { scale: 1.008 1.022; }
+}
+@keyframes mood-breathe-fast {
+  0%, 100% { scale: 1 1; }
+  45% { scale: 1.01 1.026; }
+}
+@keyframes mood-breathe-heavy {
+  0%, 100% { scale: 1 1; }
+  40% { scale: 1.022 1.04; }
+}
+@keyframes mood-sigh {
+  0%, 100% { scale: 1 0.992; }
+  35% { scale: 1.01 1.03; }
+  55% { scale: 1.004 1.01; }
+}
+@keyframes mood-sway-soft {
+  0%, 100% { rotate: -0.35deg; }
+  50% { rotate: 0.35deg; }
+}
+@keyframes mood-bounce {
+  0%, 100% { translate: 0 0; }
+  30% { translate: 0 -5px; }
+  50% { translate: 0 0; }
+  65% { translate: 0 -2px; }
+}
+@keyframes mood-slump {
+  0%, 100% { translate: 0 4px; rotate: -1deg; }
+  40% { translate: 0 1px; rotate: -0.4deg; }
+}
+@keyframes mood-fidget {
+  0%, 100% { rotate: 0deg; translate: 0 0; }
+  15% { rotate: -1.2deg; translate: -2px 0; }
+  30% { rotate: 0.8deg; translate: 2px 0; }
+  42% { rotate: -0.5deg; translate: -1px 0; }
+  60% { rotate: 1.3deg; translate: 3px 0; }
+  78% { rotate: -0.9deg; translate: -2px 0; }
+}
+@keyframes mood-shift {
+  0%, 100% { translate: -4px 0; rotate: -1deg; }
+  45% { translate: 4px 0; rotate: 1deg; }
+  55% { translate: 4px 0; rotate: 1deg; }
+}
+@keyframes mood-shake {
+  0%, 100% { translate: 0 0; }
+  10% { translate: -12px 0; rotate: -2deg; }
+  20% { translate: 12px 0; rotate: 2deg; }
+  30% { translate: -10px 0; rotate: -1.6deg; }
+  40% { translate: 10px 0; rotate: 1.6deg; }
+  50% { translate: -7px 0; rotate: -1deg; }
+  60% { translate: 7px 0; rotate: 1deg; }
+  70% { translate: -4px 0; }
+  80% { translate: 4px 0; }
+  90% { translate: -2px 0; }
+}
+@keyframes mood-tremble {
+  0%, 100% { translate: 0 0; }
+  25% { translate: -1.6px 0.6px; }
+  50% { translate: 1.4px -0.6px; }
+  75% { translate: -1px -0.4px; }
+}
+@keyframes mood-lean {
+  0%, 100% { rotate: 0deg; }
+  50% { rotate: 1.4deg; }
+}
+@keyframes mood-jolt {
+  0% { translate: 0 0; scale: 1 1; }
+  30% { translate: 0 -18px; scale: 0.98 1.05; }
+  60% { translate: 0 2px; scale: 1.02 0.98; }
+  100% { translate: 0 0; scale: 1 1; }
+}
+@keyframes mood-ponder {
+  0%, 100% { rotate: 0deg; }
+  30% { rotate: -1.4deg; }
+  60% { rotate: -1.1deg; }
+  80% { rotate: 0.4deg; }
+}
+
+.sim-mood {
+  animation: var(--mood-anim, none);
+}
+/* El ánimo del personaje es parte del contenido narrativo: se mantiene aunque el sistema pida reducir el
+   movimiento (las reglas globales de movimiento reducido usan el selector universal y aquí se reponen). */
+@media (prefers-reduced-motion: reduce) {
+  .sim-mood {
+    animation: var(--mood-anim, none) !important;
+  }
+}

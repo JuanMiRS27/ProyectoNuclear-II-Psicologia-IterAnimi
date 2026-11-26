@@ -8,7 +8,7 @@ import type { VisualManifest } from './types.ts'
 
 export interface PackageIndex {
   version: 1
-  packages: { caseId: string; path: string; escenarioIds: string[] }[]
+  packages: { caseId: string; nombre?: string; path: string; escenarioIds: string[] }[]
 }
 
 export interface StaticPackage {
@@ -29,15 +29,8 @@ async function getJson(url: string): Promise<unknown | null> {
   }
 }
 
-/**
- * Busca el paquete instalado para un conjunto de escenas. Devuelve null si no hay paquete o si es inválido:
- * en ese caso el simulador usa el personaje sin imagen y el caso sigue siendo jugable.
- */
-export async function loadStaticPackage(escenarioIds: string[]): Promise<StaticPackage | null> {
-  const index = (await getJson(`${base()}index.json`)) as PackageIndex | null
-  if (!index || !Array.isArray(index.packages)) return null
-  const wanted = new Set(escenarioIds)
-  const entry = index.packages.find((p) => Array.isArray(p.escenarioIds) && p.escenarioIds.some((id) => wanted.has(id)))
+/** Lee y valida el manifiesto de una entrada del índice y resuelve las URLs de sus sprites. */
+async function loadEntry(entry: PackageIndex['packages'][number] | undefined): Promise<StaticPackage | null> {
   if (!entry || typeof entry.path !== 'string' || entry.path.includes('..') || /^[a-z]+:|^\//i.test(entry.path)) return null
   const manifestUrl = new URL(entry.path, new URL(base(), location.origin))
   const json = await getJson(manifestUrl.href)
@@ -53,4 +46,35 @@ export async function loadStaticPackage(escenarioIds: string[]): Promise<StaticP
   const spriteUrls: Record<string, string | null> = {}
   for (const e of manifest.expressions) spriteUrls[e.id] = e.sprite ? new URL(e.sprite, manifestUrl).href : null
   return { manifest, spriteUrls }
+}
+
+async function loadIndex(): Promise<PackageIndex | null> {
+  const index = (await getJson(`${base()}index.json`)) as PackageIndex | null
+  return index && Array.isArray(index.packages) ? index : null
+}
+
+/**
+ * Busca el paquete instalado para un conjunto de escenas. Devuelve null si no hay paquete o si es inválido:
+ * en ese caso el simulador usa el personaje sin imagen y el caso sigue siendo jugable.
+ */
+export async function loadStaticPackage(escenarioIds: string[]): Promise<StaticPackage | null> {
+  const index = await loadIndex()
+  if (!index) return null
+  const wanted = new Set(escenarioIds)
+  return loadEntry(index.packages.find((p) => Array.isArray(p.escenarioIds) && p.escenarioIds.some((id) => wanted.has(id))))
+}
+
+const normalizeName = (n: string) => n.normalize('NFC').trim().replace(/\s+/g, ' ').toLowerCase()
+
+/**
+ * Paquete de un caso por su nombre, para el inicio del estudiante: antes de jugar (y en la consulta de resultados) la
+ * API no expone el id del caso ni sus escenas, pero sí su nombre. Solo se usa si el nombre identifica un único paquete;
+ * si hay dos casos con el mismo nombre se devuelve null (personaje sin rostro) para no mostrar uno equivocado.
+ */
+export async function loadStaticPackageByCaseName(caseName: string): Promise<StaticPackage | null> {
+  const index = await loadIndex()
+  if (!index || !caseName.trim()) return null
+  const wanted = normalizeName(caseName)
+  const matches = index.packages.filter((p) => typeof p.nombre === 'string' && normalizeName(p.nombre) === wanted)
+  return matches.length === 1 ? loadEntry(matches[0]) : null
 }

@@ -3,6 +3,7 @@
 .env
 .env.*
 !.env.example
+!.env.docker.example
 *.pem
 *.key
 *.p12
@@ -53,6 +54,7 @@ tmp/
 temp/
 
 # --- PostgreSQL y bases de datos locales --------------------------------------
+.env.docker
 # Clústeres locales, volcados y bases embebidas generadas durante el desarrollo.
 pgdata/
 postgres-data/

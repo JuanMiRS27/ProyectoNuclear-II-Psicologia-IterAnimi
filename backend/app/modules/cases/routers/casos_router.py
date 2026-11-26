@@ -31,7 +31,7 @@ def create_full_case(documento: CaseDSLDocument, autor: Editor, service: CasoSer
     return CasoDetalle.model_validate(service.crear_completo(autor, documento))
 
 
-@router.get("", response_model=CasoList, summary="Listar mis casos", responses=AUTH)
+@router.get("", response_model=CasoList, summary="Listar mis casos y los publicados por otros docentes", responses=AUTH)
 def list_cases(
     autor: Lector,
     service: CasoServiceDep,

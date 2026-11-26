@@ -1,3 +1,6 @@
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -13,10 +16,28 @@ from app.modules.reports.routers import router as reports_module_router
 from app.modules.sessions.routers import router as sessions_module_router
 
 
+@asynccontextmanager
+async def _ciclo_de_vida(app: FastAPI) -> AsyncIterator[None]:
+    """Arranca el worker de notificaciones integrado si está configurado (nunca en pruebas)."""
+    settings = get_settings()
+    intervalo = getattr(settings, "NOTIFICATIONS_WORKER_INTERVAL_SECONDS", 0)
+    detener = None
+    if intervalo > 0 and getattr(settings, "ENVIRONMENT", "development") != "testing":
+        from app.workers.notifications.runner import iniciar_en_segundo_plano
+
+        detener = iniciar_en_segundo_plano(intervalo)
+    try:
+        yield
+    finally:
+        if detener is not None:
+            detener.set()
+
+
 def create_app() -> FastAPI:
     settings = get_settings()
     configurar_integraciones()
     app = FastAPI(
+        lifespan=_ciclo_de_vida,
         title=settings.APP_NAME,
         version="0.1.0",
         description="Backend del Simulador de Psicología Social (Iter Animi): módulos 1 a 7.",

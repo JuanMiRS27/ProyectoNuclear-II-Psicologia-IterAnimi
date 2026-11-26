@@ -69,6 +69,10 @@ class Settings(BaseSettings):
     NOTIFICATIONS_RETRY_MAX_SECONDS: int = Field(default=3600, gt=0, le=86400)
     # Reserva de una entrega EN_PROCESO: si el worker cae, otra ejecución la retoma al vencer.
     NOTIFICATIONS_LEASE_SECONDS: int = Field(default=300, gt=0, le=3600)
+    # Worker de notificaciones integrado en la API: segundos entre pasadas (0 = desactivado; en
+    # ese caso debe ejecutarse aparte `python -m app.workers.notifications --intervalo N`).
+    # Es seguro junto a otros workers (FOR UPDATE SKIP LOCKED). Nunca se activa en pruebas.
+    NOTIFICATIONS_WORKER_INTERVAL_SECONDS: int = Field(default=0, ge=0, le=3600)
     # Clave AES-256 (32 bytes en Base64 URL-safe) para cifrar los códigos de convocatoria en reposo.
     # Obligatoria y fuera de la base de datos y de Git. Generar con:
     #   python -c "import base64, os; print(base64.urlsafe_b64encode(os.urandom(32)).decode())"

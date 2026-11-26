@@ -7,7 +7,7 @@ import { Icon } from '../../components/ui/Icon'
 import { useNotifications } from '../../hooks/use-student'
 import { formatDateTime, formatRange, formatTime, formatShortDay } from '../../lib/format'
 import { agendaOf, STATUS_LABEL, type StudentSessionStatus, type StudentSessionView } from '../../lib/student-session-adapters'
-import { SceneCharacter } from '../simulator/SceneCharacter'
+import { HeroCharacter } from './HeroCharacter'
 import { StudentPrimaryAction } from './StudentPrimaryAction'
 import { useStudentPortal } from './use-student-portal'
 
@@ -57,7 +57,7 @@ export function StudentDashboardView() {
         <div className="dash-primary">
           <section className="hero-session" aria-labelledby="h-prioritaria">
             <div className="hero-scene" aria-hidden="true">
-              <SceneCharacter className="hero-figure" decorative />
+              <HeroCharacter caseName={v.casoNombre} />
             </div>
             <div className="hero-body">
               <p className="eyebrow">{v.mode === 'results' ? 'Tu experiencia' : v.intentoEnCurso ? 'Continúa tu experiencia' : 'Tu siguiente experiencia'}</p>

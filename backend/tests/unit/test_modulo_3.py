@@ -573,20 +573,20 @@ def test_condiciones_de_programacion_validas(condiciones):
     _validar(**condiciones)
 
 
-def test_caso_para_programar_debe_ser_propio_y_publicado():
+def test_caso_para_programar_debe_ser_visible_y_publicado():
     servicio, _ = _servicio(SesionService)
     with patch.object(sesion_service, "CasoRepository") as repositorio:
-        repositorio.return_value.get_owned.return_value = None
+        repositorio.return_value.get_visible.return_value = None
         with pytest.raises(NotFoundError):
             servicio._caso_programable(usuario(), uuid.uuid4())
 
         for estado in (EstadoCasoEnum.BORRADOR, EstadoCasoEnum.ARCHIVADO):
-            repositorio.return_value.get_owned.return_value = caso_valido(estado)
+            repositorio.return_value.get_visible.return_value = caso_valido(estado)
             with pytest.raises(ConflictError, match=estado.value):
                 servicio._caso_programable(usuario(), uuid.uuid4())
 
         publicado = caso_valido(EstadoCasoEnum.PUBLICADO)
-        repositorio.return_value.get_owned.return_value = publicado
+        repositorio.return_value.get_visible.return_value = publicado
         assert servicio._caso_programable(usuario(), uuid.uuid4()) is publicado
 
 

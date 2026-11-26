@@ -5,13 +5,27 @@ import type { VisualDraft } from './types.ts'
 const DB = 'iter-animi-visual'
 const STORE = 'borradores'
 
-function open(): Promise<IDBDatabase> {
+function openVersion(version?: number): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB, 1)
-    req.onupgradeneeded = () => req.result.createObjectStore(STORE)
+    const req = version ? indexedDB.open(DB, version) : indexedDB.open(DB)
+    req.onupgradeneeded = () => {
+      if (!req.result.objectStoreNames.contains(STORE)) req.result.createObjectStore(STORE)
+    }
     req.onsuccess = () => resolve(req.result)
     req.onerror = () => reject(req.error ?? new Error('No se pudo abrir el almacenamiento del navegador.'))
   })
+}
+
+/**
+ * Abre la base de borradores. Si existe sin su almacén (p. ej. la creó otra herramienta o quedó a medias), la sube de
+ * versión para crearlo en lugar de fallar: el editor nunca queda bloqueado por un IndexedDB incompleto.
+ */
+async function open(): Promise<IDBDatabase> {
+  const db = await openVersion()
+  if (db.objectStoreNames.contains(STORE)) return db
+  const next = db.version + 1
+  db.close()
+  return openVersion(next)
 }
 
 function tx<T>(mode: IDBTransactionMode, run: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {

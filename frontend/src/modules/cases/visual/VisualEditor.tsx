@@ -3,10 +3,11 @@ import { Notice } from '../../../components/design-system/layout'
 import { InlineError, LoadingState } from '../../../components/design-system/states'
 import { Button } from '../../../components/ui/Button'
 import { ConfirmDialog } from '../../../components/ui/Dialog'
-import { useDeleteVisualDraft, useSaveVisualDraft, useSpriteLibrary, useVisualDraft } from '../../../hooks/use-visual'
+import { useDeleteVisualDraft, usePublishAvailable, useSaveVisualDraft, useSpriteLibrary, useVisualDraft } from '../../../hooks/use-visual'
 import { formatDateTime } from '../../../lib/format'
 import { libraryUrls, remapToExpressions, systemExpressions, type LibraryCharacter, type RemapReport } from '../../../lib/visual/library'
 import { buildPackage, parsePackage, PackageError } from '../../../lib/visual/package'
+import { publishPackage, PublishError } from '../../../lib/visual/publish'
 import { buildRuntime, emptyManifest } from '../../../lib/visual/runtime'
 import { DEFAULT_EXPRESSIONS, type VisualDraft, type VisualManifest } from '../../../lib/visual/types'
 import type { CasoDetalle } from '../../../types/api'
@@ -37,6 +38,10 @@ export function VisualEditor({ caso }: { caso: CasoDetalle }) {
 
 function Editor({ caso, initial }: { caso: CasoDetalle; initial: VisualDraft | null }) {
   const save = useSaveVisualDraft(caso.id)
+  const publishCheck = usePublishAvailable()
+  const canPublish = publishCheck.data === true
+  const [publishing, setPublishing] = useState(false)
+  const [publishedAt, setPublishedAt] = useState<string | null>(null)
   const remove = useDeleteVisualDraft(caso.id)
   const [manifest, setManifest] = useState<VisualManifest>(() => initial?.manifest ?? emptyManifest(caso))
   const [images, setImages] = useState<Record<string, Blob>>(() => initial?.images ?? {})
@@ -120,6 +125,26 @@ function Editor({ caso, initial }: { caso: CasoDetalle; initial: VisualDraft | n
     setNotice({ tone: 'ok', text: `De vuelta a tus sprites propios. ${describe(report, next)}`.trim() })
   }
 
+  /**
+   * Publica el paquete en el frontend servido: queda en public/visual-packages/ y los estudiantes lo cargan al abrir o
+   * recargar el caso. Los personajes del sistema solo viajan como referencia (sus imágenes ya están en el frontend).
+   */
+  const publish = async (prefix: string) => {
+    setPublishing(true)
+    try {
+      const r = await publishPackage(await buildPackage(manifest, systemId ? {} : images))
+      setPublishedAt(new Date().toISOString())
+      const who = manifest.character.name.trim() || 'El personaje'
+      const extra = r.warnings.length ? ` Aviso: ${r.warnings.join(' ')}` : ''
+      setNotice({ tone: r.warnings.length ? 'warn' : 'ok', text: `${prefix} ${who} y sus reacciones ya están publicados para los estudiantes de este caso: los verán al abrir o recargar el simulador.${extra}` })
+    } catch (err) {
+      const msg = err instanceof PackageError || err instanceof PublishError ? err.message : 'No se pudo publicar el paquete.'
+      setNotice({ tone: 'error', text: `${prefix} Pero no se pudo publicar para los estudiantes: ${msg}` })
+    } finally {
+      setPublishing(false)
+    }
+  }
+
   const onSave = () =>
     save.mutate(
       { manifest, images: systemId ? {} : images, stash },
@@ -127,7 +152,8 @@ function Editor({ caso, initial }: { caso: CasoDetalle; initial: VisualDraft | n
         onSuccess: (saved) => {
           setDirty(false)
           setSavedAt(saved.savedAt ?? null)
-          setNotice({ tone: 'ok', text: 'Borrador visual guardado en este navegador.' })
+          if (canPublish) void publish('Guardado.')
+          else setNotice({ tone: 'ok', text: 'Borrador visual guardado en este navegador.' })
         },
       },
     )
@@ -137,6 +163,7 @@ function Editor({ caso, initial }: { caso: CasoDetalle; initial: VisualDraft | n
     try {
       const bytes = await buildPackage(manifest, images)
       download(bytes, `paquete-visual-${caso.id}.zip`)
+      if (canPublish) return void publish('Paquete exportado.')
       setNotice({
         tone: 'info',
         text: 'Paquete exportado. Para que lo vean los estudiantes hay que instalarlo en el frontend antes de desplegar (ver la guía de paquetes visuales).',
@@ -176,14 +203,22 @@ function Editor({ caso, initial }: { caso: CasoDetalle; initial: VisualDraft | n
           {dirty ? (
             <span className="status-dot pending">Cambios sin guardar</span>
           ) : savedAt ? (
-            <span className="status-dot saved">Guardado en este navegador el {formatDateTime(savedAt)}</span>
+            <span className="status-dot saved">
+              {publishedAt ? `Publicado para los estudiantes el ${formatDateTime(publishedAt)}` : `Guardado en este navegador el ${formatDateTime(savedAt)}`}
+            </span>
           ) : (
             <span className="status-dot">Aún no hay un borrador guardado</span>
           )}
         </div>
         <div className="btn-row">
-          <Button variant="primary" onClick={onSave} pending={save.isPending} pendingLabel="Guardando…" disabled={!dirty && Boolean(savedAt)}>
-            Guardar borrador
+          <Button
+            variant="primary"
+            onClick={onSave}
+            pending={save.isPending || publishing}
+            pendingLabel={publishing ? 'Publicando…' : 'Guardando…'}
+            disabled={!canPublish && !dirty && Boolean(savedAt)}
+          >
+            {canPublish ? 'Guardar y publicar' : 'Guardar borrador'}
           </Button>
           <Button icon="download" onClick={() => void onExport()}>
             Exportar paquete visual
@@ -205,10 +240,17 @@ function Editor({ caso, initial }: { caso: CasoDetalle; initial: VisualDraft | n
 
       {notice && <Notice tone={notice.tone}>{notice.text}</Notice>}
       <InlineError error={save.error} />
-      <Notice tone="info" title="Qué se guarda y qué se distribuye">
-        «Guardar borrador» lo conserva solo en este navegador. Para que lo vean los estudiantes: exporta el paquete, instálalo en el frontend con{' '}
-        <code>npm run visual:install</code> y despliega. Publicar el caso no publica su paquete visual.
-      </Notice>
+      {canPublish ? (
+        <Notice tone="info" title="Se comparte automáticamente">
+          «Guardar y publicar» conserva el borrador en este navegador y lo instala en este servidor del frontend: los estudiantes del caso ven el
+          personaje y sus reacciones al abrir o recargar el simulador. Exportar el paquete también lo publica.
+        </Notice>
+      ) : (
+        <Notice tone="info" title="Qué se guarda y qué se distribuye">
+          «Guardar borrador» lo conserva solo en este navegador. Este frontend se sirve como archivos estáticos, así que para que lo vean los
+          estudiantes hay que exportar el paquete, instalarlo con <code>npm run visual:install</code> y desplegar.
+        </Notice>
+      )}
       {orphans.length > 0 && (
         <Notice tone="warn" title={`Hay ${orphans.length} asociaciones que ya no existen en el caso.`}>
           Se ignoran en el simulador (se usa la expresión inicial).{' '}

@@ -1,0 +1,222 @@
+{
+  "format": "iter-animi-paquete-visual",
+  "version": 2,
+  "case": {
+    "id": "d3a114e8-aa14-4955-b172-ac0defc5ae7c",
+    "nombre": "Violencia familiar y tentativa de feminicidio"
+  },
+  "character": {
+    "name": "Inés",
+    "defaultExpression": "neutral",
+    "library": "system-young-adult-f-01"
+  },
+  "expressions": [
+    {
+      "id": "neutral",
+      "label": "Neutral",
+      "sprite": null
+    },
+    {
+      "id": "feliz",
+      "label": "Feliz",
+      "sprite": null
+    },
+    {
+      "id": "triste",
+      "label": "Triste",
+      "sprite": null
+    },
+    {
+      "id": "enojado",
+      "label": "Enojado",
+      "sprite": null
+    },
+    {
+      "id": "preocupado",
+      "label": "Preocupado",
+      "sprite": null
+    },
+    {
+      "id": "sorprendido",
+      "label": "Sorprendido",
+      "sprite": null
+    },
+    {
+      "id": "incomodo",
+      "label": "Incómodo",
+      "sprite": null
+    },
+    {
+      "id": "reflexivo",
+      "label": "Reflexivo",
+      "sprite": null
+    }
+  ],
+  "scenes": [
+    {
+      "escenarioId": "502fea8b-9f70-4f36-9345-318abe6c3cf7",
+      "signature": "7a4297b6",
+      "initialExpression": null
+    },
+    {
+      "escenarioId": "6f6918d4-4eb3-4893-9685-2d94a3ca522e",
+      "signature": "6de43f09",
+      "initialExpression": null
+    }
+  ],
+  "reactions": [
+    {
+      "opcionId": "44ceb1ee-6f85-4866-a53b-d5bb4e8205d7",
+      "preguntaId": "ee704566-1e56-435c-b40b-47f3bffb3562",
+      "escenarioId": "502fea8b-9f70-4f36-9345-318abe6c3cf7",
+      "signature": "fb4187f2",
+      "expression": "triste",
+      "motion": "fade"
+    },
+    {
+      "opcionId": "e1ba42c3-eb6d-4844-a33a-864453fb7a25",
+      "preguntaId": "ee704566-1e56-435c-b40b-47f3bffb3562",
+      "escenarioId": "502fea8b-9f70-4f36-9345-318abe6c3cf7",
+      "signature": "8959a728",
+      "expression": "neutral",
+      "motion": "fade"
+    },
+    {
+      "opcionId": "d5f2c445-4e23-4380-a0dc-8dc9309933dc",
+      "preguntaId": "ee704566-1e56-435c-b40b-47f3bffb3562",
+      "escenarioId": "502fea8b-9f70-4f36-9345-318abe6c3cf7",
+      "signature": "45cbdd23",
+      "expression": "incomodo",
+      "motion": "fade"
+    },
+    {
+      "opcionId": "78b8a9bb-a99d-4405-ae43-38e8419fd5a1",
+      "preguntaId": "bbcbd72d-481d-4624-a499-d3ad94727130",
+      "escenarioId": "502fea8b-9f70-4f36-9345-318abe6c3cf7",
+      "signature": "3278eaa9",
+      "expression": "incomodo",
+      "motion": "fade"
+    },
+    {
+      "opcionId": "0c0f3ef5-7a5a-4f5a-861e-b876921e8f9d",
+      "preguntaId": "bbcbd72d-481d-4624-a499-d3ad94727130",
+      "escenarioId": "502fea8b-9f70-4f36-9345-318abe6c3cf7",
+      "signature": "8e5c93de",
+      "expression": "reflexivo",
+      "motion": "fade"
+    },
+    {
+      "opcionId": "0dcaee7e-f3a0-41c6-b074-6109dbf62597",
+      "preguntaId": "bbcbd72d-481d-4624-a499-d3ad94727130",
+      "escenarioId": "502fea8b-9f70-4f36-9345-318abe6c3cf7",
+      "signature": "02f5fd62",
+      "expression": "reflexivo",
+      "motion": "fade"
+    },
+    {
+      "opcionId": "ba10a27d-d849-4eac-af72-a6153a6933df",
+      "preguntaId": "361e17bf-6f1b-4a5a-b49e-79717fabb0fc",
+      "escenarioId": "502fea8b-9f70-4f36-9345-318abe6c3cf7",
+      "signature": "e29e267b",
+      "expression": "reflexivo",
+      "motion": "fade"
+    },
+    {
+      "opcionId": "9cedc5bf-ae9a-47bf-8b6e-d061cefa5664",
+      "preguntaId": "361e17bf-6f1b-4a5a-b49e-79717fabb0fc",
+      "escenarioId": "502fea8b-9f70-4f36-9345-318abe6c3cf7",
+      "signature": "249c0645",
+      "expression": "incomodo",
+      "motion": "fade"
+    },
+    {
+      "opcionId": "de53e9ee-7725-4ca4-a1b4-20117bee4981",
+      "preguntaId": "361e17bf-6f1b-4a5a-b49e-79717fabb0fc",
+      "escenarioId": "502fea8b-9f70-4f36-9345-318abe6c3cf7",
+      "signature": "80fb2342",
+      "expression": "sorprendido",
+      "motion": "fade"
+    },
+    {
+      "opcionId": "1877fcf7-0dd6-4811-9d2b-b11d70aa972f",
+      "preguntaId": "361e17bf-6f1b-4a5a-b49e-79717fabb0fc",
+      "escenarioId": "502fea8b-9f70-4f36-9345-318abe6c3cf7",
+      "signature": "05474022",
+      "expression": "reflexivo",
+      "motion": "fade"
+    },
+    {
+      "opcionId": "3ba2a541-d8c9-4920-871c-e62817c4a5a4",
+      "preguntaId": "e991afea-cb8d-4ded-9abd-e2f65e8ad8cd",
+      "escenarioId": "6f6918d4-4eb3-4893-9685-2d94a3ca522e",
+      "signature": "0f9febee",
+      "expression": "enojado",
+      "motion": "fade"
+    },
+    {
+      "opcionId": "dd19844b-d7f2-4e23-9175-b6b2cc2cb0f0",
+      "preguntaId": "e991afea-cb8d-4ded-9abd-e2f65e8ad8cd",
+      "escenarioId": "6f6918d4-4eb3-4893-9685-2d94a3ca522e",
+      "signature": "7aebd2d8",
+      "expression": "incomodo",
+      "motion": "fade"
+    },
+    {
+      "opcionId": "11c3e0a4-af37-4547-9947-9c464cd6661e",
+      "preguntaId": "e991afea-cb8d-4ded-9abd-e2f65e8ad8cd",
+      "escenarioId": "6f6918d4-4eb3-4893-9685-2d94a3ca522e",
+      "signature": "fc698e3b",
+      "expression": "feliz",
+      "motion": "fade"
+    },
+    {
+      "opcionId": "909f38a3-d3b4-4554-9fd8-c2ea078dc5a7",
+      "preguntaId": "57419a61-b61b-410a-ba43-8f319db4e46a",
+      "escenarioId": "6f6918d4-4eb3-4893-9685-2d94a3ca522e",
+      "signature": "1d30c745",
+      "expression": "neutral",
+      "motion": "fade"
+    },
+    {
+      "opcionId": "a10eceda-f363-4b46-8a55-b2ef12813afc",
+      "preguntaId": "57419a61-b61b-410a-ba43-8f319db4e46a",
+      "escenarioId": "6f6918d4-4eb3-4893-9685-2d94a3ca522e",
+      "signature": "0c9f1f74",
+      "expression": "neutral",
+      "motion": "fade"
+    },
+    {
+      "opcionId": "c27cfbc4-fc58-450a-ac2b-a5b047315dc1",
+      "preguntaId": "57419a61-b61b-410a-ba43-8f319db4e46a",
+      "escenarioId": "6f6918d4-4eb3-4893-9685-2d94a3ca522e",
+      "signature": "16e4a887",
+      "expression": "neutral",
+      "motion": "fade"
+    },
+    {
+      "opcionId": "8a2538e8-0199-417a-8937-147b4d01d753",
+      "preguntaId": "9ac7e39f-0aa3-41c8-b539-f1f8cc858d92",
+      "escenarioId": "6f6918d4-4eb3-4893-9685-2d94a3ca522e",
+      "signature": "5fd66db0",
+      "expression": "neutral",
+      "motion": "fade"
+    },
+    {
+      "opcionId": "e8847639-278a-44f4-b730-59158fa96fde",
+      "preguntaId": "9ac7e39f-0aa3-41c8-b539-f1f8cc858d92",
+      "escenarioId": "6f6918d4-4eb3-4893-9685-2d94a3ca522e",
+      "signature": "a71335c4",
+      "expression": "incomodo",
+      "motion": "fade"
+    },
+    {
+      "opcionId": "194a1d5a-91a2-452a-859f-6fe7bb3e78a1",
+      "preguntaId": "9ac7e39f-0aa3-41c8-b539-f1f8cc858d92",
+      "escenarioId": "6f6918d4-4eb3-4893-9685-2d94a3ca522e",
+      "signature": "380107cc",
+      "expression": "reflexivo",
+      "motion": "fade"
+    }
+  ],
+  "createdAt": "2026-11-23T22:31:45.281Z"
+}

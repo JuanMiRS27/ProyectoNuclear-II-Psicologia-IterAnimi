@@ -83,6 +83,7 @@ function Play({ data }: { data: Cuestionario }) {
     ? {
         expression: stage.shown.expression,
         motion: stage.shown.motion,
+        label: runtime?.label(stage.shown.expression) ?? null,
         src: visual.data?.spriteUrls[stage.shown.expression] ?? null,
         alt: `${runtime?.characterName || 'Personaje'}: ${runtime?.label(stage.shown.expression) ?? ''}`,
       }

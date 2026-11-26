@@ -1,0 +1,81 @@
+{
+  "format": "iter-animi-paquete-visual",
+  "version": 2,
+  "case": {
+    "id": "e182fd5f-65cc-4321-9eb1-da762bfba452",
+    "nombre": "Simulacion"
+  },
+  "character": {
+    "name": "Inés",
+    "defaultExpression": "neutral",
+    "library": "system-young-adult-f-01"
+  },
+  "expressions": [
+    {
+      "id": "neutral",
+      "label": "Neutral",
+      "sprite": null
+    },
+    {
+      "id": "feliz",
+      "label": "Feliz",
+      "sprite": null
+    },
+    {
+      "id": "triste",
+      "label": "Triste",
+      "sprite": null
+    },
+    {
+      "id": "enojado",
+      "label": "Enojado",
+      "sprite": null
+    },
+    {
+      "id": "preocupado",
+      "label": "Preocupado",
+      "sprite": null
+    },
+    {
+      "id": "sorprendido",
+      "label": "Sorprendido",
+      "sprite": null
+    },
+    {
+      "id": "incomodo",
+      "label": "Incómodo",
+      "sprite": null
+    },
+    {
+      "id": "reflexivo",
+      "label": "Reflexivo",
+      "sprite": null
+    }
+  ],
+  "scenes": [
+    {
+      "escenarioId": "f6e04a8f-61df-45fa-b44a-ba24cb8a6b71",
+      "signature": "79d4a67e",
+      "initialExpression": null
+    }
+  ],
+  "reactions": [
+    {
+      "opcionId": "fcb4e47d-38d6-419b-8dd6-d98d52ab23ba",
+      "preguntaId": "abb74ad0-47a5-4210-8b58-0d7fd910fff4",
+      "escenarioId": "f6e04a8f-61df-45fa-b44a-ba24cb8a6b71",
+      "signature": "f86e8713",
+      "expression": "feliz",
+      "motion": "rise"
+    },
+    {
+      "opcionId": "02768f15-1787-4400-9770-9e6646acff65",
+      "preguntaId": "abb74ad0-47a5-4210-8b58-0d7fd910fff4",
+      "escenarioId": "f6e04a8f-61df-45fa-b44a-ba24cb8a6b71",
+      "signature": "f96e88a6",
+      "expression": "enojado",
+      "motion": "rise"
+    }
+  ],
+  "createdAt": "2026-11-23T23:28:11.769Z"
+}

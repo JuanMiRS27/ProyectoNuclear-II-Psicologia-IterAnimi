@@ -247,3 +247,20 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* Inicio del estudiante: el sprite del caso ocupa el mismo lugar que el personaje sin rostro, sin teñirse. */
+.hero-scene img.hero-sprite {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  max-height: 100%;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: bottom center;
+  margin-bottom: 0;
+  filter: none;
+}
+[data-theme='dark'] .hero-scene img.hero-sprite {
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.35));
+}

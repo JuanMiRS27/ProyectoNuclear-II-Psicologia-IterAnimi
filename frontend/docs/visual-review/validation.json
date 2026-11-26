@@ -1,0 +1,3045 @@
+{
+  "screens": 336,
+  "widths": [
+    320,
+    390,
+    768,
+    1280,
+    1440,
+    1920
+  ],
+  "themes": [
+    "light",
+    "dark"
+  ],
+  "browser": "Chrome (Playwright, isolated API fixtures)",
+  "failures": [],
+  "errors": [],
+  "unknown": [],
+  "records": [
+    {
+      "name": "login",
+      "theme": "light",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Decidir con criterio.Aprender con sentido.",
+      "alerts": []
+    },
+    {
+      "name": "student",
+      "theme": "light",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Tu próxima decisión te espera",
+      "alerts": []
+    },
+    {
+      "name": "classroom-student",
+      "theme": "light",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Psicología social",
+      "alerts": []
+    },
+    {
+      "name": "session-student",
+      "theme": "light",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "notices",
+      "theme": "light",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Avisos",
+      "alerts": []
+    },
+    {
+      "name": "results",
+      "theme": "light",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Resultados",
+      "alerts": []
+    },
+    {
+      "name": "result-detail",
+      "theme": "light",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Intento 1",
+      "alerts": []
+    },
+    {
+      "name": "feedback",
+      "theme": "light",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Retroalimentación",
+      "alerts": []
+    },
+    {
+      "name": "teacher",
+      "theme": "light",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Hola, Camila",
+      "alerts": []
+    },
+    {
+      "name": "classrooms",
+      "theme": "light",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Aulas",
+      "alerts": []
+    },
+    {
+      "name": "sessions",
+      "theme": "light",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Sesiones",
+      "alerts": []
+    },
+    {
+      "name": "evaluations",
+      "theme": "light",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Evaluación",
+      "alerts": []
+    },
+    {
+      "name": "cases",
+      "theme": "light",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Casos",
+      "alerts": []
+    },
+    {
+      "name": "case-editor",
+      "theme": "light",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "sprites",
+      "theme": "light",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "case-new",
+      "theme": "light",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Nuevo caso",
+      "alerts": []
+    },
+    {
+      "name": "schedule",
+      "theme": "light",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Programar sesión",
+      "alerts": []
+    },
+    {
+      "name": "account",
+      "theme": "light",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Mi cuenta",
+      "alerts": []
+    },
+    {
+      "name": "evaluation",
+      "theme": "light",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Daniela Gómez",
+      "alerts": []
+    },
+    {
+      "name": "classroom-detail",
+      "theme": "light",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Psicología social",
+      "alerts": []
+    },
+    {
+      "name": "session-convocations",
+      "theme": "light",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "session-results",
+      "theme": "light",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "tracking",
+      "theme": "light",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "admin",
+      "theme": "light",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Administración",
+      "alerts": []
+    },
+    {
+      "name": "users",
+      "theme": "light",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Usuarios",
+      "alerts": []
+    },
+    {
+      "name": "admin-classrooms",
+      "theme": "light",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Aulas",
+      "alerts": []
+    },
+    {
+      "name": "deliveries",
+      "theme": "light",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Entregas de correo",
+      "alerts": []
+    },
+    {
+      "name": "simulator",
+      "theme": "light",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Escena 1: Un primer encuentro. Decisión 1 de 1.",
+      "alerts": []
+    },
+    {
+      "name": "login",
+      "theme": "light",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Decidir con criterio.Aprender con sentido.",
+      "alerts": []
+    },
+    {
+      "name": "student",
+      "theme": "light",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Tu próxima decisión te espera",
+      "alerts": []
+    },
+    {
+      "name": "classroom-student",
+      "theme": "light",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Psicología social",
+      "alerts": []
+    },
+    {
+      "name": "session-student",
+      "theme": "light",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "notices",
+      "theme": "light",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Avisos",
+      "alerts": []
+    },
+    {
+      "name": "results",
+      "theme": "light",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Resultados",
+      "alerts": []
+    },
+    {
+      "name": "result-detail",
+      "theme": "light",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Intento 1",
+      "alerts": []
+    },
+    {
+      "name": "feedback",
+      "theme": "light",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Retroalimentación",
+      "alerts": []
+    },
+    {
+      "name": "teacher",
+      "theme": "light",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Hola, Camila",
+      "alerts": []
+    },
+    {
+      "name": "classrooms",
+      "theme": "light",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Aulas",
+      "alerts": []
+    },
+    {
+      "name": "sessions",
+      "theme": "light",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Sesiones",
+      "alerts": []
+    },
+    {
+      "name": "evaluations",
+      "theme": "light",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Evaluación",
+      "alerts": []
+    },
+    {
+      "name": "cases",
+      "theme": "light",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Casos",
+      "alerts": []
+    },
+    {
+      "name": "case-editor",
+      "theme": "light",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "sprites",
+      "theme": "light",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "case-new",
+      "theme": "light",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Nuevo caso",
+      "alerts": []
+    },
+    {
+      "name": "schedule",
+      "theme": "light",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Programar sesión",
+      "alerts": []
+    },
+    {
+      "name": "account",
+      "theme": "light",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Mi cuenta",
+      "alerts": []
+    },
+    {
+      "name": "evaluation",
+      "theme": "light",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Daniela Gómez",
+      "alerts": []
+    },
+    {
+      "name": "classroom-detail",
+      "theme": "light",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Psicología social",
+      "alerts": []
+    },
+    {
+      "name": "session-convocations",
+      "theme": "light",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "session-results",
+      "theme": "light",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "tracking",
+      "theme": "light",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "admin",
+      "theme": "light",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Administración",
+      "alerts": []
+    },
+    {
+      "name": "users",
+      "theme": "light",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Usuarios",
+      "alerts": []
+    },
+    {
+      "name": "admin-classrooms",
+      "theme": "light",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Aulas",
+      "alerts": []
+    },
+    {
+      "name": "deliveries",
+      "theme": "light",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Entregas de correo",
+      "alerts": []
+    },
+    {
+      "name": "simulator",
+      "theme": "light",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Escena 1: Un primer encuentro. Decisión 1 de 1.",
+      "alerts": []
+    },
+    {
+      "name": "login",
+      "theme": "light",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Decidir con criterio.Aprender con sentido.",
+      "alerts": []
+    },
+    {
+      "name": "student",
+      "theme": "light",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Tu próxima decisión te espera",
+      "alerts": []
+    },
+    {
+      "name": "classroom-student",
+      "theme": "light",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Psicología social",
+      "alerts": []
+    },
+    {
+      "name": "session-student",
+      "theme": "light",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "notices",
+      "theme": "light",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Avisos",
+      "alerts": []
+    },
+    {
+      "name": "results",
+      "theme": "light",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Resultados",
+      "alerts": []
+    },
+    {
+      "name": "result-detail",
+      "theme": "light",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Intento 1",
+      "alerts": []
+    },
+    {
+      "name": "feedback",
+      "theme": "light",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Retroalimentación",
+      "alerts": []
+    },
+    {
+      "name": "teacher",
+      "theme": "light",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Hola, Camila",
+      "alerts": []
+    },
+    {
+      "name": "classrooms",
+      "theme": "light",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Aulas",
+      "alerts": []
+    },
+    {
+      "name": "sessions",
+      "theme": "light",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Sesiones",
+      "alerts": []
+    },
+    {
+      "name": "evaluations",
+      "theme": "light",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Evaluación",
+      "alerts": []
+    },
+    {
+      "name": "cases",
+      "theme": "light",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Casos",
+      "alerts": []
+    },
+    {
+      "name": "case-editor",
+      "theme": "light",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "sprites",
+      "theme": "light",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "case-new",
+      "theme": "light",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Nuevo caso",
+      "alerts": []
+    },
+    {
+      "name": "schedule",
+      "theme": "light",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Programar sesión",
+      "alerts": []
+    },
+    {
+      "name": "account",
+      "theme": "light",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Mi cuenta",
+      "alerts": []
+    },
+    {
+      "name": "evaluation",
+      "theme": "light",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Daniela Gómez",
+      "alerts": []
+    },
+    {
+      "name": "classroom-detail",
+      "theme": "light",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Psicología social",
+      "alerts": []
+    },
+    {
+      "name": "session-convocations",
+      "theme": "light",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "session-results",
+      "theme": "light",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "tracking",
+      "theme": "light",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "admin",
+      "theme": "light",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Administración",
+      "alerts": []
+    },
+    {
+      "name": "users",
+      "theme": "light",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Usuarios",
+      "alerts": []
+    },
+    {
+      "name": "admin-classrooms",
+      "theme": "light",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Aulas",
+      "alerts": []
+    },
+    {
+      "name": "deliveries",
+      "theme": "light",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Entregas de correo",
+      "alerts": []
+    },
+    {
+      "name": "simulator",
+      "theme": "light",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Escena 1: Un primer encuentro. Decisión 1 de 1.",
+      "alerts": []
+    },
+    {
+      "name": "login",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Decidir con criterio.Aprender con sentido.",
+      "alerts": []
+    },
+    {
+      "name": "student",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Tu próxima decisión te espera",
+      "alerts": []
+    },
+    {
+      "name": "classroom-student",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Psicología social",
+      "alerts": []
+    },
+    {
+      "name": "session-student",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "notices",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Avisos",
+      "alerts": []
+    },
+    {
+      "name": "results",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Resultados",
+      "alerts": []
+    },
+    {
+      "name": "result-detail",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Intento 1",
+      "alerts": []
+    },
+    {
+      "name": "feedback",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Retroalimentación",
+      "alerts": []
+    },
+    {
+      "name": "teacher",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Hola, Camila",
+      "alerts": []
+    },
+    {
+      "name": "classrooms",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Aulas",
+      "alerts": []
+    },
+    {
+      "name": "sessions",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Sesiones",
+      "alerts": []
+    },
+    {
+      "name": "evaluations",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Evaluación",
+      "alerts": []
+    },
+    {
+      "name": "cases",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Casos",
+      "alerts": []
+    },
+    {
+      "name": "case-editor",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "sprites",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "case-new",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Nuevo caso",
+      "alerts": []
+    },
+    {
+      "name": "schedule",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Programar sesión",
+      "alerts": []
+    },
+    {
+      "name": "account",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Mi cuenta",
+      "alerts": []
+    },
+    {
+      "name": "evaluation",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Daniela Gómez",
+      "alerts": []
+    },
+    {
+      "name": "classroom-detail",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Psicología social",
+      "alerts": []
+    },
+    {
+      "name": "session-convocations",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "session-results",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "tracking",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "admin",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Administración",
+      "alerts": []
+    },
+    {
+      "name": "users",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Usuarios",
+      "alerts": []
+    },
+    {
+      "name": "admin-classrooms",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Aulas",
+      "alerts": []
+    },
+    {
+      "name": "deliveries",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Entregas de correo",
+      "alerts": []
+    },
+    {
+      "name": "simulator",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Escena 1: Un primer encuentro. Decisión 1 de 1.",
+      "alerts": []
+    },
+    {
+      "name": "login",
+      "theme": "light",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Decidir con criterio.Aprender con sentido.",
+      "alerts": []
+    },
+    {
+      "name": "student",
+      "theme": "light",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Tu próxima decisión te espera",
+      "alerts": []
+    },
+    {
+      "name": "classroom-student",
+      "theme": "light",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Psicología social",
+      "alerts": []
+    },
+    {
+      "name": "session-student",
+      "theme": "light",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "notices",
+      "theme": "light",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Avisos",
+      "alerts": []
+    },
+    {
+      "name": "results",
+      "theme": "light",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Resultados",
+      "alerts": []
+    },
+    {
+      "name": "result-detail",
+      "theme": "light",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Intento 1",
+      "alerts": []
+    },
+    {
+      "name": "feedback",
+      "theme": "light",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Retroalimentación",
+      "alerts": []
+    },
+    {
+      "name": "teacher",
+      "theme": "light",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Hola, Camila",
+      "alerts": []
+    },
+    {
+      "name": "classrooms",
+      "theme": "light",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Aulas",
+      "alerts": []
+    },
+    {
+      "name": "sessions",
+      "theme": "light",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Sesiones",
+      "alerts": []
+    },
+    {
+      "name": "evaluations",
+      "theme": "light",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Evaluación",
+      "alerts": []
+    },
+    {
+      "name": "cases",
+      "theme": "light",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Casos",
+      "alerts": []
+    },
+    {
+      "name": "case-editor",
+      "theme": "light",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "sprites",
+      "theme": "light",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "case-new",
+      "theme": "light",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Nuevo caso",
+      "alerts": []
+    },
+    {
+      "name": "schedule",
+      "theme": "light",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Programar sesión",
+      "alerts": []
+    },
+    {
+      "name": "account",
+      "theme": "light",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Mi cuenta",
+      "alerts": []
+    },
+    {
+      "name": "evaluation",
+      "theme": "light",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Daniela Gómez",
+      "alerts": []
+    },
+    {
+      "name": "classroom-detail",
+      "theme": "light",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Psicología social",
+      "alerts": []
+    },
+    {
+      "name": "session-convocations",
+      "theme": "light",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "session-results",
+      "theme": "light",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "tracking",
+      "theme": "light",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "admin",
+      "theme": "light",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Administración",
+      "alerts": []
+    },
+    {
+      "name": "users",
+      "theme": "light",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Usuarios",
+      "alerts": []
+    },
+    {
+      "name": "admin-classrooms",
+      "theme": "light",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Aulas",
+      "alerts": []
+    },
+    {
+      "name": "deliveries",
+      "theme": "light",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Entregas de correo",
+      "alerts": []
+    },
+    {
+      "name": "simulator",
+      "theme": "light",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Escena 1: Un primer encuentro. Decisión 1 de 1.",
+      "alerts": []
+    },
+    {
+      "name": "login",
+      "theme": "dark",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Decidir con criterio.Aprender con sentido.",
+      "alerts": []
+    },
+    {
+      "name": "student",
+      "theme": "dark",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Tu próxima decisión te espera",
+      "alerts": []
+    },
+    {
+      "name": "classroom-student",
+      "theme": "dark",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Psicología social",
+      "alerts": []
+    },
+    {
+      "name": "session-student",
+      "theme": "dark",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "notices",
+      "theme": "dark",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Avisos",
+      "alerts": []
+    },
+    {
+      "name": "results",
+      "theme": "dark",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Resultados",
+      "alerts": []
+    },
+    {
+      "name": "result-detail",
+      "theme": "dark",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Intento 1",
+      "alerts": []
+    },
+    {
+      "name": "feedback",
+      "theme": "dark",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Retroalimentación",
+      "alerts": []
+    },
+    {
+      "name": "teacher",
+      "theme": "dark",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Hola, Camila",
+      "alerts": []
+    },
+    {
+      "name": "classrooms",
+      "theme": "dark",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Aulas",
+      "alerts": []
+    },
+    {
+      "name": "sessions",
+      "theme": "dark",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Sesiones",
+      "alerts": []
+    },
+    {
+      "name": "evaluations",
+      "theme": "dark",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Evaluación",
+      "alerts": []
+    },
+    {
+      "name": "cases",
+      "theme": "dark",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Casos",
+      "alerts": []
+    },
+    {
+      "name": "case-editor",
+      "theme": "dark",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "sprites",
+      "theme": "dark",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "case-new",
+      "theme": "dark",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Nuevo caso",
+      "alerts": []
+    },
+    {
+      "name": "schedule",
+      "theme": "dark",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Programar sesión",
+      "alerts": []
+    },
+    {
+      "name": "account",
+      "theme": "dark",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Mi cuenta",
+      "alerts": []
+    },
+    {
+      "name": "evaluation",
+      "theme": "dark",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Daniela Gómez",
+      "alerts": []
+    },
+    {
+      "name": "classroom-detail",
+      "theme": "dark",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Psicología social",
+      "alerts": []
+    },
+    {
+      "name": "session-convocations",
+      "theme": "dark",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "session-results",
+      "theme": "dark",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "tracking",
+      "theme": "dark",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "admin",
+      "theme": "dark",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Administración",
+      "alerts": []
+    },
+    {
+      "name": "users",
+      "theme": "dark",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Usuarios",
+      "alerts": []
+    },
+    {
+      "name": "admin-classrooms",
+      "theme": "dark",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Aulas",
+      "alerts": []
+    },
+    {
+      "name": "deliveries",
+      "theme": "dark",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Entregas de correo",
+      "alerts": []
+    },
+    {
+      "name": "simulator",
+      "theme": "dark",
+      "width": 320,
+      "overflow": false,
+      "docWidth": 320,
+      "title": "Escena 1: Un primer encuentro. Decisión 1 de 1.",
+      "alerts": []
+    },
+    {
+      "name": "login",
+      "theme": "dark",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Decidir con criterio.Aprender con sentido.",
+      "alerts": []
+    },
+    {
+      "name": "student",
+      "theme": "dark",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Tu próxima decisión te espera",
+      "alerts": []
+    },
+    {
+      "name": "classroom-student",
+      "theme": "dark",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Psicología social",
+      "alerts": []
+    },
+    {
+      "name": "session-student",
+      "theme": "dark",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "notices",
+      "theme": "dark",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Avisos",
+      "alerts": []
+    },
+    {
+      "name": "results",
+      "theme": "dark",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Resultados",
+      "alerts": []
+    },
+    {
+      "name": "result-detail",
+      "theme": "dark",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Intento 1",
+      "alerts": []
+    },
+    {
+      "name": "feedback",
+      "theme": "dark",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Retroalimentación",
+      "alerts": []
+    },
+    {
+      "name": "teacher",
+      "theme": "dark",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Hola, Camila",
+      "alerts": []
+    },
+    {
+      "name": "classrooms",
+      "theme": "dark",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Aulas",
+      "alerts": []
+    },
+    {
+      "name": "sessions",
+      "theme": "dark",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Sesiones",
+      "alerts": []
+    },
+    {
+      "name": "evaluations",
+      "theme": "dark",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Evaluación",
+      "alerts": []
+    },
+    {
+      "name": "cases",
+      "theme": "dark",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Casos",
+      "alerts": []
+    },
+    {
+      "name": "case-editor",
+      "theme": "dark",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "sprites",
+      "theme": "dark",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "case-new",
+      "theme": "dark",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Nuevo caso",
+      "alerts": []
+    },
+    {
+      "name": "schedule",
+      "theme": "dark",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Programar sesión",
+      "alerts": []
+    },
+    {
+      "name": "account",
+      "theme": "dark",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Mi cuenta",
+      "alerts": []
+    },
+    {
+      "name": "evaluation",
+      "theme": "dark",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Daniela Gómez",
+      "alerts": []
+    },
+    {
+      "name": "classroom-detail",
+      "theme": "dark",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Psicología social",
+      "alerts": []
+    },
+    {
+      "name": "session-convocations",
+      "theme": "dark",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "session-results",
+      "theme": "dark",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "tracking",
+      "theme": "dark",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "admin",
+      "theme": "dark",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Administración",
+      "alerts": []
+    },
+    {
+      "name": "users",
+      "theme": "dark",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Usuarios",
+      "alerts": []
+    },
+    {
+      "name": "admin-classrooms",
+      "theme": "dark",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Aulas",
+      "alerts": []
+    },
+    {
+      "name": "deliveries",
+      "theme": "dark",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Entregas de correo",
+      "alerts": []
+    },
+    {
+      "name": "simulator",
+      "theme": "dark",
+      "width": 390,
+      "overflow": false,
+      "docWidth": 390,
+      "title": "Escena 1: Un primer encuentro. Decisión 1 de 1.",
+      "alerts": []
+    },
+    {
+      "name": "login",
+      "theme": "dark",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Decidir con criterio.Aprender con sentido.",
+      "alerts": []
+    },
+    {
+      "name": "student",
+      "theme": "dark",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Tu próxima decisión te espera",
+      "alerts": []
+    },
+    {
+      "name": "classroom-student",
+      "theme": "dark",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Psicología social",
+      "alerts": []
+    },
+    {
+      "name": "session-student",
+      "theme": "dark",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "notices",
+      "theme": "dark",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Avisos",
+      "alerts": []
+    },
+    {
+      "name": "results",
+      "theme": "dark",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Resultados",
+      "alerts": []
+    },
+    {
+      "name": "result-detail",
+      "theme": "dark",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Intento 1",
+      "alerts": []
+    },
+    {
+      "name": "feedback",
+      "theme": "dark",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Retroalimentación",
+      "alerts": []
+    },
+    {
+      "name": "teacher",
+      "theme": "dark",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Hola, Camila",
+      "alerts": []
+    },
+    {
+      "name": "classrooms",
+      "theme": "dark",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Aulas",
+      "alerts": []
+    },
+    {
+      "name": "sessions",
+      "theme": "dark",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Sesiones",
+      "alerts": []
+    },
+    {
+      "name": "evaluations",
+      "theme": "dark",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Evaluación",
+      "alerts": []
+    },
+    {
+      "name": "cases",
+      "theme": "dark",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Casos",
+      "alerts": []
+    },
+    {
+      "name": "case-editor",
+      "theme": "dark",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "sprites",
+      "theme": "dark",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "case-new",
+      "theme": "dark",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Nuevo caso",
+      "alerts": []
+    },
+    {
+      "name": "schedule",
+      "theme": "dark",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Programar sesión",
+      "alerts": []
+    },
+    {
+      "name": "account",
+      "theme": "dark",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Mi cuenta",
+      "alerts": []
+    },
+    {
+      "name": "evaluation",
+      "theme": "dark",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Daniela Gómez",
+      "alerts": []
+    },
+    {
+      "name": "classroom-detail",
+      "theme": "dark",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Psicología social",
+      "alerts": []
+    },
+    {
+      "name": "session-convocations",
+      "theme": "dark",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "session-results",
+      "theme": "dark",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "tracking",
+      "theme": "dark",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "admin",
+      "theme": "dark",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Administración",
+      "alerts": []
+    },
+    {
+      "name": "users",
+      "theme": "dark",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Usuarios",
+      "alerts": []
+    },
+    {
+      "name": "admin-classrooms",
+      "theme": "dark",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Aulas",
+      "alerts": []
+    },
+    {
+      "name": "deliveries",
+      "theme": "dark",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Entregas de correo",
+      "alerts": []
+    },
+    {
+      "name": "simulator",
+      "theme": "dark",
+      "width": 768,
+      "overflow": false,
+      "docWidth": 768,
+      "title": "Escena 1: Un primer encuentro. Decisión 1 de 1.",
+      "alerts": []
+    },
+    {
+      "name": "login",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Decidir con criterio.Aprender con sentido.",
+      "alerts": []
+    },
+    {
+      "name": "student",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Tu próxima decisión te espera",
+      "alerts": []
+    },
+    {
+      "name": "classroom-student",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Psicología social",
+      "alerts": []
+    },
+    {
+      "name": "session-student",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "notices",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Avisos",
+      "alerts": []
+    },
+    {
+      "name": "results",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Resultados",
+      "alerts": []
+    },
+    {
+      "name": "result-detail",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Intento 1",
+      "alerts": []
+    },
+    {
+      "name": "feedback",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Retroalimentación",
+      "alerts": []
+    },
+    {
+      "name": "teacher",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Hola, Camila",
+      "alerts": []
+    },
+    {
+      "name": "classrooms",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Aulas",
+      "alerts": []
+    },
+    {
+      "name": "sessions",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Sesiones",
+      "alerts": []
+    },
+    {
+      "name": "evaluations",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Evaluación",
+      "alerts": []
+    },
+    {
+      "name": "cases",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Casos",
+      "alerts": []
+    },
+    {
+      "name": "case-editor",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "sprites",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "case-new",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Nuevo caso",
+      "alerts": []
+    },
+    {
+      "name": "schedule",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Programar sesión",
+      "alerts": []
+    },
+    {
+      "name": "account",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Mi cuenta",
+      "alerts": []
+    },
+    {
+      "name": "evaluation",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Daniela Gómez",
+      "alerts": []
+    },
+    {
+      "name": "classroom-detail",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Psicología social",
+      "alerts": []
+    },
+    {
+      "name": "session-convocations",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "session-results",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "tracking",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "admin",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Administración",
+      "alerts": []
+    },
+    {
+      "name": "users",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Usuarios",
+      "alerts": []
+    },
+    {
+      "name": "admin-classrooms",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Aulas",
+      "alerts": []
+    },
+    {
+      "name": "deliveries",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Entregas de correo",
+      "alerts": []
+    },
+    {
+      "name": "simulator",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "docWidth": 1280,
+      "title": "Escena 1: Un primer encuentro. Decisión 1 de 1.",
+      "alerts": []
+    },
+    {
+      "name": "login",
+      "theme": "dark",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Decidir con criterio.Aprender con sentido.",
+      "alerts": []
+    },
+    {
+      "name": "student",
+      "theme": "dark",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Tu próxima decisión te espera",
+      "alerts": []
+    },
+    {
+      "name": "classroom-student",
+      "theme": "dark",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Psicología social",
+      "alerts": []
+    },
+    {
+      "name": "session-student",
+      "theme": "dark",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "notices",
+      "theme": "dark",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Avisos",
+      "alerts": []
+    },
+    {
+      "name": "results",
+      "theme": "dark",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Resultados",
+      "alerts": []
+    },
+    {
+      "name": "result-detail",
+      "theme": "dark",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Intento 1",
+      "alerts": []
+    },
+    {
+      "name": "feedback",
+      "theme": "dark",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Retroalimentación",
+      "alerts": []
+    },
+    {
+      "name": "teacher",
+      "theme": "dark",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Hola, Camila",
+      "alerts": []
+    },
+    {
+      "name": "classrooms",
+      "theme": "dark",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Aulas",
+      "alerts": []
+    },
+    {
+      "name": "sessions",
+      "theme": "dark",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Sesiones",
+      "alerts": []
+    },
+    {
+      "name": "evaluations",
+      "theme": "dark",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Evaluación",
+      "alerts": []
+    },
+    {
+      "name": "cases",
+      "theme": "dark",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Casos",
+      "alerts": []
+    },
+    {
+      "name": "case-editor",
+      "theme": "dark",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "sprites",
+      "theme": "dark",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "case-new",
+      "theme": "dark",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Nuevo caso",
+      "alerts": []
+    },
+    {
+      "name": "schedule",
+      "theme": "dark",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Programar sesión",
+      "alerts": []
+    },
+    {
+      "name": "account",
+      "theme": "dark",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Mi cuenta",
+      "alerts": []
+    },
+    {
+      "name": "evaluation",
+      "theme": "dark",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Daniela Gómez",
+      "alerts": []
+    },
+    {
+      "name": "classroom-detail",
+      "theme": "dark",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Psicología social",
+      "alerts": []
+    },
+    {
+      "name": "session-convocations",
+      "theme": "dark",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "session-results",
+      "theme": "dark",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "tracking",
+      "theme": "dark",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "admin",
+      "theme": "dark",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Administración",
+      "alerts": []
+    },
+    {
+      "name": "users",
+      "theme": "dark",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Usuarios",
+      "alerts": []
+    },
+    {
+      "name": "admin-classrooms",
+      "theme": "dark",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Aulas",
+      "alerts": []
+    },
+    {
+      "name": "deliveries",
+      "theme": "dark",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Entregas de correo",
+      "alerts": []
+    },
+    {
+      "name": "simulator",
+      "theme": "dark",
+      "width": 1920,
+      "overflow": false,
+      "docWidth": 1920,
+      "title": "Escena 1: Un primer encuentro. Decisión 1 de 1.",
+      "alerts": []
+    },
+    {
+      "name": "login",
+      "theme": "light",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Decidir con criterio.Aprender con sentido.",
+      "alerts": []
+    },
+    {
+      "name": "student",
+      "theme": "light",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Tu próxima decisión te espera",
+      "alerts": []
+    },
+    {
+      "name": "classroom-student",
+      "theme": "light",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Psicología social",
+      "alerts": []
+    },
+    {
+      "name": "session-student",
+      "theme": "light",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "notices",
+      "theme": "light",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Avisos",
+      "alerts": []
+    },
+    {
+      "name": "results",
+      "theme": "light",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Resultados",
+      "alerts": []
+    },
+    {
+      "name": "result-detail",
+      "theme": "light",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Intento 1",
+      "alerts": []
+    },
+    {
+      "name": "feedback",
+      "theme": "light",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Retroalimentación",
+      "alerts": []
+    },
+    {
+      "name": "teacher",
+      "theme": "light",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Hola, Camila",
+      "alerts": []
+    },
+    {
+      "name": "classrooms",
+      "theme": "light",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Aulas",
+      "alerts": []
+    },
+    {
+      "name": "sessions",
+      "theme": "light",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Sesiones",
+      "alerts": []
+    },
+    {
+      "name": "evaluations",
+      "theme": "light",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Evaluación",
+      "alerts": []
+    },
+    {
+      "name": "cases",
+      "theme": "light",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Casos",
+      "alerts": []
+    },
+    {
+      "name": "case-editor",
+      "theme": "light",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "sprites",
+      "theme": "light",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "case-new",
+      "theme": "light",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Nuevo caso",
+      "alerts": []
+    },
+    {
+      "name": "schedule",
+      "theme": "light",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Programar sesión",
+      "alerts": []
+    },
+    {
+      "name": "account",
+      "theme": "light",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Mi cuenta",
+      "alerts": []
+    },
+    {
+      "name": "evaluation",
+      "theme": "light",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Daniela Gómez",
+      "alerts": []
+    },
+    {
+      "name": "classroom-detail",
+      "theme": "light",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Psicología social",
+      "alerts": []
+    },
+    {
+      "name": "session-convocations",
+      "theme": "light",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "session-results",
+      "theme": "light",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "tracking",
+      "theme": "light",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "admin",
+      "theme": "light",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Administración",
+      "alerts": []
+    },
+    {
+      "name": "users",
+      "theme": "light",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Usuarios",
+      "alerts": []
+    },
+    {
+      "name": "admin-classrooms",
+      "theme": "light",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Aulas",
+      "alerts": []
+    },
+    {
+      "name": "deliveries",
+      "theme": "light",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Entregas de correo",
+      "alerts": []
+    },
+    {
+      "name": "simulator",
+      "theme": "light",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Escena 1: Un primer encuentro. Decisión 1 de 1.",
+      "alerts": []
+    },
+    {
+      "name": "login",
+      "theme": "dark",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Decidir con criterio.Aprender con sentido.",
+      "alerts": []
+    },
+    {
+      "name": "student",
+      "theme": "dark",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Tu próxima decisión te espera",
+      "alerts": []
+    },
+    {
+      "name": "classroom-student",
+      "theme": "dark",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Psicología social",
+      "alerts": []
+    },
+    {
+      "name": "session-student",
+      "theme": "dark",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "notices",
+      "theme": "dark",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Avisos",
+      "alerts": []
+    },
+    {
+      "name": "results",
+      "theme": "dark",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Resultados",
+      "alerts": []
+    },
+    {
+      "name": "result-detail",
+      "theme": "dark",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Intento 1",
+      "alerts": []
+    },
+    {
+      "name": "feedback",
+      "theme": "dark",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Retroalimentación",
+      "alerts": []
+    },
+    {
+      "name": "teacher",
+      "theme": "dark",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Hola, Camila",
+      "alerts": []
+    },
+    {
+      "name": "classrooms",
+      "theme": "dark",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Aulas",
+      "alerts": []
+    },
+    {
+      "name": "sessions",
+      "theme": "dark",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Sesiones",
+      "alerts": []
+    },
+    {
+      "name": "evaluations",
+      "theme": "dark",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Evaluación",
+      "alerts": []
+    },
+    {
+      "name": "cases",
+      "theme": "dark",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Casos",
+      "alerts": []
+    },
+    {
+      "name": "case-editor",
+      "theme": "dark",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "sprites",
+      "theme": "dark",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "case-new",
+      "theme": "dark",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Nuevo caso",
+      "alerts": []
+    },
+    {
+      "name": "schedule",
+      "theme": "dark",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Programar sesión",
+      "alerts": []
+    },
+    {
+      "name": "account",
+      "theme": "dark",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Mi cuenta",
+      "alerts": []
+    },
+    {
+      "name": "evaluation",
+      "theme": "dark",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Daniela Gómez",
+      "alerts": []
+    },
+    {
+      "name": "classroom-detail",
+      "theme": "dark",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Psicología social",
+      "alerts": []
+    },
+    {
+      "name": "session-convocations",
+      "theme": "dark",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "session-results",
+      "theme": "dark",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "tracking",
+      "theme": "dark",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Las voces de una comunidad",
+      "alerts": []
+    },
+    {
+      "name": "admin",
+      "theme": "dark",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Administración",
+      "alerts": []
+    },
+    {
+      "name": "users",
+      "theme": "dark",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Usuarios",
+      "alerts": []
+    },
+    {
+      "name": "admin-classrooms",
+      "theme": "dark",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Aulas",
+      "alerts": []
+    },
+    {
+      "name": "deliveries",
+      "theme": "dark",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Entregas de correo",
+      "alerts": []
+    },
+    {
+      "name": "simulator",
+      "theme": "dark",
+      "width": 1440,
+      "overflow": false,
+      "docWidth": 1440,
+      "title": "Escena 1: Un primer encuentro. Decisión 1 de 1.",
+      "alerts": []
+    }
+  ]
+}
